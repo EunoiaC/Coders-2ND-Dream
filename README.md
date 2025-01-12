@@ -1,0 +1,6 @@
+- Allow a terminal interface
+- Make login with "gh auth login"
+- Make more coder stereotypical
+- For signup, make it a dual screen config file.
+  - The left screen will have the config inputs
+  - The right screen will have different tooltips depending on the highlighted line

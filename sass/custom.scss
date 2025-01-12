@@ -1,50 +1,156 @@
-/* Variables */
-
-/* Modern & Sleek Palette */
-$modern-primary: #4A90E2;
-$modern-secondary: #50E3C2;
-$modern-light: #F5F7FA;
-$modern-dark: #2C3E50;
-$modern-accent: #F8E71C;
-
-/* Playful & Fun Palette */
-$playful-primary: #FF6F61;
-$playful-secondary: #6B6AFF;
-$playful-light: #FFF5E1;
-$playful-dark: #3A3B5A;
-$playful-accent: #FFD700;
-
-/* Elegant & Minimal Palette */
-$elegant-primary: #2C394B;
-$elegant-secondary: #A6D49F;
-$elegant-light: #FFFFFF;
-$elegant-dark: #1C2833;
-$elegant-accent: #FF5733;
-
 /* Bootstrap Variables */
-$primary: $elegant-primary; /* Change this for different palettes */
-$secondary: $elegant-secondary;
-$light: $elegant-light;
-$dark: $elegant-dark;
-$warning: $elegant-accent; /* Use Bootstrap's warning for accent color */
+$primary: #56B6C2; // Cyan blue, reminiscent of syntax highlighting for keywords and variables
+$secondary: #E06C75; // Soft red, often used for errors or attention-grabbing highlights in code
+$light: #ABB2BF; // Muted light gray, similar to default text in dark-mode editors
+$dark: #282C34; // Dark gray, matching common dark-mode backgrounds like VS Code or terminals
+$warning: #D19A66; // Amber-orange, inspired by warnings or deprecation highlights
+
+$terminal-bg: #1E1E1E;
+$terminal-text: #00ff00;
+$terminal-header: #323232;
+$terminal-prompt: $primary;
+$terminal-error: $secondary;
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 #login {
   height: 90vh;
-  background-color: $primary;
+  background-color: $dark;
+  color: $light;
   align-items: center;
 }
 
-body {
-  background-color: $primary;
-}
-
 .login-box {
+  width: 600px;
   height: fit-content;
   padding: 20px;
-
-  border: 4px solid transparent;
   border-radius: 20px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: $terminal-bg;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  /* Terminal Window Header */
+  .terminal-header {
+    background: $terminal-header;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    align-items: center;
+    margin: -20px -20px 0;
+
+    .terminal-buttons {
+      display: flex;
+      gap: 8px;
+      margin-left: 10px;
+
+      .terminal-button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+
+        &.close { background: #FF5F56; }
+        &.minimize { background: #FFBD2E; }
+        &.maximize { background: #27C93F; }
+      }
+    }
+
+    .terminal-title {
+      color: $light;
+      margin-left: 15px;
+      font-size: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  }
+}
+
+.terminal-screen {
+  font-family: "SF Mono", "Monaco", "Consolas", monospace;
+  font-size: 14px;
+  color: $terminal-text;
+  background-color: #000;
+  height: 300px;
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: 0 0 10px 10px;
+  margin-bottom: 0;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  line-height: 1.6;
+
+  /* Scrollbar Styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $terminal-bg;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $terminal-header;
+    border-radius: 4px;
+  }
+
+  /* Terminal Content */
+  .line {
+    display: flex;
+    align-items: flex-start;
+    margin: 8px 0;
+
+    &.error {
+      color: $terminal-error;
+    }
+
+    &.system {
+      color: $light;
+    }
+  }
+
+  .prompt {
+    color: $terminal-prompt;
+    margin-right: 8px;
+    user-select: none;
+
+    &::before {
+      content: "➜";
+      margin-right: 5px;
+      color: $primary;
+    }
+  }
+
+  .input {
+    flex: 1;
+    color: $terminal-text;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  /* Blinking Cursor */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    background: $terminal-text;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+  }
+}
+
+/* Cursor Animation */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+footer {
+  background-color: $dark;
+  color: $light;
+
+  p {
+    margin: 0;
+  }
 }
