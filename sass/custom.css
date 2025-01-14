@@ -11972,6 +11972,107 @@ textarea.form-control-lg {
     opacity: 0;
   }
 }
+/* General Editor Styling */
+.editor {
+  display: flex;
+  height: 75vh;
+  width: 50vw;
+  background-color: #1e1e1e; /* Dark editor background */
+  color: #d4d4d4; /* Text color */
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  overflow: hidden;
+  position: relative;
+  left: 0;
+}
+
+.editor-tooltip {
+  width: 50vw;
+  height: 75vh;
+  background-color: #2d2d2d;
+  border-left: solid 2px black;
+  color: #d4d4d4;
+}
+
+.editor-console {
+  height: 25vh;
+  width: 100vw;
+  background-color: orange;
+}
+
+/* Line numbers styling */
+.line-number-container {
+  background-color: #2d2d2d; /* Slightly darker for contrast */
+  color: #858585; /* Subdued color for line numbers */
+  padding: 10px;
+  text-align: right;
+  user-select: none;
+}
+
+/* Code area styling */
+.code-container {
+  flex-grow: 1;
+  padding: 10px;
+  overflow: auto;
+}
+
+.code {
+  white-space: pre;
+  word-wrap: break-word;
+  margin: 0;
+}
+
+.editable {
+  color: #569cd6; /* Highlight editable fields */
+  border-bottom: 1px dashed #569cd6; /* Subtle underline */
+  cursor: text;
+  white-space: nowrap;
+}
+
+.editable:focus {
+  outline: none;
+  background-color: #3c3c3c;
+  border-bottom: 1px solid #d4d4d4; /* Highlight active field */
+}
+
+.editable.error {
+  border-bottom: 1px dashed red; /* Highlight field as an error */
+}
+
+.editable.error:focus {
+  border-bottom: 1px dashed red; /* Highlight field as an error */
+}
+
+.config-key {
+  color: mediumpurple;
+}
+
+.config-colon {
+  color: coral;
+}
+
+.config-blue {
+  color: #569cd6;
+}
+
+.config-enum {
+  color: darkgoldenrod;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #282c34; /* IDE-style dark background */
+  color: #fff; /* White text */
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  display: none; /* Initially hidden */
+  z-index: 100; /* Bring to the front */
+  pointer-events: none; /* Prevent interaction */
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;

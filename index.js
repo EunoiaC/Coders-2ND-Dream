@@ -1,4 +1,5 @@
-// Your web app's Firebase configuration
+import { marked } from "marked";
+
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyAgHxgz4BD3mxvUFJrr2KUDGER6LElf790",
@@ -30,9 +31,6 @@ function showPage(page) {
     page.classList.remove("d-none");
 }
 
-// start by showing the login page unless already signed in
-showPage(loginPage);
-
 const githubAuthProvider = new firebase.auth.GithubAuthProvider();
 
 function signOut() {
@@ -48,7 +46,8 @@ function signOut() {
         });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// terminal screen
+function loadTerminal() {
     const terminalScreen = document.getElementById("terminalScreen");
 
     // Predefined commands and responses
@@ -128,18 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(() => {
                     }, 2000); // 2 seconds delay
                     const user = result.user;
-                    let screen = null;
                     if (result.additionalUserInfo.isNewUser) {
                         terminalScreen.appendChild(createResponse("Signing up " + user.displayName + "..."));
-                        screen = registerPage;
                     } else {
                         terminalScreen.appendChild(createResponse("Logging in " + user.displayName + "..."));
-                        screen = homePage;
                     }
-
-                    setTimeout(() => {
-                        showPage(screen);
-                    }, 2000); // 2 seconds delay
                 })
                 .catch((error) => {
                     console.error(error.message);
@@ -223,4 +215,93 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize the terminal with installation process and prompt
     simulateInstallation();
+}
+
+// config file register
+function loadConfig() {
+    const register = document.getElementById("register");
+
+    // Generate line numbers dynamically based on the lines in the code block
+    const lineNumberContainer = register.querySelector(".line-number-container");
+    const codeBlock = register.querySelector(".code");
+    const lines = codeBlock.innerText.split("\n");
+
+    lineNumberContainer.innerHTML = lines
+        .map((_, index) => `<div>${index + 1}</div>`)
+        .join("");
+
+    // Add event listeners to editable fields
+    const editableFields = register.querySelectorAll(".editable");
+
+    editableFields.forEach((field) => {
+        field.addEventListener("input", () => {
+            // Example: validate or store field data in real-time
+            console.log(`${field.dataset.key || "field"} updated: ${field.innerText}`);
+        });
+
+        // Prevent newline insertion
+        field.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault(); // Stop the newline from being added
+            }
+        });
+
+        const md = field.getAttribute("data-tooltip");
+        if (md) {
+            field.addEventListener("focus", (e) => {
+                const div = document.getElementById('editorTooltip');
+                div.innerHTML = marked(md)
+            });
+        }
+    });
+
+    // fill known values
+    const user = auth.currentUser;
+
+    const displayName = document.getElementById("configDisplayName");
+    const email = document.getElementById("configEmail");
+    const age = document.getElementById("configAge");
+    const seeking = document.getElementById("configSeeking");
+
+    displayName.textContent = user.displayName;
+    email.textContent = user.email;
+
+    // add error for age (must be int)
+    age.addEventListener("input", () => {
+        const value = age.innerText;
+
+        // Check if the value contains only numbers
+        if (/^\d+$/.test(value)) {
+            // Value contains only numbers
+            age.classList.remove("error");
+            console.log(`number only`);
+        } else {
+            // Value contains non-numeric characters
+            age.classList.add("error");
+        }
+    });
+
+    seeking.addEventListener("input", () => {
+       const value = seeking.innerText;
+
+       if (value === "FULL_STACK" || value === "FRONT_END" || value === "BACK_END") {
+           seeking.classList.remove("error");
+       } else {
+           seeking.classList.add("error");
+       }
+    });
+}
+
+// which page to show user
+auth.onAuthStateChanged(function(user) {
+    if (user) {
+        setTimeout(() => {
+            showPage(registerPage);
+            loadConfig(); // TODO: make specific for register
+        }, 2000); // 2 seconds delay
+    } else {
+        // No user is signed in.
+        showPage(loginPage);
+        loadTerminal();
+    }
 });

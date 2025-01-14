@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="./sass/custom.css">
+    <link rel="stylesheet" href="sass/custom.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -50,7 +50,46 @@
 
 
 <div id="register">
+    <div class="row no-gutter">
+        <div class="editor">
+            <div class="line-number-container">
+                <!-- Line numbers -->
+            </div>
+            <div class="code-container">
+                <pre class="code">
+{
+<span class="config-key">    "display_name"</span><span class="config-colon">:</span> <span class="config-blue">"<span class='editable' id="configDisplayName" contenteditable='true' data-tooltip="
+# Display Name
+The name other users will see when viewing your profile"></span>"</span>,
+<span class="config-key">    "email"</span><span class="config-colon">:</span> <span class="config-blue">"<span class='editable' id="configEmail" contenteditable='false'></span>"</span>,
+<span class="config-key">    "birth_date"</span><span class="config-colon">:</span> <span class="config-colon">new</span> <span class="config-enum">Date</span>(<span class='editable error' id="configAge" contenteditable='true' data-tooltip="
+# Birth Date
+Requires a value of type 'Date'
+### Date(int month, int day, int year)
+- Year must be a 4 digit integer
+"> </span>),
+<span class="config-key">    "seeking"</span><span class="config-colon">:</span> <span class="config-enum">Stack</span>.<span class='editable' id="configSeeking" contenteditable='true' data-tooltip="
+# Seeking
+Requires a value of type 'Stack'
+### Stack(enum)
+- FRONT_END
+- BACK_END
+- FULL_STACK">FULL_STACK</span>,
+<span class="config-key">    "known_languages"</span><span class="config-colon">:</span> [<span class="editable" id="configKnownLanguages" contenteditable="true"> </span>],
+<span class="config-key">    "site_preferences"</span><span class="config-colon">:</span> {
+<span class="config-key">        "theme"</span><span class="config-colon">:</span> <span class="config-blue">"<span class='editable' contenteditable='false'>dark</span>"</span>
+    }
+}
+                </pre>
+            </div>
+        </div>
+        <div class="editor-tooltip" id="editorTooltip">
 
+        </div>
+    </div>
+    <div class="editor-console">
+
+    </div>
 </div>
 
 <div id="home" class="d-flex align-items-center justify-content-center">
@@ -66,7 +105,7 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-<script src="index.js"></script>
+<script src="index.js" type="module"></script>
 </body>
 
 </html>
