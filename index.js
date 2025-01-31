@@ -88,7 +88,7 @@ async function showPage(page) {
         for (let i = 0; i < knownLangs.length; i++) {
             let lang = knownLangs[i];
             profileLanguages.innerHTML += `
-            <img class="profile-lang-img" src="public/${lang}logo.png">
+            <img class="profile-lang-img" src="${lang}logo.png">
             `
         }
 
