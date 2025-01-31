@@ -1,6 +1,20 @@
-import { marked } from "marked";
+import {marked} from "marked";
+import {initializeApp} from "firebase/app";
+import {
+    getAdditionalUserInfo,
+    getAuth,
+    GithubAuthProvider,
+    onAuthStateChanged,
+    signInWithPopup,
+    updateProfile
+} from "firebase/auth";
+import {doc, getDoc, setDoc, updateDoc, getFirestore} from 'firebase/firestore';
+
+// TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
+// TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
 const firebaseConfig = {
     apiKey: "AIzaSyAgHxgz4BD3mxvUFJrr2KUDGER6LElf790",
     authDomain: "coder-s-second-dream.firebaseapp.com",
@@ -12,26 +26,145 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore(app)
+
 // const analytics = getAnalytics(app);
 
 const loginPage = document.getElementById("login");
 const homePage = document.getElementById("home");
 const registerPage = document.getElementById("register");
+const profilePage = document.getElementById("profile");
 
-let pages = [loginPage, homePage, registerPage];
+let pages = [loginPage, homePage, registerPage, profilePage];
+let currentProfileUID = null;
+let currentProfileData = null
 
-function showPage(page) {
+async function showPage(page) {
     // hide all possible other pages
     for (let i = 0; i < pages.length; i++) {
         pages[i].classList.add("d-none");
     }
 
     page.classList.remove("d-none");
+
+    if (page === registerPage) {
+        // clear the config console
+        const console = document.getElementById("configConsoleOutput");
+        console.innerText = ""
+    } else if (page === profilePage) {
+        const pfp = document.getElementById("profile-pfp");
+        const name = document.getElementById("profile-name");
+        const docRef = doc(db, "users", currentProfileUID);
+        const docSnap = await getDoc(docRef);
+        const data = docSnap.data();
+        currentProfileData = data
+
+        const profileEditReadme = document.getElementById("profile-edit-readme");
+        const profileReadmeText = document.getElementById("profile-readme-text");
+
+        const selfCapabilities = document.getElementById("profile-self");
+        const lookingFor = document.getElementById("profile-looking-for");
+
+        let stack = ["FRONT_END", "BACK_END", "FULL_STACK"]
+
+        selfCapabilities.innerText = stack[data.selfCapabilities];
+        lookingFor.innerText = stack[data.lookingFor];
+
+        profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
+        pfp.src = data.pfpLink;
+
+        let bday = new Date(data.bday[2] + "-" + data.bday[0] + "-" + data.bday[1]);
+        let ageDifMs = Date.now() - bday.getTime();
+        let ageDate = new Date(ageDifMs); // miliseconds from epoch
+        let ageNum = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+        name.textContent = data.displayName + " (" + ageNum + ")";
+
+        let knownLangs = data.knownLangs;
+        let profileLanguages = document.getElementById("profile-languages");
+        profileLanguages.innerHTML = "";
+        for (let i = 0; i < knownLangs.length; i++) {
+            let lang = knownLangs[i];
+            profileLanguages.innerHTML += `
+            <img class="profile-lang-img" src="${lang}logo.png">
+            `
+        }
+
+        if (currentProfileUID === auth.currentUser.uid) {
+            profileEditReadme.classList.remove("d-none");
+        } else {
+            profileEditReadme.classList.add("d-none");
+        }
+    }
 }
 
-const githubAuthProvider = new firebase.auth.GithubAuthProvider();
+function currentPage() {
+    for (let i = 0; i < pages.length; i++) {
+        let page = pages[i];
+        if (!page.classList.contains("d-none")) {
+            return page;
+        }
+    }
+    return null;
+}
+
+const authListener = async (user) => {
+    if (user) {
+
+        const dname = document.getElementById("configDisplayName");
+        const email = document.getElementById("configEmail");
+
+        dname.innerText = user.displayName;
+        email.innerText = user.email;
+
+        currentProfileUID = user.uid;
+
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) { // registered user
+            const data = docSnap.data();
+            if (currentPage() === null) { // show page immediately
+                showPage(profilePage);
+            } else { // at login
+                setTimeout(() => {
+                    showPage(profilePage);
+                }, 2000);
+            }
+        } else { // unregistered user
+            if (currentPage() === null) { // show page immediately
+                showPage(registerPage);
+            } else {
+                setTimeout(() => {
+                    showPage(registerPage);
+                }, 2000);
+            }
+
+        }
+    } else {
+        // No user is signed in. (make sure we are not already at login)
+        if (!currentPage()) {
+            showPage(loginPage);
+            loadTerminal();
+        } else if (currentPage() !== loginPage) {
+            showPage(loginPage);
+            loadTerminal();
+        }
+    }
+}
+
+// initial page data filling
+function begin() {
+    loadConfig(); // only load once
+    loadProfilePage();
+    onAuthStateChanged(auth, authListener);
+}
+
+addEventListener("DOMContentLoaded", begin);
+
+const githubAuthProvider = new GithubAuthProvider();
 
 function signOut() {
     auth.signOut()
@@ -122,12 +255,11 @@ function loadTerminal() {
         // If the command is valid and requires the next step
         if (command === "gh auth login") {
             // login
-            auth.signInWithPopup(githubAuthProvider)
-                .then((result) => {
-                    setTimeout(() => {
-                    }, 2000); // 2 seconds delay
+            signInWithPopup(auth, githubAuthProvider)
+                .then(async (result) => {
                     const user = result.user;
-                    if (result.additionalUserInfo.isNewUser) {
+                    const additionalInfo = getAdditionalUserInfo(result);
+                    if (additionalInfo.isNewUser) {
                         terminalScreen.appendChild(createResponse("Signing up " + user.displayName + "..."));
                     } else {
                         terminalScreen.appendChild(createResponse("Logging in " + user.displayName + "..."));
@@ -154,11 +286,11 @@ function loadTerminal() {
     // Simulate installation process with progress bars
     const simulateInstallation = () => {
         const steps = [
-            { text: "Downloading GitHub CLI...", duration: 1000 },
-            { text: "Extracting files...", duration: 1000 },
-            { text: "Installing dependencies...", duration: 1500 },
-            { text: "Setting up environment...", duration: 1000 },
-            { text: "Installation complete. Run 'gh auth login' to authenticate.", duration: 500 },
+            {text: "Downloading GitHub CLI...", duration: 1000},
+            {text: "Extracting files...", duration: 1000},
+            {text: "Installing dependencies...", duration: 1500},
+            {text: "Setting up environment...", duration: 1000},
+            {text: "Installation complete. Run 'gh auth login' to authenticate.", duration: 500},
         ];
 
         const addProgressBar = () => {
@@ -217,9 +349,22 @@ function loadTerminal() {
     simulateInstallation();
 }
 
+function removeAllEventListeners(element) {
+    const newElement = element.cloneNode(true);
+    element.parentNode.replaceChild(newElement, element);
+    return newElement;
+}
+
 // config file register
 function loadConfig() {
     const register = document.getElementById("register");
+
+    const div = document.getElementById('editorTooltip');
+    const tutorial = `
+# Register Page
+Fill out your data in the \`config.json\` file on the left and run the build script when you're finished!
+                `
+    div.innerHTML = marked(tutorial)
 
     // Generate line numbers dynamically based on the lines in the code block
     const lineNumberContainer = register.querySelector(".line-number-container");
@@ -249,59 +394,230 @@ function loadConfig() {
         const md = field.getAttribute("data-tooltip");
         if (md) {
             field.addEventListener("focus", (e) => {
-                const div = document.getElementById('editorTooltip');
                 div.innerHTML = marked(md)
+            });
+
+            field.addEventListener("blur", (e) => {
+                div.innerHTML = marked(tutorial)
             });
         }
     });
 
-    // fill known values
-    const user = auth.currentUser;
-
     const displayName = document.getElementById("configDisplayName");
     const email = document.getElementById("configEmail");
-    const age = document.getElementById("configAge");
+    const birthDate = document.getElementById("configBirthdate");
     const seeking = document.getElementById("configSeeking");
-
-    displayName.textContent = user.displayName;
-    email.textContent = user.email;
+    const selfCapabilities = document.getElementById("configSelfCapabilites");
+    const knownLangs = document.getElementById("configKnownLanguages");
 
     // add error for age (must be int)
-    age.addEventListener("input", () => {
-        const value = age.innerText;
+    birthDate.addEventListener("input", () => {
+        const value = birthDate.innerText;
 
-        // Check if the value contains only numbers
-        if (/^\d+$/.test(value)) {
+        // Check if the value is in the right format
+        if (/^\s*(\d{1,2})\s*,\s*(\d{1,2})\s*,\s*(\d{4})\s*$/.test(value)) {
             // Value contains only numbers
-            age.classList.remove("error");
-            console.log(`number only`);
+            birthDate.classList.remove("error");
         } else {
             // Value contains non-numeric characters
-            age.classList.add("error");
+            birthDate.classList.add("error");
         }
     });
 
-    seeking.addEventListener("input", () => {
-       const value = seeking.innerText;
+    const stackListener = (event) => {
+        const value = event.target.innerText;
 
-       if (value === "FULL_STACK" || value === "FRONT_END" || value === "BACK_END") {
-           seeking.classList.remove("error");
-       } else {
-           seeking.classList.add("error");
-       }
+        if (value === "FULL_STACK" || value === "FRONT_END" || value === "BACK_END") {
+            event.target.classList.remove("error");
+        } else {
+            event.target.classList.add("error");
+        }
+    }
+
+    seeking.addEventListener("input", stackListener);
+    selfCapabilities.addEventListener("input", stackListener);
+
+    const supportedLangs = [ // if a list has more than one item, the following items are alternate names
+        ["python"], ["c++", "cpp"], ["java"], ["javascript", "js"], ["kotlin"], ["ruby"], ["lua"], ["rust"], ["swift"],
+        ["php"], ["go", "golang"], ["c#", "csharp"], ["sql"]
+    ]
+
+    function getLang(lang) {
+        for (let i = 0; i < supportedLangs.length; i++) {
+            let sLang = supportedLangs[i];
+            if (sLang.includes(lang)) {
+                return sLang[0];
+            }
+        }
+        return null;
+    }
+
+    knownLangs.addEventListener("input", () => {
+        const regex = /^\s*"([^"]+)"(?:\s*,\s*"([^"]+)")*\s*$/;
+        const value = knownLangs.innerText;
+
+        if (regex.test(value)) {
+            knownLangs.classList.remove("error");
+            // Extract the individual values
+            const values = [...value.matchAll(/"([^"]+)"/g)].map(match => match[1]);
+            for (let i = 0; i < values.length; i++) {
+                const lang = getLang(values[i]);
+                console.log(lang);
+                if (lang == null) {
+                    knownLangs.classList.add("error");
+                }
+            }
+        } else {
+            knownLangs.classList.add("error");
+        }
+    });
+
+    let run = document.getElementById("configRunButton");
+    const consoleOutput = document.getElementById("configConsoleOutput");
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function displayOutput(text, del) {
+        await delay(del);
+        consoleOutput.innerHTML += text;
+    }
+
+    run = removeAllEventListeners(run);
+    run.addEventListener("click", async (e) => {
+        consoleOutput.innerHTML = "";
+        await displayOutput("Running...<br><br>", 500);
+        if (birthDate.classList.contains("error")) {
+            await displayOutput(`
+           <span style="color: red">Error:</span> invalid arguments for class Date(int, int, int)
+           <br><br>
+           Process failed with exit code 1.`, 500);
+            return;
+        } else {
+            // check if month, day year format works
+            const text = birthDate.innerText
+            const result = text.split(",").map(item => item.trim());
+
+            if (result[0] < 1 || result[0] > 12) {
+                await displayOutput(`
+               <span style="color: red">Error:</span> Argument 1 of class Date must be inclusive between 1 and 12
+               <br><br>
+               Process failed with exit code 1.
+               `, 500)
+                return;
+            }
+            if (result[1] < 1 || result[1] > 31) {
+                await displayOutput(`
+               <span style="color: red">Error:</span> Argument 2 of class Date must be inclusive between 1 and 31
+               <br><br>
+               Process failed with exit code 1.
+               `, 500)
+                return;
+            }
+        }
+
+        if (selfCapabilities.classList.contains("error") || seeking.classList.contains("error")) {
+            await displayOutput(`
+           <span style="color: red">Error:</span> Invalid constant name for enum Stack
+           <br><br>
+           Process failed with exit code 1.
+           `, 500);
+            return;
+        }
+
+        if (knownLangs.classList.contains("error")) {
+            await displayOutput(`
+            <span style="color: red">Error:</span> known_languages cannot be empty or contain invalid items 
+           <br><br>
+           Process failed with exit code 1.
+            `, 500);
+            return;
+        }
+
+        if (displayName.innerText === "") {
+            await displayOutput(`
+            <span style="color: red">Error:</span> display_name cannot be empty
+           <br><br>
+           Process failed with exit code 1.
+            `, 500);
+            return
+        }
+
+        const user = auth.currentUser;
+
+        updateProfile(user, {
+            displayName: displayName.innerText
+        });
+
+        await displayOutput(`
+           Process finished with exit code 0.
+            `, 500);
+
+
+        let stack = ["FRONT_END", "BACK_END", "FULL_STACK"]
+        const values = [...knownLangs.innerText.matchAll(/"([^"]+)"/g)].map(match => match[1]);
+        for (let i = 0; i < values.length; i++) {
+            values[i] = getLang(values[i]);
+        }
+
+        // now create a profile in firestore
+        // TODO: do this with vercel api, pass the uid too. MAKE SURE TO ADD AURA
+        const data = {
+            uid: user.uid,
+            displayName: displayName.innerText,
+            bday: birthDate.innerText.trim().split(/,\s*/).map(num => num.trim()).map(Number),
+            selfCapabilities: stack.indexOf(selfCapabilities.innerText),
+            lookingFor: stack.indexOf(seeking.innerText),
+            knownLangs: values,
+            pfpLink: user.providerData[0].photoURL,
+            readme: "# Edit your README!",
+            matches: 0,
+            rejects: 0
+        }
+
+        console.log(data)
+
+        const docRef = doc(db, "users", user.uid);
+        setDoc(docRef, data)
+            .then(() => {
+                console.log('Document written with ID: ', docRef.id);
+                showPage(profilePage)
+            })
+            .catch((error) => {
+                console.error('Error adding document: ', error);
+            });
     });
 }
 
-// which page to show user
-auth.onAuthStateChanged(function(user) {
-    if (user) {
-        setTimeout(() => {
-            showPage(registerPage);
-            loadConfig(); // TODO: make specific for register
-        }, 2000); // 2 seconds delay
-    } else {
-        // No user is signed in.
-        showPage(loginPage);
-        loadTerminal();
+function loadProfilePage() {
+    const profileEditReadme = document.getElementById("profile-edit-readme");
+    const profileReadmeText = document.getElementById("profile-readme-text");
+
+    profileEditReadme.onclick = async (event) => {
+        if (profileEditReadme.classList.contains("fa-pencil-alt")) {
+            // begin edit
+            profileEditReadme.classList.remove("fa-pencil-alt");
+            profileEditReadme.classList.add("fa-check");
+            profileReadmeText.innerText = currentProfileData.readme;
+            profileReadmeText.contentEditable = true;
+        } else {
+            // end edit
+            profileEditReadme.classList.add("fa-pencil-alt");
+            profileEditReadme.classList.remove("fa-check");
+
+            currentProfileData.readme = profileReadmeText.innerText;
+
+            const docRef = doc(db, "users", auth.currentUser.uid);
+            await updateDoc(docRef, {readme: currentProfileData.readme})
+                .then(() => {
+                    console.log('Document written with ID: ', docRef.id);
+                    profileReadmeText.innerHTML = marked(currentProfileData.readme, {gfm: true});
+                    profileReadmeText.contentEditable = false;
+                })
+                .catch((error) => {
+                    console.error('Error adding document: ', error);
+                });
+        }
     }
-});
+}

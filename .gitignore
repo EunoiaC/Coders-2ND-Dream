@@ -128,3 +128,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+/api/coder-s-second-dream-firebase-adminsdk-1dr77-56708fa241.json

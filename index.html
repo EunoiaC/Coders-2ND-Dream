@@ -20,7 +20,7 @@
 <body class="bg-dark">
 
 <!-- home page -->
-<div id="login">
+<div id="login" class="d-none">
     <div class="d-flex align-items-center justify-content-center">
         <pre style="font-size: 1.5vw">
  _____           _           _          _____           _     ______
@@ -49,8 +49,8 @@
 </div>
 
 
-<div id="register">
-    <div class="row no-gutter">
+<div id="register" class="d-none">
+    <div class="row">
         <div class="editor">
             <div class="line-number-container">
                 <!-- Line numbers -->
@@ -60,22 +60,50 @@
 {
 <span class="config-key">    "display_name"</span><span class="config-colon">:</span> <span class="config-blue">"<span class='editable' id="configDisplayName" contenteditable='true' data-tooltip="
 # Display Name
-The name other users will see when viewing your profile"></span>"</span>,
+- The name other users will see when viewing your profile
+- Typically the first and last name seperated by a space"></span>"</span>,
 <span class="config-key">    "email"</span><span class="config-colon">:</span> <span class="config-blue">"<span class='editable' id="configEmail" contenteditable='false'></span>"</span>,
-<span class="config-key">    "birth_date"</span><span class="config-colon">:</span> <span class="config-colon">new</span> <span class="config-enum">Date</span>(<span class='editable error' id="configAge" contenteditable='true' data-tooltip="
+<span class="config-key">    "birth_date"</span><span class="config-colon">:</span> <span class="config-colon">new</span> <span class="config-enum">Date</span>(<span class='editable error' id="configBirthdate" contenteditable='true' data-tooltip="
 # Birth Date
-Requires a value of type 'Date'
-### Date(int month, int day, int year)
+Requires a value of type `Date`
+### Date(`int` month, `int` day, `int` year)
 - Year must be a 4 digit integer
 "> </span>),
-<span class="config-key">    "seeking"</span><span class="config-colon">:</span> <span class="config-enum">Stack</span>.<span class='editable' id="configSeeking" contenteditable='true' data-tooltip="
-# Seeking
-Requires a value of type 'Stack'
-### Stack(enum)
+<span class="config-key">    "self_capabilities"</span><span class="config-colon">:</span> <span class="config-enum">Stack</span>.<span class='editable' id="configSelfCapabilites" contenteditable='true' data-tooltip="
+# Self Capabilities
+- The type of developer you are
+- Requires a value of type `Stack`
+### Stack(`enum`)
 - FRONT_END
 - BACK_END
 - FULL_STACK">FULL_STACK</span>,
-<span class="config-key">    "known_languages"</span><span class="config-colon">:</span> [<span class="editable" id="configKnownLanguages" contenteditable="true"> </span>],
+<span class="config-key">    "looking_for"</span><span class="config-colon">:</span> <span class="config-enum">Stack</span>.<span class='editable' id="configSeeking" contenteditable='true' data-tooltip="
+# Looking For
+- The type of developer you are looking for
+- Requires a value of type `Stack`
+### Stack(`enum`)
+- FRONT_END
+- BACK_END
+- FULL_STACK">FULL_STACK</span>,
+<span class="config-key">    "known_languages"</span><span class="config-colon">:</span> [<span class="editable error" id="configKnownLanguages" contenteditable="true" spellcheck="false" data-tooltip="
+# Known Languages
+- Shown on your profile for others trying to find out more about you
+- Requires a value of type `String[]`
+### Supported Languages
+- python
+- c++ (cpp)
+- java
+- javascript (js)
+- kotlin
+- ruby
+- lua
+- rust
+- swift
+- php
+- go (golang)
+- c# (csharp)
+- sql
+"> </span>],
 <span class="config-key">    "site_preferences"</span><span class="config-colon">:</span> {
 <span class="config-key">        "theme"</span><span class="config-colon">:</span> <span class="config-blue">"<span class='editable' contenteditable='false'>dark</span>"</span>
     }
@@ -87,15 +115,64 @@ Requires a value of type 'Stack'
 
         </div>
     </div>
-    <div class="editor-console">
+    <div class="editor-console col">
+        <div class="run-bar">
+            <h4 id="configRunButton"><i class="fa fa-play" aria-hidden="true"></i></h4>
+        </div>
+        <div id="configConsoleOutput">
 
+        </div>
     </div>
 </div>
 
-<div id="home" class="d-flex align-items-center justify-content-center">
+<div id="home" class="d-flex align-items-center justify-content-center d-none">
     Welcome To Coder's Second Dream
 </div>
 
+<div id="profile" class="d-none">
+    <div class="row p-5">
+        <!-- Left column (1/4) -->
+        <div class="col-12 col-sm-3">
+            <div class="p-3 text-white profile-left-container text-center">
+                <img class="img-fluid rounded mx-auto d-block" id="profile-pfp">
+                <h1 id="profile-name">FIRST LAST</h1>
+                <table>
+                    <tr>
+                        <th>Self</th>
+                        <th>Seeking</th>
+                    </tr>
+                    <tr>
+                        <td id="profile-self">Confidence</td>
+                        <td id="profile-looking-for">Knowledge</td>
+                    </tr>
+                </table>
+                <div style="margin-top: 10px">
+                    <!-- This button is to navigate to the matching page if on your own profile, or to match with someone on their profile-->
+                    <button class="btn btn-primary" id="profile-leave"><i class="fa-solid fa-arrow-left"></i> Start Matching!</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle column (2/4) -->
+        <div class="col-12 col-sm-6">
+            <div class="profile-right-container" id="profile-readme">
+                <div class="p-2 bg-light text-dark d-flex align-items-center rounded-top">
+                    <i id="profile-edit-readme" class="fas fa-pencil-alt me-2 d-none"></i> README.md
+                </div>
+                <div class="p-3 text-white" id="profile-readme-text">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right column (1/4) -->
+        <div class="col-12 col-sm-3">
+            <h1 id="profile-rank" class="text-center">INTERN</h1>
+            <div id="profile-languages" class="text-center">
+
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Footer -->
 <footer class="text-center py-3 text-light">
     <div>
