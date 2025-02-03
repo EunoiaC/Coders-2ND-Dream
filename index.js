@@ -28,7 +28,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
-const db = getFirestore(app)
+const db = getFirestore(app);
 
 // const analytics = getAnalytics(app);
 
@@ -562,31 +562,44 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
         }
 
         // now create a profile in firestore
-        // TODO: do this with vercel api, pass the uid too. MAKE SURE TO ADD AURA
         const data = {
-            uid: user.uid,
             displayName: displayName.innerText,
             bday: birthDate.innerText.trim().split(/,\s*/).map(num => num.trim()).map(Number),
             selfCapabilities: stack.indexOf(selfCapabilities.innerText),
             lookingFor: stack.indexOf(seeking.innerText),
             knownLangs: values,
             pfpLink: user.providerData[0].photoURL,
-            readme: "# Edit your README!",
-            matches: 0,
-            rejects: 0
+            readme: "# Edit your README!"
         }
-
         console.log(data)
 
         const docRef = doc(db, "users", user.uid);
         setDoc(docRef, data)
             .then(() => {
                 console.log('Document written with ID: ', docRef.id);
-                showPage(profilePage)
             })
             .catch((error) => {
                 console.error('Error adding document: ', error);
             });
+
+        // TODO: call the register function and only pass UID
+
+        const response = await fetch('/api/register_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                uid: user.uid,
+            }),
+        });
+
+        if (!response.ok) {
+            window.alert("Failed to register user");
+            throw new Error('Failed to register user');
+        } else {
+            showPage(profilePage);
+        }
     });
 }
 
