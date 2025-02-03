@@ -1,14 +1,10 @@
 import fetch from 'node-fetch';
 import {initializeApp} from "firebase/app";
 import {
-    getAdditionalUserInfo,
+    signInWithEmailAndPassword,
     getAuth,
-    GithubAuthProvider,
-    onAuthStateChanged,
-    signInWithPopup,
-    updateProfile
 } from "firebase/auth";
-import {doc, getDoc, setDoc, updateDoc, getFirestore} from 'firebase/firestore';
+import {doc, updateDoc, getFirestore} from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyAgHxgz4BD3mxvUFJrr2KUDGER6LElf790",
