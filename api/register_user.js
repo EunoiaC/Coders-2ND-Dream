@@ -38,6 +38,7 @@ export default async function register_user(req, res) {
             selfRequestedMatches: 0,
             otherRequestedMatches: 0,
             successfulMatches: 0,
+            membership: 0 // tier 0 membership (free)
         })
             .then(() => {
                 console.log('Document written with ID: ', docRef.id);

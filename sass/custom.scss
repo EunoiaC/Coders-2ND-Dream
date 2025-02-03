@@ -267,11 +267,11 @@ $terminal-error: $secondary;
   pointer-events: none; /* Prevent interaction */
 }
 
-#profile-pfp {
-  filter: drop-shadow(0 0 20px crimson);
-}
+//#profile-pfp {
+//  filter: drop-shadow(0 0 10px crimson);
+//}
 
-#profile-name {
+#profile-rank {
   margin-top: 20px;
 }
 
@@ -279,51 +279,92 @@ $terminal-error: $secondary;
   border-radius: 10px 10px 10px 10px;
 }
 
-.profile-right-container {
-  background-color: $terminal-bg;
-  border-radius: 10px 10px 10px 10px;
-  height: 80vh;
-  max-width: 800px;
-}
+// Profile Page Styling
+#profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
 
-#profile-edit-readme {
-  cursor: pointer;
-}
+  .profile-left-container {
+    background: #282c34; // Dark theme background
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    text-align: center;
 
-#profile-readme-text {
-  height: 100%; /* Ensure it fills the available height */
-  width: 100%;
-  background-color: black;
-  color: white;
-  font-size: 14px;
-  padding: 10px;
-  overflow-y: auto; /* Enable scrolling instead of increasing height */
-  word-wrap: break-word;
-  border-radius: 5px;
-  outline: none; /* Remove focus outline */
-}
+    h1 {
+      font-size: 22px;
+      margin: 10px 0;
+    }
 
-table {
-  width: 50%;
-  margin: auto;
-  border-collapse: collapse;
-  text-align: center;
-}
-th, td {
-  border: 2px solid black;
-  padding: 10px;
-}
-th {
-  background-color: darkslateblue;
-}
+    h3 {
+      font-size: 18px;
+      color: #f0db4f; // Yellow/gold accent
+    }
 
-#profile-blurb {
-  background-color: $terminal-bg;
-  border-radius: 8px;
-  padding: 4px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-  font-family: "SF Mono", "Monaco", "Consolas", monospace;
-  font-size: 14px;
+    table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+
+      th, td {
+        padding: 8px;
+        border: 1px solid #444;
+      }
+
+      th {
+        background: #3a3f4b;
+      }
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  }
+
+  .profile-right-container {
+    background: #1e1e1e;
+    border-radius: 12px;
+    height: 80vh;
+    max-width: 800px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+    #profile-readme-text {
+      height: 75vh; /* Ensure it fills the available height */
+      width: 100%;
+      font-family: "Fira Code", monospace;
+      color: white;
+      font-size: 14px;
+      padding: 10px;
+      overflow-y: auto; /* Enable scrolling instead of increasing height */
+      word-wrap: break-word;
+      border-radius: 5px;
+      outline: none; /* Remove focus outline */
+    }
+
+    #profile-edit-readme {
+      cursor: pointer;
+    }
+
+
+    .bg-light {
+      background: #282c34 !important;
+      color: #61afef;
+      border-radius: 10px 10px 0 0;
+      padding: 10px;
+    }
+  }
+
+  #profile-languages {
+    background: #333;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
 }
 
 /* Dynamic text colors */
@@ -356,6 +397,8 @@ th {
   color: red;
   font-family: "SF Mono", "Monaco", "Consolas", monospace;
   border-radius: 25px;
+  padding: 4px;
+  font-size: 14px;
 }
 
 .profile-lang-img {

@@ -103,6 +103,8 @@ Requires a value of type `Date`
 - go (golang)
 - c# (csharp)
 - sql
+- css
+- html
 "> </span>],
 <span class="config-key">    "site_preferences"</span><span class="config-colon">:</span> {
 <span class="config-key">        "theme"</span><span class="config-colon">:</span> <span class="config-blue">"<span class='editable' contenteditable='false'>dark</span>"</span>
@@ -132,10 +134,13 @@ Requires a value of type `Date`
 <div id="profile" class="d-none">
     <div class="row p-5">
         <!-- Left column (1/4) -->
+        <!-- Left column (1/4) -->
         <div class="col-12 col-sm-3">
-            <div class="p-3 text-white profile-left-container text-center">
-                <img class="img-fluid rounded mx-auto d-block" id="profile-pfp">
+            <div class="profile-left-container">
+                <img class="img-fluid rounded" id="profile-pfp">
+                <h1 id="profile-rank">Intern</h1>
                 <h1 id="profile-name">FIRST LAST</h1>
+                <h3 id="profile-aura"></h3>
                 <table>
                     <tr>
                         <th>Self</th>
@@ -146,18 +151,17 @@ Requires a value of type `Date`
                         <td id="profile-looking-for">Knowledge</td>
                     </tr>
                 </table>
-                <div style="margin-top: 10px">
-                    <!-- This button is to navigate to the matching page if on your own profile, or to match with someone on their profile-->
-                    <button class="btn btn-primary" id="profile-leave"><i class="fa-solid fa-arrow-left"></i> Start Matching!</button>
-                </div>
+                <button class="btn btn-primary" id="profile-leave">
+                    <i class="fa-solid fa-arrow-left"></i> Start Matching!
+                </button>
             </div>
         </div>
 
         <!-- Middle column (2/4) -->
         <div class="col-12 col-sm-6">
             <div class="profile-right-container" id="profile-readme">
-                <div class="p-2 bg-light text-dark d-flex align-items-center rounded-top">
-                    <i id="profile-edit-readme" class="fas fa-pencil-alt me-2 d-none"></i> README.md
+                <div class="p-2 bg-black text-light d-flex align-items-center rounded-top">
+                    <i id="profile-edit-readme" class="fas fa-pencil-alt me-2 d-none text-light"></i> README.md
                 </div>
                 <div class="p-3 text-white" id="profile-readme-text">
                 </div>
@@ -166,7 +170,6 @@ Requires a value of type `Date`
 
         <!-- Right column (1/4) -->
         <div class="col-12 col-sm-3">
-            <h1 id="profile-rank" class="text-center">INTERN</h1>
             <div id="profile-languages" class="text-center">
 
             </div>

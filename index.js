@@ -12,6 +12,8 @@ import {doc, getDoc, setDoc, updateDoc, getFirestore} from 'firebase/firestore';
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
+// TODO: use a serverless function to make matches, check the user subscription level and info to stop inspect-elemented matches
+// TODO: tally number of match requests/profile views, and lock an account if reaching membership limits. Set a timestamp, wait a week to unlock acc
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -56,6 +58,7 @@ async function showPage(page) {
     } else if (page === profilePage) {
         const pfp = document.getElementById("profile-pfp");
         const name = document.getElementById("profile-name");
+        const aura = document.getElementById("profile-aura");
         const docRef = doc(db, "users", currentProfileUID);
         const docSnap = await getDoc(docRef);
         const data = docSnap.data();
@@ -80,7 +83,7 @@ async function showPage(page) {
         let ageDate = new Date(ageDifMs); // miliseconds from epoch
         let ageNum = Math.abs(ageDate.getUTCFullYear() - 1970);
 
-        name.textContent = data.displayName + " (" + ageNum + ")";
+        name.textContent = data.displayName;
 
         let knownLangs = data.knownLangs;
         let profileLanguages = document.getElementById("profile-languages");
@@ -91,6 +94,29 @@ async function showPage(page) {
             <img class="profile-lang-img" src="${lang}logo.png">
             `
         }
+
+        // calculate aura
+        function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities) {
+            if (selfRequestedMatches < 0 || otherRequestedMatches < 0 || successfulMatches < 0) {
+                throw new Error("Match values cannot be negative");
+            }
+
+            const requestRatio = otherRequestedMatches / (selfRequestedMatches + 1); // Avoid division by zero
+            const matchFactor = successfulMatches / (selfRequestedMatches + otherRequestedMatches + 1);
+
+            let aura = Math.round(((requestRatio * 2 + matchFactor * 3) * 50) / 50) * 50; // Weighted scaling and rounding to nearest 50
+
+            if (selfCapabilities === 2) {
+                aura += 100;
+            } else {
+                aura += 50;
+            }
+
+            return Math.max(aura, 0); // Ensure non-negative aura values
+        }
+
+        // TODO: add subscription level to aura
+        aura.innerText = "🔥Aura: " + calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities);
 
         if (currentProfileUID === auth.currentUser.uid) {
             profileEditReadme.classList.remove("d-none");
@@ -439,7 +465,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
 
     const supportedLangs = [ // if a list has more than one item, the following items are alternate names
         ["python"], ["c++", "cpp"], ["java"], ["javascript", "js"], ["kotlin"], ["ruby"], ["lua"], ["rust"], ["swift"],
-        ["php"], ["go", "golang"], ["c#", "csharp"], ["sql"]
+        ["php"], ["go", "golang"], ["c#", "csharp"], ["sql"], ["css"], ["html"]
     ]
 
     function getLang(lang) {
