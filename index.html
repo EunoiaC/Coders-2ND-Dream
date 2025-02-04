@@ -87,6 +87,7 @@ Requires a value of type `Date`
 - FULL_STACK">FULL_STACK</span>,
 <span class="config-key">    "known_languages"</span><span class="config-colon">:</span> [<span class="editable error" id="configKnownLanguages" contenteditable="true" spellcheck="false" data-tooltip="
 # Known Languages
+- An array of strings specifying the languages that you know
 - Shown on your profile for others trying to find out more about you
 - Requires a value of type `String[]`
 ### Supported Languages
@@ -134,23 +135,19 @@ Requires a value of type `Date`
 <div id="profile" class="d-none">
     <div class="row p-5">
         <!-- Left column (1/4) -->
-        <!-- Left column (1/4) -->
         <div class="col-12 col-sm-3">
             <div class="profile-left-container">
                 <img class="img-fluid rounded" id="profile-pfp">
-                <h1 id="profile-rank">Intern</h1>
                 <h1 id="profile-name">FIRST LAST</h1>
-                <h3 id="profile-aura"></h3>
-                <table>
-                    <tr>
-                        <th>Self</th>
-                        <th>Seeking</th>
-                    </tr>
-                    <tr>
-                        <td id="profile-self">Confidence</td>
-                        <td id="profile-looking-for">Knowledge</td>
-                    </tr>
-                </table>
+                <hr>
+                <div class="profile-tags">
+                    <span class="badge" id="profile-age"></span>
+                    <span class="badge" id="profile-rank">Intern</span>
+                    <span class="badge" id="profile-aura"></span>
+                    <span class="badge" id="profile-self"></span>
+                    <span class="badge" id="profile-looking-for"></span>
+                </div>
+                <hr>
                 <button class="btn btn-primary" id="profile-leave">
                     <i class="fa-solid fa-arrow-left"></i> Start Matching!
                 </button>

@@ -58,6 +58,7 @@ async function showPage(page) {
     } else if (page === profilePage) {
         const pfp = document.getElementById("profile-pfp");
         const name = document.getElementById("profile-name");
+        const age = document.getElementById("profile-age");
         const aura = document.getElementById("profile-aura");
         const docRef = doc(db, "users", currentProfileUID);
         const docSnap = await getDoc(docRef);
@@ -70,10 +71,10 @@ async function showPage(page) {
         const selfCapabilities = document.getElementById("profile-self");
         const lookingFor = document.getElementById("profile-looking-for");
 
-        let stack = ["FRONT_END", "BACK_END", "FULL_STACK"]
+        let stack = ["Front End", "Back End", "Full Stack"]
 
-        selfCapabilities.innerText = stack[data.selfCapabilities];
-        lookingFor.innerText = stack[data.lookingFor];
+        selfCapabilities.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
+        lookingFor.innerHTML = "<i class=\"fa-solid fa-magnifying-glass\"></i> " + stack[data.lookingFor];
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
         pfp.src = data.pfpLink;
@@ -84,6 +85,7 @@ async function showPage(page) {
         let ageNum = Math.abs(ageDate.getUTCFullYear() - 1970);
 
         name.textContent = data.displayName;
+        age.textContent = "Age: " + ageNum;
 
         let knownLangs = data.knownLangs;
         let profileLanguages = document.getElementById("profile-languages");

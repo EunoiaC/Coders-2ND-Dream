@@ -255,7 +255,7 @@ $terminal-error: $secondary;
 
 .tooltip {
   position: absolute;
-  background-color: #282c34; /* IDE-style dark background */
+  background-color: $dark; /* IDE-style dark background */
   color: #fff; /* White text */
   padding: 8px;
   border-radius: 4px;
@@ -270,10 +270,6 @@ $terminal-error: $secondary;
 //#profile-pfp {
 //  filter: drop-shadow(0 0 10px crimson);
 //}
-
-#profile-rank {
-  margin-top: 20px;
-}
 
 .profile-left-container {
   border-radius: 10px 10px 10px 10px;
@@ -298,8 +294,7 @@ $terminal-error: $secondary;
       margin: 10px 0;
     }
 
-    h3 {
-      font-size: 18px;
+    #profile-aura {
       color: #f0db4f; // Yellow/gold accent
     }
 
@@ -351,7 +346,7 @@ $terminal-error: $secondary;
 
 
     .bg-light {
-      background: #282c34 !important;
+      background: $dark !important;
       color: #61afef;
       border-radius: 10px 10px 0 0;
       padding: 10px;
@@ -363,14 +358,18 @@ $terminal-error: $secondary;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    height: 80vh;
+    overflow-y: auto;
   }
 }
 
-/* Dynamic text colors */
-#profile-self, #profile-looking-for {
+#profile-self {
   color: $primary;
 }
 
+#profile-looking-for {
+  color: $warning;
+}
 
 /* When editable */
 #profile-readme-text[contenteditable="true"] {
@@ -392,16 +391,20 @@ $terminal-error: $secondary;
 }
 
 #profile-rank {
-  border: 2px solid red;
-  color: red;
+  color: red; // color changes based on rank
   font-family: "SF Mono", "Monaco", "Consolas", monospace;
-  border-radius: 25px;
-  padding: 4px;
-  font-size: 14px;
+}
+
+.badge {
+  font-size: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  margin: 3px;
+  background-color: $dark;
 }
 
 .profile-lang-img {
   max-width: 150px;
+  width: 100%;
 }
 
 footer {

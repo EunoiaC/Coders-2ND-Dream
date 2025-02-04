@@ -12080,7 +12080,7 @@ textarea.form-control-lg {
 
 .tooltip {
   position: absolute;
-  background-color: #282c34; /* IDE-style dark background */
+  background-color: #282C34; /* IDE-style dark background */
   color: #fff; /* White text */
   padding: 8px;
   border-radius: 4px;
@@ -12090,10 +12090,6 @@ textarea.form-control-lg {
   display: none; /* Initially hidden */
   z-index: 100; /* Bring to the front */
   pointer-events: none; /* Prevent interaction */
-}
-
-#profile-rank {
-  margin-top: 20px;
 }
 
 .profile-left-container {
@@ -12117,8 +12113,7 @@ textarea.form-control-lg {
   font-size: 22px;
   margin: 10px 0;
 }
-#profile .profile-left-container h3, #profile .profile-left-container .h3 {
-  font-size: 18px;
+#profile .profile-left-container #profile-aura {
   color: #f0db4f;
 }
 #profile .profile-left-container table {
@@ -12161,7 +12156,7 @@ textarea.form-control-lg {
   cursor: pointer;
 }
 #profile .profile-right-container .bg-light {
-  background: #282c34 !important;
+  background: #282C34 !important;
   color: #61afef;
   border-radius: 10px 10px 0 0;
   padding: 10px;
@@ -12171,11 +12166,16 @@ textarea.form-control-lg {
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  height: 80vh;
+  overflow-y: auto;
 }
 
-/* Dynamic text colors */
-#profile-self, #profile-looking-for {
+#profile-self {
   color: #56B6C2;
+}
+
+#profile-looking-for {
+  color: #D19A66;
 }
 
 /* When editable */
@@ -12198,16 +12198,20 @@ textarea.form-control-lg {
 }
 
 #profile-rank {
-  border: 2px solid red;
   color: red;
   font-family: "SF Mono", "Monaco", "Consolas", monospace;
-  border-radius: 25px;
-  padding: 4px;
-  font-size: 14px;
+}
+
+.badge {
+  font-size: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  margin: 3px;
+  background-color: #282C34;
 }
 
 .profile-lang-img {
   max-width: 150px;
+  width: 100%;
 }
 
 footer {
