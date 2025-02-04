@@ -12149,7 +12149,6 @@ textarea.form-control-lg {
 #profile .profile-right-container #profile-readme-text {
   height: 75vh; /* Ensure it fills the available height */
   width: 100%;
-  font-family: "Fira Code", monospace;
   color: white;
   font-size: 14px;
   padding: 10px;
