@@ -12208,13 +12208,12 @@ textarea.form-control-lg {
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
   font-weight: 100;
   border-radius: 4px;
-  margin-bottom: -6px;
 }
 
 .badge {
   font-size: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  margin-top: 10px !important;
+  margin: 4px;
   background-color: #282C34;
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
   font-weight: 100;
@@ -12230,12 +12229,18 @@ textarea.form-control-lg {
 }
 
 @media (max-width: 1460px) {
-  .badge, #profile-age, #profile-aura {
+  .badge {
     display: block; /* Makes each badge take full width */
     width: 100%;
   }
   br {
     display: none;
+  }
+}
+@media (max-width: 1100px) {
+  #profile-age, #profile-aura {
+    display: block; /* Makes each badge take full width */
+    width: 100%;
   }
 }
 @media (max-width: 575px) {

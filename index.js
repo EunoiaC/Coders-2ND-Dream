@@ -116,8 +116,21 @@ async function showPage(page) {
             return Math.max(aura, 0); // Ensure non-negative aura values
         }
 
+        function formatNumberWithUnits(number) {
+            if (number >= 1000) {
+                return (number / 1000).toFixed(1) + 'k';
+            } else if (number >= 1000000) {
+                return (number / 1000000).toFixed(1) + 'm';
+            } else {
+                return number.toString();
+            }
+        }
+
         // TODO: add subscription level to aura
-        aura.innerText = "Aura: " + calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities) + "🔥";
+        let auraNum = calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities);
+        aura.innerText = "Aura: " + formatNumberWithUnits(auraNum) + "🔥";
+
+
 
         if (currentProfileUID === auth.currentUser.uid) {
             profileEditReadme.classList.remove("d-none");
