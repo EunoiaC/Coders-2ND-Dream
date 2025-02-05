@@ -137,15 +137,19 @@ Requires a value of type `Date`
         <!-- Left column (1/4) -->
         <div class="col-12 col-sm-3">
             <div class="profile-left-container">
-                <img class="img-fluid rounded" id="profile-pfp">
-                <h1 id="profile-name">FIRST LAST</h1>
-                <hr>
-                <div class="profile-tags">
-                    <span class="badge" id="profile-age"></span>
-                    <span class="badge" id="profile-rank">Intern</span>
-                    <span class="badge" id="profile-aura"></span>
-                    <span class="badge" id="profile-self"></span>
-                    <span class="badge" id="profile-looking-for"></span>
+                <div class="profile-name-image m-0 w-100">
+                    <img class="img-fluid rounded-top" id="profile-pfp">
+                    <h1 id="profile-name" class="rounded-bottom">FIRST LAST</h1>
+                </div>
+                <div class="badge p-3 w-100">
+                    <span class="m-1" id="profile-age"></span>
+                    <span id="profile-aura"></span>
+                </div>
+                <div class="badge m-0 p-3 w-100">
+                    <span class="badge rank-intern w-100" id="profile-rank">Intern</span>
+                    <br>
+                    <span class="badge flex-fill" id="profile-self"></span>
+                    <span class="badge flex-fill" id="profile-looking-for"></span>
                 </div>
                 <hr>
                 <button class="btn btn-primary" id="profile-leave">
@@ -166,7 +170,9 @@ Requires a value of type `Date`
         </div>
 
         <!-- Right column (1/4) -->
-        <div class="col-12 col-sm-3">
+        <div class="col-12 col-sm-3 profile-languages">
+            <h1 id="profile-self-lang" class="text-center"></h1>
+            <hr>
             <div id="profile-languages" class="text-center">
 
             </div>

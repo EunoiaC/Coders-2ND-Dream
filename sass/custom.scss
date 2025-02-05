@@ -271,10 +271,6 @@ $terminal-error: $secondary;
 //  filter: drop-shadow(0 0 10px crimson);
 //}
 
-.profile-left-container {
-  border-radius: 10px 10px 10px 10px;
-}
-
 // Profile Page Styling
 #profile {
   display: flex;
@@ -291,11 +287,12 @@ $terminal-error: $secondary;
 
     h1 {
       font-size: 22px;
-      margin: 10px 0;
+      padding: 5px;
     }
 
     #profile-aura {
       color: #f0db4f; // Yellow/gold accent
+      font-size: 20px;
     }
 
     table {
@@ -353,22 +350,29 @@ $terminal-error: $secondary;
     }
   }
 
-  #profile-languages {
-    background: #333;
+  .profile-languages {
+    background: $dark;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    height: 80vh;
+    height: 100%;
+    max-height: 80vh;
     overflow-y: auto;
   }
 }
 
 #profile-self {
   color: $primary;
+  border: $primary solid 1px;
+}
+
+#profile-self-lang {
+  color: $primary;
 }
 
 #profile-looking-for {
   color: $warning;
+  border: $warning solid 1px;
 }
 
 /* When editable */
@@ -390,16 +394,86 @@ $terminal-error: $secondary;
   border-radius: 4px;
 }
 
-#profile-rank {
-  color: red; // color changes based on rank
-  font-family: "SF Mono", "Monaco", "Consolas", monospace;
+.profile-name-image {
+  font-size: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background-color: $dark;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
+  font-weight: 100;
+  border-radius: 4px;
+  margin-bottom: -6px;
 }
 
 .badge {
   font-size: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  margin: 3px;
+  margin-top: 10px !important;
   background-color: $dark;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
+  font-weight: 100;
+}
+
+.badge img {
+  width: 15px;
+}
+
+.code-badge {
+  border: $secondary solid 1px;
+  color: $secondary;
+}
+
+@media (max-width: 1460px) {
+  .badge, #profile-age, #profile-aura { // prevent overflow
+    display: block; /* Makes each badge take full width */
+    width: 100%;
+  }
+
+  br {
+    display: none;
+  }
+}
+
+@media (max-width: 575px) { // phones
+  #profile-readme {
+    margin-top: 10px;
+  }
+
+  .profile-languages {
+    margin-top: 20px;
+  }
+
+}
+
+/* Hover Effect */
+.badge:hover  {
+  transform: translateY(-3px); /* Slightly raises the badge */
+  filter: brightness(1.2); /* Slightly increases brightness */
+  cursor: pointer;
+}
+
+.profile-name-image:hover {
+  transform: translateY(-3px); /* Slightly raises the badge */
+  cursor: pointer;
+}
+
+#profile-name {
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
+  background-color: $dark;
+}
+
+#profile-name:hover {
+  filter: brightness(1.2); /* Slightly increases brightness */
+  cursor: pointer;
+}
+
+#profile-age {
+  font-size: 20px;
+}
+
+// TODO: add more ranks
+.rank-intern {
+  color: red; // color changes based on rank
+  border: red solid 1px;
 }
 
 .profile-lang-img {

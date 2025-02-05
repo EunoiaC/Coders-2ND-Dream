@@ -12092,10 +12092,6 @@ textarea.form-control-lg {
   pointer-events: none; /* Prevent interaction */
 }
 
-.profile-left-container {
-  border-radius: 10px 10px 10px 10px;
-}
-
 #profile {
   display: flex;
   justify-content: center;
@@ -12111,10 +12107,11 @@ textarea.form-control-lg {
 }
 #profile .profile-left-container h1, #profile .profile-left-container .h1 {
   font-size: 22px;
-  margin: 10px 0;
+  padding: 5px;
 }
 #profile .profile-left-container #profile-aura {
   color: #f0db4f;
+  font-size: 20px;
 }
 #profile .profile-left-container table {
   width: 100%;
@@ -12161,21 +12158,28 @@ textarea.form-control-lg {
   border-radius: 10px 10px 0 0;
   padding: 10px;
 }
-#profile #profile-languages {
-  background: #333;
+#profile .profile-languages {
+  background: #282C34;
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  height: 80vh;
+  height: 100%;
+  max-height: 80vh;
   overflow-y: auto;
 }
 
 #profile-self {
   color: #56B6C2;
+  border: #56B6C2 solid 1px;
+}
+
+#profile-self-lang {
+  color: #56B6C2;
 }
 
 #profile-looking-for {
   color: #D19A66;
+  border: #D19A66 solid 1px;
 }
 
 /* When editable */
@@ -12197,16 +12201,80 @@ textarea.form-control-lg {
   border-radius: 4px;
 }
 
-#profile-rank {
-  color: red;
-  font-family: "SF Mono", "Monaco", "Consolas", monospace;
+.profile-name-image {
+  font-size: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background-color: #282C34;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
+  font-weight: 100;
+  border-radius: 4px;
+  margin-bottom: -6px;
 }
 
 .badge {
   font-size: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  margin: 3px;
+  margin-top: 10px !important;
   background-color: #282C34;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
+  font-weight: 100;
+}
+
+.badge img {
+  width: 15px;
+}
+
+.code-badge {
+  border: #E06C75 solid 1px;
+  color: #E06C75;
+}
+
+@media (max-width: 1460px) {
+  .badge, #profile-age, #profile-aura {
+    display: block; /* Makes each badge take full width */
+    width: 100%;
+  }
+  br {
+    display: none;
+  }
+}
+@media (max-width: 575px) {
+  #profile-readme {
+    margin-top: 10px;
+  }
+  .profile-languages {
+    margin-top: 20px;
+  }
+}
+/* Hover Effect */
+.badge:hover {
+  transform: translateY(-3px); /* Slightly raises the badge */
+  filter: brightness(1.2); /* Slightly increases brightness */
+  cursor: pointer;
+}
+
+.profile-name-image:hover {
+  transform: translateY(-3px); /* Slightly raises the badge */
+  cursor: pointer;
+}
+
+#profile-name {
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
+  background-color: #282C34;
+}
+
+#profile-name:hover {
+  filter: brightness(1.2); /* Slightly increases brightness */
+  cursor: pointer;
+}
+
+#profile-age {
+  font-size: 20px;
+}
+
+.rank-intern {
+  color: red;
+  border: red solid 1px;
 }
 
 .profile-lang-img {

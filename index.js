@@ -15,6 +15,13 @@ import {doc, getDoc, setDoc, updateDoc, getFirestore} from 'firebase/firestore';
 // TODO: use a serverless function to make matches, check the user subscription level and info to stop inspect-elemented matches
 // TODO: tally number of match requests/profile views, and lock an account if reaching membership limits. Set a timestamp, wait a week to unlock acc
 
+/* TODO: the following code for checking if account cooldown is over
+import { serverTimestamp } from "firebase/firestore";
+const updateTimestamp = await updateDoc(docRef, {
+    timestamp: serverTimestamp()
+});
+ */
+
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 const firebaseConfig = {
@@ -69,11 +76,13 @@ async function showPage(page) {
         const profileReadmeText = document.getElementById("profile-readme-text");
 
         const selfCapabilities = document.getElementById("profile-self");
+        const langTitle = document.getElementById("profile-self-lang");
         const lookingFor = document.getElementById("profile-looking-for");
 
         let stack = ["Front End", "Back End", "Full Stack"]
 
         selfCapabilities.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
+        langTitle.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
         lookingFor.innerHTML = "<i class=\"fa-solid fa-magnifying-glass\"></i> " + stack[data.lookingFor];
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
@@ -86,16 +95,6 @@ async function showPage(page) {
 
         name.textContent = data.displayName;
         age.textContent = "Age: " + ageNum;
-
-        let knownLangs = data.knownLangs;
-        let profileLanguages = document.getElementById("profile-languages");
-        profileLanguages.innerHTML = "";
-        for (let i = 0; i < knownLangs.length; i++) {
-            let lang = knownLangs[i];
-            profileLanguages.innerHTML += `
-            <img class="profile-lang-img" src="${lang}logo.png">
-            `
-        }
 
         // calculate aura
         function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities) {
@@ -118,12 +117,22 @@ async function showPage(page) {
         }
 
         // TODO: add subscription level to aura
-        aura.innerText = "🔥Aura: " + calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities);
+        aura.innerText = "Aura: " + calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities) + "🔥";
 
         if (currentProfileUID === auth.currentUser.uid) {
             profileEditReadme.classList.remove("d-none");
         } else {
             profileEditReadme.classList.add("d-none");
+        }
+
+        let knownLangs = data.knownLangs;
+        let profileLanguages = document.getElementById("profile-languages");
+        profileLanguages.innerHTML = "";
+        for (let i = 0; i < knownLangs.length; i++) {
+            let lang = knownLangs[i];
+            profileLanguages.innerHTML += `
+            <img class="profile-lang-img" src="${lang}logo.png">
+            `
         }
     }
 }
