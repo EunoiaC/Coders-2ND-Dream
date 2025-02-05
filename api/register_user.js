@@ -1,25 +1,14 @@
-import fetch from 'node-fetch';
-import {initializeApp} from "firebase/app";
-import {
-    signInWithEmailAndPassword,
-    getAuth,
-} from "firebase/auth";
-import {doc, updateDoc, getFirestore} from 'firebase/firestore';
+import admin from "firebase-admin";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAgHxgz4BD3mxvUFJrr2KUDGER6LElf790",
-    authDomain: "coder-s-second-dream.firebaseapp.com",
-    projectId: "coder-s-second-dream",
-    storageBucket: "coder-s-second-dream.firebasestorage.app",
-    messagingSenderId: "249976919261",
-    appId: "1:249976919261:web:1ae131ec4951f17860b734",
-    measurementId: "G-DPJLSV4CS2"
-};
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getFirestore(app);
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
+
+const db = admin.firestore();
 
 // Main API handler
 export default async function register_user(req, res) {
@@ -27,29 +16,33 @@ export default async function register_user(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { uid } = req.body;
-    if (!uid) {
-        return res.status(400).json({ error: "Invalid input" });
+    // check auth header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Unauthorized" });
     }
 
-    signInWithEmailAndPassword(auth, "admin@admin.com", process.env.ADMIN_PASS).then(userCred => {
-        const docRef = doc(db, "users", uid);
-        updateDoc(docRef, {
-            selfRequestedMatches: 0,
-            otherRequestedMatches: 0,
-            successfulMatches: 0,
-            membership: 0 // tier 0 membership (free)
-        })
-            .then(() => {
-                console.log('Document written with ID: ', docRef.id);
-                res.status(200).json()
-            })
-            .catch((error) => {
-                console.error('Error adding document: ', error);
-                res.status(500).json({ error: error.message || 'An unexpected error occurred' })
+    const idToken = authHeader.split("Bearer ")[1];
+
+    try {
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        let uid = decodedToken.uid;
+
+        const docRef = db.collection("users").doc(uid);
+        try {
+            await docRef.update({
+                selfRequestedMatches: 0,
+                otherRequestedMatches: 0,
+                successfulMatches: 0,
+                membership: 0 // tier 0 membership (free)
             });
-    }).catch(err => {
-        console.error(err)
-        res.status(500).json({ error: err.message || 'An unexpected error occurred' })
-    });
+            return res.status(200).json();
+        } catch (e) {
+            return res.status(500).json({ error: e });
+        }
+
+    } catch (error) {
+        console.error("Error verifying token:", error);
+        return res.status(401).json({ error: "Invalid token" });
+    }
 }

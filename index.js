@@ -405,6 +405,16 @@ function removeAllEventListeners(element) {
     return newElement;
 }
 
+async function getBearerToken() {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("User is not logged in");
+    }
+
+    return await user.getIdToken();
+}
+
 // config file register
 function loadConfig() {
     const register = document.getElementById("register");
@@ -632,16 +642,14 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
                 console.error('Error adding document: ', error);
             });
 
-        // TODO: call the register function and only pass UID
+        const token = await getBearerToken();
 
         const response = await fetch('/api/register_user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                uid: user.uid,
-            }),
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
