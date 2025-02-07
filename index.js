@@ -141,6 +141,9 @@ async function showPage(page) {
         profileLanguages.innerHTML = "";
         for (let i = 0; i < knownLangs.length; i++) {
             let lang = knownLangs[i];
+            if (lang === "c#") {
+                lang = "csharp";
+            }
             profileLanguages.innerHTML += `
             <img class="profile-lang-img" src="${lang}logo.png">
             `
