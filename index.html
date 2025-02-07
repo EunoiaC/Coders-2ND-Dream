@@ -133,6 +133,62 @@ Requires a value of type `Date`
 </div>
 
 <div id="profile" class="d-none">
+    <!-- Subscription Modal -->
+    <div class="modal fade" id="subscriptionModal" tabindex="-1" aria-labelledby="subscriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subscriptionModalLabel">Choose Your Subscription Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row text-center">
+                        <!-- Basic Plan -->
+                        <div class="col-md-4">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    Basic Plan
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">$5/month</h5>
+                                    <p class="card-text">Access to core features</p>
+                                    <button class="btn btn-primary">Select</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pro Plan -->
+                        <div class="col-md-4">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    Pro Plan
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">$15/month</h5>
+                                    <p class="card-text">All Basic features + premium tools</p>
+                                    <button class="btn btn-success">Select</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Elite Plan -->
+                        <div class="col-md-4">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    Elite Plan
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">$30/month</h5>
+                                    <p class="card-text">All Pro features + priority support</p>
+                                    <button class="btn btn-warning">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row p-5">
         <!-- Left column (1/4) -->
         <div class="col-12 col-sm-3">
@@ -145,7 +201,7 @@ Requires a value of type `Date`
                     <span class="m-1" id="profile-age"></span>
                     <span id="profile-aura"></span>
                 </div>
-                <div class="badge m-0 w-100">
+                <div class="badge m-0 w-100" id="profile-edit-bounds">
                     <span class="badge rank-intern w-100" id="profile-rank">Intern</span>
                     <br>
                     <span class="badge" id="profile-self"></span>

@@ -267,9 +267,13 @@ $terminal-error: $secondary;
   pointer-events: none; /* Prevent interaction */
 }
 
-//#profile-pfp {
-//  filter: drop-shadow(0 0 10px crimson);
-//}
+#profile-pfp {
+  transition: filter 0.15s ease-out;
+}
+
+#profile-pfp:hover {
+  filter: brightness(0.8); /* Slightly increases brightness */
+}
 
 // Profile Page Styling
 #profile {

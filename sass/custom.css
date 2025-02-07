@@ -12092,6 +12092,14 @@ textarea.form-control-lg {
   pointer-events: none; /* Prevent interaction */
 }
 
+#profile-pfp {
+  transition: filter 0.15s ease-out;
+}
+
+#profile-pfp:hover {
+  filter: brightness(0.8); /* Slightly increases brightness */
+}
+
 #profile {
   display: flex;
   justify-content: center;

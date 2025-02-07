@@ -143,6 +143,9 @@ async function showPage(page) {
         profileLanguages.innerHTML = "";
         for (let i = 0; i < knownLangs.length; i++) {
             let lang = knownLangs[i];
+            if (lang === "c#") {
+                lang = "csharp";
+            }
             profileLanguages.innerHTML += `
             <img class="profile-lang-img" src="${lang}logo.png">
             `
@@ -664,6 +667,61 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
 function loadProfilePage() {
     const profileEditReadme = document.getElementById("profile-edit-readme");
     const profileReadmeText = document.getElementById("profile-readme-text");
+    const selfCapabilities = document.getElementById("profile-self");
+    const seeking = document.getElementById("profile-looking-for");
+    const displayName = document.getElementById("profile-name");
+    const subscription = document.getElementById("profile-rank");
+
+    // show subscriptions
+    subscription.onclick = () => {
+        const subModal = new bootstrap.Modal(document.getElementById("subscriptionModal"));
+        subModal.show();
+    }
+
+    let stack = [" Front End", " Back End", " Full Stack"]; // space in front bc the element has a space after the font awesome
+
+    let buttonPressed = false;
+    selfCapabilities.onclick = (event) => {
+        if (currentProfileUID === auth.currentUser.uid) {
+            buttonPressed = true;
+            let idx = stack.indexOf(selfCapabilities.innerText);
+            idx++;
+            if (idx > 2) {
+                idx = 0;
+            }
+            selfCapabilities.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[idx];
+        }
+    }
+
+    seeking.onclick = (event) => {
+        if (currentProfileUID === auth.currentUser.uid) {
+            buttonPressed = true;
+            let idx = stack.indexOf(seeking.innerText);
+            idx++;
+            if (idx > 2) {
+                idx = 0;
+            }
+            seeking.innerHTML = "<i class=\"fa-solid fa-magnifying-glass\"></i> " + stack[idx];
+        }
+    }
+
+    // only trigger an edit once the mouse leaves the edit box
+    const bounds = document.getElementById("profile-edit-bounds");
+    bounds.onmouseout = async (event) => {
+        if (buttonPressed) {
+            buttonPressed = false;
+            const docRef = doc(db, "users", auth.currentUser.uid);
+            const data = {
+                selfCapabilities: stack.indexOf(selfCapabilities.innerText),
+                lookingFor: stack.indexOf(seeking.innerText),
+                displayName: displayName.innerText,
+                //TODO: add pfp and languages
+            }
+            await updateDoc(docRef, data).then(() => {
+                console.log('Document was updated successfully.');
+            });
+        }
+    };
 
     profileEditReadme.onclick = async (event) => {
         if (profileEditReadme.classList.contains("fa-pencil-alt")) {
