@@ -130,8 +130,6 @@ async function showPage(page) {
         let auraNum = calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities);
         aura.innerText = "Aura: " + formatNumberWithUnits(auraNum) + "🔥";
 
-
-
         if (currentProfileUID === auth.currentUser.uid) {
             profileEditReadme.classList.remove("d-none");
         } else {
@@ -143,9 +141,6 @@ async function showPage(page) {
         profileLanguages.innerHTML = "";
         for (let i = 0; i < knownLangs.length; i++) {
             let lang = knownLangs[i];
-            if (lang === "c#") {
-                lang = "csharp";
-            }
             profileLanguages.innerHTML += `
             <img class="profile-lang-img" src="${lang}logo.png">
             `
@@ -706,6 +701,7 @@ function loadProfilePage() {
     }
 
     // only trigger an edit once the mouse leaves the edit box
+    // TODO: live update aura
     const bounds = document.getElementById("profile-edit-bounds");
     bounds.onmouseout = async (event) => {
         if (buttonPressed) {
