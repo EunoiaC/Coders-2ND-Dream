@@ -12221,7 +12221,6 @@ textarea.form-control-lg {
 .badge {
   font-size: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  margin: 4px;
   background-color: #282C34;
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
   font-weight: 100;
@@ -12285,7 +12284,7 @@ textarea.form-control-lg {
   font-size: 20px;
 }
 
-.rank-intern {
+.rank-jobless {
   color: red;
   border: red solid 1px;
 }

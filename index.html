@@ -135,52 +135,88 @@ Requires a value of type `Date`
 <div id="profile" class="d-none">
     <!-- Subscription Modal -->
     <div class="modal fade" id="subscriptionModal" tabindex="-1" aria-labelledby="subscriptionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content bg-dark">
                 <div class="modal-header">
                     <h5 class="modal-title" id="subscriptionModalLabel">Choose Your Subscription Plan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row text-center">
-                        <!-- Basic Plan -->
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="card border-danger">
+                                <div class="card-header bg-danger text-white">
+                                    Jobless
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Free</h5>
+                                    <ul class="list-inline pl-3 font-14 font-weight-medium text-dark text-start">
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>5 weekly match opportunities</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Limited messaging</span></li>
+                                    </ul>
+
+                                    <button class="btn btn-danger" id="sub-free">Select</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
                             <div class="card border-primary">
                                 <div class="card-header bg-primary text-white">
-                                    Basic Plan
+                                    Intern
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">$5/month</h5>
-                                    <p class="card-text">Access to core features</p>
-                                    <button class="btn btn-primary">Select</button>
+                                    <ul class="list-inline pl-3 font-14 font-weight-medium text-dark text-start">
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>10 daily match opportunities</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Minimized ads</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Built-in icebreakers</span></li>
+                                    </ul>
+
+                                    <button class="btn btn-primary" id="sub-intern">Select</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Pro Plan -->
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card border-success">
                                 <div class="card-header bg-success text-white">
-                                    Pro Plan
+                                    Salesforce Worker
                                 </div>
                                 <div class="card-body">
-                                    <h5 class="card-title">$15/month</h5>
-                                    <p class="card-text">All Basic features + premium tools</p>
-                                    <button class="btn btn-success">Select</button>
+                                    <h5 class="card-title">$10/month</h5>
+                                    <ul class="list-inline pl-3 font-14 font-weight-medium text-dark text-start">
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>30 daily match opportunities</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>No ads</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Built-in icebreakers</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>AI-generated opening lines</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>More likely perfect matches</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>View mutual GitHub repos</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Debug Mode - undo a match request</span></li>
+                                    </ul>
+                                    <button class="btn btn-success" id="sub-salesforce">Select</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Elite Plan -->
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card border-warning">
                                 <div class="card-header bg-warning text-dark">
-                                    Elite Plan
+                                    AP CSA God
                                 </div>
                                 <div class="card-body">
-                                    <h5 class="card-title">$30/month</h5>
-                                    <p class="card-text">All Pro features + priority support</p>
-                                    <button class="btn btn-warning">Select</button>
+                                    <h5 class="card-title">$300/month</h5>
+                                    <ul class="list-inline pl-3 font-14 font-weight-medium text-dark text-start">
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Unlimited match opportunities</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>No ads</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Built-in icebreakers</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>AI-generated opening lines</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Choose any desired match</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>View mutual GitHub repos</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Debug Mode - undo a match request</span></li>
+                                        <li class="py-2"><i class="fa-solid fa-check"></i> <span>Bag Insurance - we pay for a second date</span></li>
+                                    </ul>
+                                    <button class="btn btn-warning" id="sub-ap">Select</button>
                                 </div>
                             </div>
                         </div>
@@ -201,11 +237,11 @@ Requires a value of type `Date`
                     <span class="m-1" id="profile-age"></span>
                     <span id="profile-aura"></span>
                 </div>
-                <div class="badge m-0 w-100" id="profile-edit-bounds">
-                    <span class="badge rank-intern w-100" id="profile-rank">Intern</span>
+                <div class="badge m-0 p-3 w-100" id="profile-edit-bounds">
+                    <span class="badge rank-jobless w-100" id="profile-rank">Jobless</span>
                     <br>
-                    <span class="badge" id="profile-self"></span>
-                    <span class="badge" id="profile-looking-for"></span>
+                    <span class="badge mt-1" id="profile-self"></span>
+                    <span class="badge mt-1" id="profile-looking-for"></span>
                 </div>
                 <hr>
                 <button class="btn btn-primary" id="profile-leave">

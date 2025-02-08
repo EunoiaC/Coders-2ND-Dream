@@ -210,7 +210,31 @@ const authListener = async (user) => {
 function begin() {
     loadConfig(); // only load once
     loadProfilePage();
+    initSubscribe();
     onAuthStateChanged(auth, authListener);
+}
+
+function initSubscribe() {
+    const free = document.getElementById("sub-free");
+    const intern = document.getElementById("sub-intern");
+    const salesforce = document.getElementById("sub-salesforce");
+    const ap = document.getElementById("sub-ap");
+
+    free.onclick = () => {
+        subscribe(0);
+    }
+
+    intern.onclick = () => {
+        subscribe(1);
+    }
+
+    salesforce.onclick = () => {
+        subscribe(2);
+    }
+
+    ap.onclick = () => {
+        subscribe(3);
+    }
 }
 
 addEventListener("DOMContentLoaded", begin);
@@ -748,4 +772,8 @@ function loadProfilePage() {
                 });
         }
     }
+}
+
+function subscribe(tier) {
+    console.log("Subscribe " + tier);
 }
