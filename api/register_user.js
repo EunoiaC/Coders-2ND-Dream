@@ -34,7 +34,8 @@ export default async function register_user(req, res) {
                 selfRequestedMatches: 0,
                 otherRequestedMatches: 0,
                 successfulMatches: 0,
-                membership: 0 // tier 0 membership (free)
+                membership: 0, // tier 0 membership (free)
+                // sortBy: Math.random() // used for querying
             });
             return res.status(200).json();
         } catch (e) {

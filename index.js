@@ -47,10 +47,10 @@ const registerPage = document.getElementById("register");
 const profilePage = document.getElementById("profile");
 
 let pages = [loginPage, homePage, registerPage, profilePage];
-let currentProfileUID = null;
+let viewingSelf = false;
 let currentProfileData = null
 
-async function showPage(page) {
+async function showPage(page, data = null) {
     // hide all possible other pages
     for (let i = 0; i < pages.length; i++) {
         pages[i].classList.add("d-none");
@@ -67,12 +67,21 @@ async function showPage(page) {
         const name = document.getElementById("profile-name");
         const age = document.getElementById("profile-age");
         const aura = document.getElementById("profile-aura");
-        const docRef = doc(db, "users", currentProfileUID);
-        const docSnap = await getDoc(docRef);
-        const data = docSnap.data();
-        currentProfileData = data
 
         const profileEditReadme = document.getElementById("profile-edit-readme");
+
+        // only read the current user's data unless a different user data is passed as an arg
+        if (!data) {
+            const docRef = doc(db, "users", auth.currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            data = docSnap.data();
+            profileEditReadme.classList.remove("d-none");
+        } else {
+            profileEditReadme.classList.add("d-none"); // hide the edit button since viewing a different profile
+        }
+
+        currentProfileData = data;
+
         const profileReadmeText = document.getElementById("profile-readme-text");
 
         const selfCapabilities = document.getElementById("profile-self");
@@ -130,12 +139,6 @@ async function showPage(page) {
         let auraNum = calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities);
         aura.innerText = "Aura: " + formatNumberWithUnits(auraNum) + "🔥";
 
-        if (currentProfileUID === auth.currentUser.uid) {
-            profileEditReadme.classList.remove("d-none");
-        } else {
-            profileEditReadme.classList.add("d-none");
-        }
-
         let knownLangs = data.knownLangs;
         let profileLanguages = document.getElementById("profile-languages");
         profileLanguages.innerHTML = "";
@@ -170,13 +173,11 @@ const authListener = async (user) => {
         dname.innerText = user.displayName;
         email.innerText = user.email;
 
-        currentProfileUID = user.uid;
-
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) { // registered user
-            const data = docSnap.data();
+            viewingSelf = true;
             if (currentPage() === null) { // show page immediately
                 showPage(profilePage);
             } else { // at login
@@ -681,6 +682,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             window.alert("Failed to register user");
             throw new Error('Failed to register user');
         } else {
+            viewingSelf = true;
             showPage(profilePage);
         }
     });
@@ -691,6 +693,7 @@ function loadProfilePage() {
     const profileReadmeText = document.getElementById("profile-readme-text");
     const selfCapabilities = document.getElementById("profile-self");
     const seeking = document.getElementById("profile-looking-for");
+    const pfp = document.getElementById("profile-pfp");
     const displayName = document.getElementById("profile-name");
     const subscription = document.getElementById("profile-rank");
 
@@ -704,7 +707,7 @@ function loadProfilePage() {
 
     let buttonPressed = false;
     selfCapabilities.onclick = (event) => {
-        if (currentProfileUID === auth.currentUser.uid) {
+        if (viewingSelf) {
             buttonPressed = true;
             let idx = stack.indexOf(selfCapabilities.innerText);
             idx++;
@@ -716,7 +719,7 @@ function loadProfilePage() {
     }
 
     seeking.onclick = (event) => {
-        if (currentProfileUID === auth.currentUser.uid) {
+        if (viewingSelf) {
             buttonPressed = true;
             let idx = stack.indexOf(seeking.innerText);
             idx++;
@@ -727,6 +730,57 @@ function loadProfilePage() {
         }
     }
 
+    const urlInput = document.getElementById("pfp-url-input");
+    const pfpConfirm = document.getElementById("pfp-save-url");
+    const editPfpModal = new bootstrap.Modal(document.getElementById("pfpModal"));
+
+    pfpConfirm.onclick = async (event) => {
+
+        // validate link
+        function isImageValid(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url;
+            });
+        }
+        isImageValid(urlInput.value).then(async (isValid) => {
+            if (isValid) {
+                const docRef = doc(db, "users", auth.currentUser.uid);
+                currentProfileData.pfpLink = urlInput.value;
+                await updateDoc(docRef, currentProfileData).then(() => {
+                    console.log('Document was updated successfully.');
+                });
+                pfp.src = urlInput.value;
+                editPfpModal.hide();
+            } else {
+                urlInput.classList.add("is-invalid");  // Show error
+            }
+        });
+    }
+
+    pfp.onclick = (event) => {
+        urlInput.classList.remove("is-invalid");  // hide error
+        urlInput.value = currentProfileData.pfpLink;
+
+        editPfpModal.show();
+    }
+
+    displayName.contentEditable = true;
+
+    displayName.onblur = async (event) => {
+        if (displayName.innerText !== "" && displayName.innerText !== currentProfileData.displayName) {
+            const docRef = doc(db, "users", auth.currentUser.uid);
+            currentProfileData.displayName = displayName.innerText;
+            await updateDoc(docRef, currentProfileData).then(() => {
+                console.log('Document was updated successfully.');
+            });
+        }
+    }
+
+
+
     // only trigger an edit once the mouse leaves the edit box
     // TODO: live update aura
     const bounds = document.getElementById("profile-edit-bounds");
@@ -734,13 +788,9 @@ function loadProfilePage() {
         if (buttonPressed) {
             buttonPressed = false;
             const docRef = doc(db, "users", auth.currentUser.uid);
-            const data = {
-                selfCapabilities: stack.indexOf(selfCapabilities.innerText),
-                lookingFor: stack.indexOf(seeking.innerText),
-                displayName: displayName.innerText,
-                //TODO: add pfp and languages
-            }
-            await updateDoc(docRef, data).then(() => {
+            currentProfileData.selfCapabilities = stack.indexOf(selfCapabilities.innerText);
+            currentProfileData.lookingFor = stack.indexOf(seeking.innerText);
+            await updateDoc(docRef, currentProfileData).then(() => {
                 console.log('Document was updated successfully.');
             });
         }
