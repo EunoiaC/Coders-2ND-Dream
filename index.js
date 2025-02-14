@@ -692,13 +692,14 @@ async function loadUsers() {
     const token = await getBearerToken();
 
     // TODO: implement loading from cookies
-    return await fetch('/api/fetch_users', {
+    const res = await fetch('/api/fetch_users', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         }
     });
+    return await res.json();
 }
 
 function loadProfilePage() {

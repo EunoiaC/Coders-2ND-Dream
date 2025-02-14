@@ -52,7 +52,6 @@ async function loadFree(userData, doc) {
         let requiredUsers = 5;
         let randomStart = Math.floor(Math.random() * (requiredUsers - 4));
 
-
         // TODO: remove (this is only for testing)
         if (docNum <= requiredUsers) {
             randomStart = 0;
@@ -65,7 +64,7 @@ async function loadFree(userData, doc) {
             .where("selfCapabilities", '==', userData.get("lookingFor"))
             .orderBy("userIdx")
             .startAt(randomStart)
-            .limit(requiredUsers); // fetches the most recent 5 users
+            .limit(requiredUsers);
         let snapshot1 = await query1.get(); // Get user data
         snapshot1.forEach(doc => users.set(doc.id, doc.data()));
 
@@ -81,7 +80,7 @@ async function loadFree(userData, doc) {
             snapshot2.forEach(doc => users.set(doc.id, doc.data()));
         }
 
-        return Array.from(users.values()).slice(0, requiredUsers);
+        return Array.from(users.values());
     } else {
         // return that it's been too close since the last attempt
         return { error: "Wait at least a week before trying again." };
