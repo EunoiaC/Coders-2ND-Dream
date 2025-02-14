@@ -8,7 +8,7 @@ import {
     signInWithPopup,
     updateProfile
 } from "firebase/auth";
-import {doc, getDoc, setDoc, updateDoc, getFirestore} from 'firebase/firestore';
+import {doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
@@ -688,6 +688,17 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
     });
 }
 
+async function loadUsers() {
+    // TODO: implement loading from cookies
+    return await fetch('/api/fetch_users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+}
+
 function loadProfilePage() {
     const profileEditReadme = document.getElementById("profile-edit-readme");
     const profileReadmeText = document.getElementById("profile-readme-text");
@@ -696,6 +707,12 @@ function loadProfilePage() {
     const pfp = document.getElementById("profile-pfp");
     const displayName = document.getElementById("profile-name");
     const subscription = document.getElementById("profile-rank");
+    const leaveProfile = document.getElementById("profile-leave");
+
+    // start matching if on our page
+    leaveProfile.onclick = (event) => {
+        console.log(loadUsers)
+    }
 
     // show subscriptions
     subscription.onclick = () => {
@@ -746,7 +763,7 @@ function loadProfilePage() {
             });
         }
         isImageValid(urlInput.value).then(async (isValid) => {
-            if (isValid) {
+            if (isValid && urlInput.value !== currentProfileData.pfpLink) {
                 const docRef = doc(db, "users", auth.currentUser.uid);
                 currentProfileData.pfpLink = urlInput.value;
                 await updateDoc(docRef, currentProfileData).then(() => {
