@@ -28,6 +28,8 @@ export default async function register_user(req, res) {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
         let uid = decodedToken.uid;
 
+        let docNum = db.collection("users").count().get();
+
         const docRef = db.collection("users").doc(uid);
         try {
             await docRef.update({
@@ -35,7 +37,7 @@ export default async function register_user(req, res) {
                 otherRequestedMatches: 0,
                 successfulMatches: 0,
                 membership: 0, // tier 0 membership (free)
-                // sortBy: Math.random() // used for querying
+                userIdx: docNum + 1 // indexing starts at 1
             });
             return res.status(200).json();
         } catch (e) {

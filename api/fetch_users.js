@@ -49,23 +49,30 @@ async function loadFree(userData, doc) {
 
         // choose a random number from 5 to docNum
         let requiredUsers = 5;
-        let randomStart = Math.floor(Math.random() * (docNum - requiredUsers + 1) + requiredUsers);
+        let randomStart = Math.floor(Math.random() * (requiredUsers - 4);
+
+
+        // TODO: remove (this is only for testing)
+        if (docNum <= requiredUsers) {
+            randomStart = 0;
+        }
 
         let users = new Map();  // Use a map to prevent duplicates
 
         // basic algorithm: only considers match type; still fetches random users
         const query1 = await db.collection("users")
             .where("selfCapabilities", '==', userData.get("lookingFor"))
+            .orderBy("userIdx")
             .startAt(randomStart)
-            .limitToLast(requiredUsers); // fetches the most recent 5 users
+            .limit(requiredUsers); // fetches the most recent 5 users
         let snapshot1 = await query1.get(); // Get user data
         snapshot1.forEach(doc => users.set(doc.id, doc.data()));
 
         // fetch from the other side if not enough users
         if (users.size < requiredUsers) {
             const query2 = db.collection("users")
-                .where("attribute", "==", "desiredValue")
-                .orderBy("sortBy")
+                .where("selfCapabilities", '==', userData.get("lookingFor"))
+                .orderBy("userIdx")
                 .endBefore(randomStart)
                 .limit(requiredUsers - users.size);
 
