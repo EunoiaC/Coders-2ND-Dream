@@ -710,8 +710,8 @@ function loadProfilePage() {
     const leaveProfile = document.getElementById("profile-leave");
 
     // start matching if on our page
-    leaveProfile.onclick = (event) => {
-        console.log(loadUsers)
+    leaveProfile.onclick = async (event) => {
+        console.log(await loadUsers())
     }
 
     // show subscriptions
