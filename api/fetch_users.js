@@ -64,6 +64,7 @@ async function loadFree(userData, doc) {
         // TODO: remove b/c this is for testing
         if (docNum <= requiredAmnt) {
             startAtVal = min;
+            console.log(min);
         }
 
         const matchesQuery = await db.collection("users")
