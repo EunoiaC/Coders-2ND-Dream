@@ -650,8 +650,9 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
         // now create a profile in firestore
 
         // create a random value for selfCapabilities
-        let min = stack.indexOf(selfCapabilities.innerText)/3 * Number.MAX_VALUE;
-        let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * Number.MAX_VALUE;
+        let maxSeed = 9999999999 // 1 less than ten billion
+        let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
+        let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * maxSeed;
         let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
         const data = {
@@ -659,9 +660,9 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             bday: birthDate.innerText.trim().split(/,\s*/).map(num => num.trim()).map(Number),
             selfCapabilities: stack.indexOf(selfCapabilities.innerText),
             lookingFor: stack.indexOf(seeking.innerText),
-            // FRONT_END seeds: 0 -> (1/3)Number.MAX_VALUE
-            // BACK_END seeds: (1/3)Number.MAX_VALUE -> (2/3)Number.MAX_VALUE
-            // FULL_STACK seeds: (3/3)Number.MAX_VALUE -> Number.MAX_VALUE
+            // FRONT_END seeds: 0 -> (1/3)maxSeed
+            // BACK_END seeds: (1/3)Number.MAX_VALUE -> (2/3)maxSeed
+            // FULL_STACK seeds: (3/3)Number.MAX_VALUE -> maxSeed
             matchSeed: random,
             knownLangs: values,
             pfpLink: user.providerData[0].photoURL,
@@ -819,8 +820,10 @@ function loadProfilePage() {
             buttonPressed = false;
             const docRef = doc(db, "users", auth.currentUser.uid);
 
-            let min = stack.indexOf(selfCapabilities.innerText)/3 * Number.MAX_VALUE;
-            let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * Number.MAX_VALUE;
+            // create a random value for selfCapabilities
+            let maxSeed = 9999999999 // 1 less than ten billion
+            let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
+            let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * maxSeed;
             let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
             currentProfileData.selfCapabilities = stack.indexOf(selfCapabilities.innerText);

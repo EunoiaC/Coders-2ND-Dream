@@ -48,25 +48,28 @@ async function loadFree(userData, doc) {
         let docNumSnap = await db.collection("users").count().get();
         let docNum = docNumSnap.data().count;
 
-        const maxSeed = Number.MAX_VALUE;
+        const maxSeed = 9999999999; // 1 less than 10 bil
         const ranges = {
             0: { min: 0, max: maxSeed / 3 }, // FRONT_END
             1: { min: maxSeed / 3, max: (2 / 3) * maxSeed }, // BACK_END
             2: { min: (2 / 3) * maxSeed, max: maxSeed } // FULL_STACK
         };
 
+        const requiredAmnt = 5;
         const lookingFor = userData.get("lookingFor");
         const { min, max } = ranges[lookingFor];
         const offset = Math.random() * (max - min) * 0.5; // Random start point within half range
         let startAtVal = min + offset;
 
         // TODO: remove b/c this is for testing
-        startAtVal = min;
+        if (docNum <= requiredAmnt) {
+            startAtVal = min;
+        }
 
         const matchesQuery = await db.collection("users")
             .where("matchSeed", ">=", startAtVal)
             .orderBy("matchSeed")
-            .limit(5)
+            .limit(requiredAmnt)
             .get();
 
         let users = new Map();
