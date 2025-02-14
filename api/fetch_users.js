@@ -62,7 +62,7 @@ async function loadFree(userData, doc) {
 
         // If there aren't enough users, fall back to min value
         if (docNum <= 5) {
-            startAtVal = min;
+            startAtVal = 0;
         }
 
         const matchesQuery = await db.collection("users")
