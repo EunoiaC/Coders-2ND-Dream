@@ -49,7 +49,7 @@ async function loadFree(userData, doc) {
 
         // choose a random number from 5 to docNum
         let requiredUsers = 5;
-        let randomStart = Math.floor(Math.random() * (requiredUsers - 4);
+        let randomStart = Math.floor(Math.random() * (requiredUsers - 4));
 
 
         // TODO: remove (this is only for testing)
