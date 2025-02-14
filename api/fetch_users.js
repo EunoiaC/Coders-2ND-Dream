@@ -51,8 +51,8 @@ async function loadFree(userData, doc) {
         const maxSeed = 9999999999; // 1 less than 10 bil
         const ranges = {
             0: { min: 0, max: maxSeed / 3 }, // FRONT_END
-            1: { min: maxSeed / 3, max: (2 / 3) * maxSeed }, // BACK_END
-            2: { min: (2 / 3) * maxSeed, max: maxSeed } // FULL_STACK
+            1: { min: maxSeed / 3, max: maxSeed/3 }, // BACK_END
+            2: { min: maxSeed/3, max: maxSeed } // FULL_STACK
         };
 
         const requiredAmnt = 5;
@@ -64,7 +64,6 @@ async function loadFree(userData, doc) {
         // TODO: remove b/c this is for testing
         if (docNum <= requiredAmnt) {
             startAtVal = min;
-            console.log(min);
         }
 
         const matchesQuery = await db.collection("users")

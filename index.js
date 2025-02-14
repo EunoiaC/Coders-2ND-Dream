@@ -652,7 +652,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
         // create a random value for selfCapabilities
         let maxSeed = 9999999999 // 1 less than ten billion
         let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
-        let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * maxSeed;
+        let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
         let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
         const data = {
@@ -823,7 +823,7 @@ function loadProfilePage() {
             // create a random value for selfCapabilities
             let maxSeed = 9999999999 // 1 less than ten billion
             let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
-            let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * maxSeed;
+            let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
             let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
             currentProfileData.selfCapabilities = stack.indexOf(selfCapabilities.innerText);
