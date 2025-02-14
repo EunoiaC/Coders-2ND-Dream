@@ -48,9 +48,9 @@ async function loadFree(userData, doc) {
         let docNumSnap = await db.collection("users").count().get();
         let docNum = docNumSnap.data().count;
 
-        // choose a random number from 5 to docNum
+        // choose a random number from 0 to docNum-5
         let requiredUsers = 5;
-        let randomStart = Math.floor(Math.random() * (requiredUsers - 4));
+        let randomStart = Math.floor(Math.random() * (docNum - 4));
 
         // TODO: remove (this is only for testing)
         if (docNum <= requiredUsers) {

@@ -648,11 +648,21 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
         }
 
         // now create a profile in firestore
+
+        // create a random value for selfCapabilities
+        let min = stack.indexOf(selfCapabilities.innerText)/3 * Number.MAX_VALUE;
+        let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * Number.MAX_VALUE;
+        let random = Math.floor(Math.random() * (max - min + 1)) + min;
+
         const data = {
             displayName: displayName.innerText,
             bday: birthDate.innerText.trim().split(/,\s*/).map(num => num.trim()).map(Number),
             selfCapabilities: stack.indexOf(selfCapabilities.innerText),
             lookingFor: stack.indexOf(seeking.innerText),
+            // FRONT_END seeds: 0 -> (1/3)Number.MAX_VALUE
+            // BACK_END seeds: (1/3)Number.MAX_VALUE -> (2/3)Number.MAX_VALUE
+            // FULL_STACK seeds: (3/3)Number.MAX_VALUE -> Number.MAX_VALUE
+            matchSeed: random,
             knownLangs: values,
             pfpLink: user.providerData[0].photoURL,
             readme: "# Edit your README!"
@@ -808,8 +818,14 @@ function loadProfilePage() {
         if (buttonPressed) {
             buttonPressed = false;
             const docRef = doc(db, "users", auth.currentUser.uid);
+
+            let min = stack.indexOf(selfCapabilities.innerText)/3 * Number.MAX_VALUE;
+            let max = stack.indexOf(selfCapabilities.innerText + 1)/3 * Number.MAX_VALUE;
+            let random = Math.floor(Math.random() * (max - min + 1)) + min;
+
             currentProfileData.selfCapabilities = stack.indexOf(selfCapabilities.innerText);
             currentProfileData.lookingFor = stack.indexOf(seeking.innerText);
+            currentProfileData.matchSeed = random;
             await updateDoc(docRef, currentProfileData).then(() => {
                 console.log('Document was updated successfully.');
             });
