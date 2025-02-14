@@ -45,7 +45,8 @@ async function loadFree(userData, doc) {
             lastFetch: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        let docNum = db.collection("users").count().get();
+        let docNumSnap = await db.collection("users").count().get();
+        let docNum = docNumSnap.data().count;
 
         // choose a random number from 5 to docNum
         let requiredUsers = 5;
