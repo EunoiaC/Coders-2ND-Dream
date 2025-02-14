@@ -465,11 +465,6 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
     const editableFields = register.querySelectorAll(".editable");
 
     editableFields.forEach((field) => {
-        field.addEventListener("input", () => {
-            // Example: validate or store field data in real-time
-            console.log(`${field.dataset.key || "field"} updated: ${field.innerText}`);
-        });
-
         // Prevent newline insertion
         field.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
@@ -548,7 +543,6 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             const values = [...value.matchAll(/"([^"]+)"/g)].map(match => match[1]);
             for (let i = 0; i < values.length; i++) {
                 const lang = getLang(values[i]);
-                console.log(lang);
                 if (lang == null) {
                     knownLangs.classList.add("error");
                 }
@@ -668,7 +662,6 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             pfpLink: user.providerData[0].photoURL,
             readme: "# Edit your README!"
         }
-        console.log(data)
 
         const docRef = doc(db, "users", user.uid);
         setDoc(docRef, data)
