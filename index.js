@@ -690,7 +690,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
 
 async function loadUsers() {
     const token = await getBearerToken();
-    
+
     // TODO: implement loading from cookies
     return await fetch('/api/fetch_users', {
         method: 'POST',

@@ -25,7 +25,7 @@ const db = admin.firestore();
 async function loadFree(userData, doc) {
     let run = false;
 
-    if (!userData.get("lastFetch")) { // check if the timestamp existed
+    if (!userData.hasOwnProperty("lastFetch")) { // check if the timestamp existed
         run = true;
     } else {
         const now = new Date();
