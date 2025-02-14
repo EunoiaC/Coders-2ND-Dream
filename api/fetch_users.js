@@ -48,37 +48,31 @@ async function loadFree(userData, doc) {
         let docNumSnap = await db.collection("users").count().get();
         let docNum = docNumSnap.data().count;
 
-        // choose a random number from 0 to docNum-5
-        let requiredUsers = 5;
-        let randomStart = Math.floor(Math.random() * (docNum - 4));
+        const maxSeed = Number.MAX_VALUE;
+        const ranges = {
+            0: { min: 0, max: maxSeed / 3 }, // FRONT_END
+            1: { min: maxSeed / 3, max: (2 / 3) * maxSeed }, // BACK_END
+            2: { min: (2 / 3) * maxSeed, max: maxSeed } // FULL_STACK
+        };
 
-        // TODO: remove (this is only for testing)
-        if (docNum <= requiredUsers) {
-            randomStart = 0;
+        const lookingFor = userData.get("lookingFor");
+        const { min, max } = ranges[lookingFor];
+        const offset = Math.random() * (max - min) * 0.5; // Random start point within half range
+        let startAtVal = min + offset;
+
+        // If there aren't enough users, fall back to min value
+        if (docNum <= 5) {
+            startAtVal = min;
         }
 
-        let users = new Map();  // Use a map to prevent duplicates
+        const matchesQuery = await db.collection("users")
+            .where("matchSeed", ">=", startAtVal)
+            .orderBy("matchSeed")
+            .limit(5)
+            .get();
 
-        // basic algorithm: only considers match type; still fetches random users
-        const query1 = await db.collection("users")
-            .where("selfCapabilities", '==', userData.get("lookingFor"))
-            .orderBy("userIdx")
-            .startAt(randomStart)
-            .limit(requiredUsers);
-        let snapshot1 = await query1.get(); // Get user data
-        snapshot1.forEach(doc => users.set(doc.id, doc.data()));
-
-        // fetch from the other side if not enough users
-        if (users.size < requiredUsers) {
-            const query2 = db.collection("users")
-                .where("selfCapabilities", '==', userData.get("lookingFor"))
-                .orderBy("userIdx")
-                .endBefore(randomStart)
-                .limit(requiredUsers - users.size);
-
-            const snapshot2 = await query2.get();
-            snapshot2.forEach(doc => users.set(doc.id, doc.data()));
-        }
+        let users = new Map();
+        matchesQuery.docs.map(doc => users.set(doc.id, doc.data()));
 
         return Array.from(users.values());
     } else {
