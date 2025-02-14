@@ -25,7 +25,7 @@ const db = admin.firestore();
 async function loadFree(userData, doc) {
     let run = false;
 
-    if (!userData.hasOwnProperty("lastFetch")) { // check if the timestamp existed
+    if (!userData.get("lastFetch")) { // check if the timestamp existed
         run = true;
     } else {
         const now = new Date();
@@ -55,7 +55,7 @@ async function loadFree(userData, doc) {
 
         // basic algorithm: only considers match type; still fetches random users
         const query1 = await db.collection("users")
-            .where("selfCapabilities", '==', userData.lookingFor)
+            .where("selfCapabilities", '==', userData.get("lookingFor"))
             .startAt(randomStart)
             .limitToLast(requiredUsers); // fetches the most recent 5 users
         let snapshot1 = await query1.get(); // Get user data
