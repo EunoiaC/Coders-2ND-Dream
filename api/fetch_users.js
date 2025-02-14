@@ -60,10 +60,8 @@ async function loadFree(userData, doc) {
         const offset = Math.random() * (max - min) * 0.5; // Random start point within half range
         let startAtVal = min + offset;
 
-        // If there aren't enough users, fall back to min value
-        if (docNum <= 5) {
-            startAtVal = min;
-        }
+        // TODO: remove b/c this is for testing
+        startAtVal = min;
 
         const matchesQuery = await db.collection("users")
             .where("matchSeed", ">=", startAtVal)
