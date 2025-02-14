@@ -650,7 +650,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
         // now create a profile in firestore
 
         // create a random value for selfCapabilities
-        let maxSeed = 9999999999 // 1 less than ten billion
+        let maxSeed = Number.MAX_VALUE;
         let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
         let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
         let random = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -821,7 +821,7 @@ function loadProfilePage() {
             const docRef = doc(db, "users", auth.currentUser.uid);
 
             // create a random value for selfCapabilities
-            let maxSeed = 9999999999 // 1 less than ten billion
+            let maxSeed = Number.MAX_VALUE;
             let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
             let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
             let random = Math.floor(Math.random() * (max - min + 1)) + min;

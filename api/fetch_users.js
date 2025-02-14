@@ -48,7 +48,7 @@ async function loadFree(userData, doc) {
         let docNumSnap = await db.collection("users").count().get();
         let docNum = docNumSnap.data().count;
 
-        const maxSeed = 9999999999; // 1 less than 10 bil
+        const maxSeed = Number.MAX_VALUE; // 1 less than 10 bil
         const ranges = {
             0: { min: 0, max: maxSeed / 3 }, // FRONT_END
             1: { min: maxSeed / 3, max: maxSeed/3 }, // BACK_END
