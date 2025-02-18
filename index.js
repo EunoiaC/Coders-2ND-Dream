@@ -15,12 +15,10 @@ import {doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
 // TODO: use a serverless function to make matches, check the user subscription level and info to stop inspect-elemented matches
 // TODO: tally number of match requests/profile views, and lock an account if reaching membership limits. Set a timestamp, wait a week to unlock acc
 
-/* TODO: the following code for checking if account cooldown is over
-import { serverTimestamp } from "firebase/firestore";
-const updateTimestamp = await updateDoc(docRef, {
-    timestamp: serverTimestamp()
-});
- */
+// TODO:
+//  Add an incoming match requests list with the UID of pending matches that can be rejected or accepted
+//  - Accepting a match leads to the creation of a chatroom stored in the openChats list in both user documents
+//  - Need to create a "chats" collection where a chat can only be read by the two users, not written
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 

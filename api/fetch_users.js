@@ -54,22 +54,26 @@ async function loadFree(userData, doc) {
         const requiredAmnt = 5;
         const lookingFor = userData.get("lookingFor");
         const { min, max } = ranges[lookingFor];
-        const offset = Math.random() * (max - min) * 0.5; // Random start point within half range
-        let startAtVal = min + offset;
 
         // TODO: remove b/c this is for testing
-        if (docNum <= requiredAmnt) {
-            startAtVal = min;
-        }
-
-        const matchesQuery = await db.collection("users")
-            .where("matchSeed", ">=", startAtVal)
-            .orderBy("matchSeed")
-            .limit(requiredAmnt)
-            .get();
+        // if (docNum <= requiredAmnt) {
+        //     startAtVal = min;
+        // }
 
         let users = new Map(); // use a map because if a second query is made, overlapping users will be accounted for
-        matchesQuery.docs.map(doc => users.set(doc.id, doc.data()));
+
+        // get 5 random documents by finding each one closest to the match seed
+        for (let i = 0; i < requiredAmnt; i++) {
+            // generate a random number between min and max
+            let random = Math.floor(Math.random() * (max - min + 1) + min);
+
+            const matchesQuery = await db.collection("users")
+                .where("matchSeed", ">=", random)
+                .orderBy("matchSeed")
+                .limit(1)
+                .get();
+            matchesQuery.docs.map(doc => users.set(doc.id, doc.data()));
+        }
 
         // add loaded UIDs to the user's document to show who they can match with
         let uids = Array.from(users.keys());
