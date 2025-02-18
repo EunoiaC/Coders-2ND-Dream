@@ -170,7 +170,11 @@ const authListener = async (user) => {
         const dname = document.getElementById("configDisplayName");
         const email = document.getElementById("configEmail");
 
-        dname.innerText = user.displayName;
+        try {
+            dname.innerText = user.displayName;
+        } catch (e) {
+            dname.innerText = "";
+        }
         email.innerText = user.email;
 
         const docRef = doc(db, "users", user.uid);

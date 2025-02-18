@@ -40,10 +40,6 @@ async function loadFree(userData, doc) {
     }
 
     if (run) {
-        // update the timestamp in the doc
-        await doc.update({
-            lastFetch: admin.firestore.FieldValue.serverTimestamp(),
-        });
 
         let docNumSnap = await db.collection("users").count().get();
         let docNum = docNumSnap.data().count;
@@ -72,8 +68,17 @@ async function loadFree(userData, doc) {
             .limit(requiredAmnt)
             .get();
 
-        let users = new Map();
+        let users = new Map(); // use a map because if a second query is made, overlapping users will be accounted for
         matchesQuery.docs.map(doc => users.set(doc.id, doc.data()));
+
+        // add loaded UIDs to the user's document to show who they can match with
+        let uids = Array.from(users.keys());
+
+        // update the timestamp in the doc and currently matching users
+        await doc.update({
+            lastFetch: admin.firestore.FieldValue.serverTimestamp(),
+            currentMatchPool: uids
+        });
 
         return Array.from(users.values());
     } else {
