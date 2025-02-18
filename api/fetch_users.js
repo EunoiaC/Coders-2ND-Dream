@@ -72,7 +72,8 @@ async function loadFree(userData, doc) {
                 .orderBy("matchSeed")
                 .limit(1)
                 .get();
-            matchesQuery.docs.map(doc => users.set(doc.id, doc.data()));
+            let doc = matchesQuery.docs[0];
+            users.set(doc.id, doc.data());
         }
 
         // add loaded UIDs to the user's document to show who they can match with
