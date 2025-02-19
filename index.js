@@ -43,10 +43,41 @@ const loginPage = document.getElementById("login");
 const homePage = document.getElementById("home");
 const registerPage = document.getElementById("register");
 const profilePage = document.getElementById("profile");
+const matchpoolPage = document.getElementById("matchpool");
 
-let pages = [loginPage, homePage, registerPage, profilePage];
+let pages = [loginPage, homePage, registerPage, profilePage, matchpoolPage];
 let viewingSelf = false;
 let currentProfileData = null
+
+// calculate aura
+function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities) {
+    if (selfRequestedMatches < 0 || otherRequestedMatches < 0 || successfulMatches < 0) {
+        throw new Error("Match values cannot be negative");
+    }
+
+    const requestRatio = otherRequestedMatches / (selfRequestedMatches + 1); // Avoid division by zero
+    const matchFactor = successfulMatches / (selfRequestedMatches + otherRequestedMatches + 1);
+
+    let aura = Math.round(((requestRatio * 2 + matchFactor * 3) * 50) / 50) * 50; // Weighted scaling and rounding to nearest 50
+
+    if (selfCapabilities === 2) {
+        aura += 100;
+    } else {
+        aura += 50;
+    }
+
+    return Math.max(aura, 0); // Ensure non-negative aura values
+}
+
+function formatNumberWithUnits(number) {
+    if (number >= 1000) {
+        return (number / 1000).toFixed(1) + 'k';
+    } else if (number >= 1000000) {
+        return (number / 1000000).toFixed(1) + 'm';
+    } else {
+        return number.toString();
+    }
+}
 
 async function showPage(page, data = null) {
     // hide all possible other pages
@@ -60,6 +91,8 @@ async function showPage(page, data = null) {
         // clear the config console
         const console = document.getElementById("configConsoleOutput");
         console.innerText = ""
+    } else if (page === matchpoolPage) {
+        await showMatchPool();
     } else if (page === profilePage) {
         const pfp = document.getElementById("profile-pfp");
         const name = document.getElementById("profile-name");
@@ -102,36 +135,6 @@ async function showPage(page, data = null) {
 
         name.textContent = data.displayName;
         age.textContent = "Age: " + ageNum;
-
-        // calculate aura
-        function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities) {
-            if (selfRequestedMatches < 0 || otherRequestedMatches < 0 || successfulMatches < 0) {
-                throw new Error("Match values cannot be negative");
-            }
-
-            const requestRatio = otherRequestedMatches / (selfRequestedMatches + 1); // Avoid division by zero
-            const matchFactor = successfulMatches / (selfRequestedMatches + otherRequestedMatches + 1);
-
-            let aura = Math.round(((requestRatio * 2 + matchFactor * 3) * 50) / 50) * 50; // Weighted scaling and rounding to nearest 50
-
-            if (selfCapabilities === 2) {
-                aura += 100;
-            } else {
-                aura += 50;
-            }
-
-            return Math.max(aura, 0); // Ensure non-negative aura values
-        }
-
-        function formatNumberWithUnits(number) {
-            if (number >= 1000) {
-                return (number / 1000).toFixed(1) + 'k';
-            } else if (number >= 1000000) {
-                return (number / 1000000).toFixed(1) + 'm';
-            } else {
-                return number.toString();
-            }
-        }
 
         // TODO: add subscription level to aura
         let auraNum = calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities);
@@ -708,6 +711,57 @@ async function loadUsers() {
     return await res.json();
 }
 
+function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc) {
+    // Create a div with the same structure as the provided profile template
+    const profileDiv = document.createElement("div");
+    profileDiv.className = "col-12 col-sm-3"; // Ensures 4 per row
+
+    profileDiv.innerHTML = `
+        <div class="profile-left-container">
+            <div class="profile-name-image mb-2 w-100">
+                <img class="img-fluid rounded-top" src="${imgSrc}" alt="Profile Picture">
+                <h1 class="rounded-bottom">${name}</h1>
+            </div>
+            <div class="badge w-100 m-0 mb-2">
+                <span class="m-1">${age}</span>
+                <span>Aura: ${formatNumberWithUnits(aura)}🔥</span>
+            </div>
+            <div class="badge m-0 p-3 w-100" id="profile-edit-bounds">
+                <span class="badge rank-jobless w-100">${rank}</span>
+                <br>
+                <span class="badge mt-1"><i class="fa-solid fa-code"></i> ${self}</span>
+                <span class="badge mt-1"><i class="fa-solid fa-magnifying-glass"></i> ${lookingFor}</span>
+            </div>
+            <hr>
+            <button class="btn btn-primary">
+                <i class="fa-solid fa-arrow-left"></i> Start Matching!
+            </button>
+        </div>
+    `;
+
+    // Append to the container
+    document.getElementById("matchpool-container").appendChild(profileDiv);
+}
+
+async function showMatchPool() {
+    document.getElementById("matchpool-container").innerHTML = "";
+    let users = await loadUsers();
+
+    for (let user of users) {
+        let bday = new Date(user.bday[2] + "-" + user.bday[0] + "-" + user.bday[1]);
+        let ageDifMs = Date.now() - bday.getTime();
+        let ageDate = new Date(ageDifMs); // miliseconds from epoch
+        let ageNum = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+        let auraNum = calculateAura(user.selfRequestedMatches, user.otherRequestedMatches, user.successfulMatches, user.selfCapabilities);
+
+        let stack = ["Front End", "Back End", "Full Stack"]; // space in front bc the element has a space after the font awesome
+
+        // TODO: update rank
+        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack.indexOf(user.selfCapabilities), stack.indexOf(user.lookingFor), user.pfpLink);
+    }
+}
+
 function loadProfilePage() {
     const profileEditReadme = document.getElementById("profile-edit-readme");
     const profileReadmeText = document.getElementById("profile-readme-text");
@@ -720,7 +774,7 @@ function loadProfilePage() {
 
     // start matching if on our page
     leaveProfile.onclick = async (event) => {
-        console.log(await loadUsers())
+        showPage(matchpoolPage);
     }
 
     // show subscriptions
