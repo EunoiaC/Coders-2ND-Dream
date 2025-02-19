@@ -769,7 +769,7 @@ async function loadUsers() {
 function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc) {
     // Create a div with the same structure as the provided profile template
     const profileDiv = document.createElement("div");
-    profileDiv.className = "col-12 col-sm-3"; // Ensures 4 per row
+    profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
 
     profileDiv.innerHTML = `
         <div class="profile-left-container">
