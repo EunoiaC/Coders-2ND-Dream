@@ -704,66 +704,14 @@ async function loadUsers() {
 
     let lastFetch = localStorage.getItem("lastFetch");
 
-    async function apiFetch() {
-        const res = await fetch('/api/fetch_users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return await res.json();
-    }
-
-    // user never fetched before; let them try
-    if (!lastFetch) {
-        let res = await apiFetch();
-        if (res.error) {
-            window.alert("There was an error. Please try again.");
-            return;
+    const res = await fetch('/api/fetch_users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         }
-        localStorage.setItem("lastFetch", (new Date()).toISOString());
-        localStorage.setItem("matchpool", JSON.stringify(res.users));
-        return res;
-    }
-
-    let now = new Date();
-    let date = new Date(lastFetch);
-
-    const timeDiff = now - date; // Difference in milliseconds
-    const seconds = Math.floor(timeDiff / 1000);
-
-    let cooldownMsg = "";
-
-    switch (currentProfileData.membership) {
-        case 0:
-            // 1 week cooldown
-            if (seconds > 604800) {
-                let res = await apiFetch();
-
-                if (res.error) {
-                    window.alert("There was an error. Please try again.");
-                    return;
-                }
-
-                localStorage.setItem("lastFetch", (new Date()).toISOString());
-                localStorage.setItem("matchpool", JSON.stringify(res.users));
-                return res;
-            }
-            // since it is less than a week, give a message
-            let secondsLeft = 604800 - seconds;
-            // convert seconds to days
-            let days = Math.floor(secondsLeft / 86400);
-            cooldownMsg = `You have ${days} days left until you can find new users to match with, or you can upgrade your plan`;
-            break;
-        // TODO: add more cases
-    }
-
-    // if none of the api calls returned, then give the users saved in local storage
-    return {
-        users: JSON.parse(localStorage.getItem("matchpool")),
-        message: cooldownMsg
-    };
+    });
+    return await res.json();
 }
 
 function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc) {

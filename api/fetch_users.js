@@ -25,6 +25,7 @@ const db = admin.firestore();
 async function loadFree(userData, doc) {
     let run = false;
 
+    let seconds = 0
     if (!userData.get("lastFetch")) { // check if the timestamp existed
         run = true;
     } else {
@@ -32,7 +33,7 @@ async function loadFree(userData, doc) {
         let timestamp = userData.get("lastFetch").toDate();
         const timeDiff = now - timestamp; // Difference in milliseconds
 
-        const seconds = Math.floor(timeDiff / 1000);
+        seconds = Math.floor(timeDiff / 1000);
 
         if (seconds > 604800) { // seconds in a week
             run = true; // only let free tier fetch again if it's been a week
@@ -75,6 +76,7 @@ async function loadFree(userData, doc) {
             let doc = matchesQuery.docs[0];
             let data = doc.data();
             data.uid = doc.id;
+            delete data.matchpool; // dont return the matchpool, sensitive info
             users.set(doc.id, data);
         }
 
@@ -84,13 +86,14 @@ async function loadFree(userData, doc) {
         // update the timestamp in the doc and currently matching users
         await doc.update({
             lastFetch: admin.firestore.FieldValue.serverTimestamp(),
-            currentMatchPool: uids
+            matchpool: Array.from(users.values()),
         });
 
         return {users: Array.from(users.values())};
     } else {
-        // return a message that it's been too close since the last attempt
-        return {message: "Wait at least a week before trying again."};
+        // return a message that it's been too close since the last attempt, and return cached match pool
+        let secondsLeft = 604800 - seconds;
+        return {users: userData.get("matchpool"), message: `You have ${secondsLeft/86400} days left until you receive a new match pool`};
     }
 }
 
