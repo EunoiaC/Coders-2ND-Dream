@@ -12106,53 +12106,53 @@ textarea.form-control-lg {
   color: #fff;
 }
 
-#profile {
+#profile, .profile {
   display: flex;
   justify-content: center;
   align-items: center;
   color: #fff;
 }
-#profile .profile-left-container {
+#profile .profile-left-container, .profile .profile-left-container {
   background: #282c34;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   text-align: center;
 }
-#profile .profile-left-container h1, #profile .profile-left-container .h1 {
+#profile .profile-left-container h1, #profile .profile-left-container .h1, .profile .profile-left-container h1, .profile .profile-left-container .h1 {
   font-size: 22px;
   padding: 5px;
 }
-#profile .profile-left-container #profile-aura, #profile .profile-left-container .profile-aura {
+#profile .profile-left-container #profile-aura, #profile .profile-left-container .profile-aura, .profile .profile-left-container #profile-aura, .profile .profile-left-container .profile-aura {
   color: #f0db4f;
   font-size: 20px;
 }
-#profile .profile-left-container table {
+#profile .profile-left-container table, .profile .profile-left-container table {
   width: 100%;
   margin-top: 10px;
   border-collapse: collapse;
 }
-#profile .profile-left-container table th, #profile .profile-left-container table td {
+#profile .profile-left-container table th, #profile .profile-left-container table td, .profile .profile-left-container table th, .profile .profile-left-container table td {
   padding: 8px;
   border: 1px solid #444;
 }
-#profile .profile-left-container table th {
+#profile .profile-left-container table th, .profile .profile-left-container table th {
   background: #3a3f4b;
 }
-#profile .profile-left-container button {
+#profile .profile-left-container button, .profile .profile-left-container button {
   margin-top: 15px;
   width: 100%;
   font-size: 16px;
   border-radius: 8px;
 }
-#profile .profile-right-container {
+#profile .profile-right-container, .profile .profile-right-container {
   background: #1e1e1e;
   border-radius: 12px;
   height: 80vh;
   max-width: 800px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
-#profile .profile-right-container #profile-readme-text {
+#profile .profile-right-container #profile-readme-text, .profile .profile-right-container #profile-readme-text {
   height: 75vh; /* Ensure it fills the available height */
   width: 100%;
   color: white;
@@ -12163,16 +12163,16 @@ textarea.form-control-lg {
   border-radius: 5px;
   outline: none; /* Remove focus outline */
 }
-#profile .profile-right-container #profile-edit-readme {
+#profile .profile-right-container #profile-edit-readme, .profile .profile-right-container #profile-edit-readme {
   cursor: pointer;
 }
-#profile .profile-right-container .bg-light {
+#profile .profile-right-container .bg-light, .profile .profile-right-container .bg-light {
   background: #282C34 !important;
   color: #61afef;
   border-radius: 10px 10px 0 0;
   padding: 10px;
 }
-#profile .profile-languages {
+#profile .profile-languages, .profile .profile-languages {
   background: #282C34;
   padding: 15px;
   border-radius: 12px;
