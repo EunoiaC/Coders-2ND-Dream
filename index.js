@@ -830,7 +830,6 @@ async function showMatchPool() {
     }
 
     // TODO: stylised alert using `msg` variable
-    alert(msg);
 }
 
 function loadProfilePage() {
