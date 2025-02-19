@@ -795,7 +795,7 @@ async function showMatchPool() {
     let matchpoolContainer = document.getElementById("matchpool-container");
     matchpoolContainer.innerHTML = `
     <div class="d-flex justify-content-center">
-        <div class="spinner-grow" style="width: 10rem; height: 10rem;" role="status">
+        <div class="spinner-border" style="width: 30rem; height: 30rem" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
