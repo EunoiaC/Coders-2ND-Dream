@@ -724,7 +724,7 @@ async function loadUsers() {
         }
         localStorage.setItem("lastFetch", (new Date()).toISOString());
         localStorage.setItem("matchpool", JSON.stringify(res));
-        return {users: res};
+        return res;
     }
 
     let now = new Date();
@@ -748,7 +748,7 @@ async function loadUsers() {
 
                 localStorage.setItem("lastFetch", (new Date()).toISOString());
                 localStorage.setItem("matchpool", JSON.stringify(res));
-                return {users: res};
+                return res;
             }
             // since it is less than a week, give a message
             let secondsLeft = 604800 - seconds;
@@ -759,7 +759,7 @@ async function loadUsers() {
         // TODO: add more cases
     }
 
-    // if none of them returned, then give the users saved in local storage
+    // if none of the api calls returned, then give the users saved in local storage
     return {
         users: JSON.parse(localStorage.getItem("matchpool")),
         message: cooldownMsg
@@ -830,6 +830,7 @@ async function showMatchPool() {
     }
 
     // TODO: stylised alert using `msg` variable
+    alert(msg);
 }
 
 function loadProfilePage() {

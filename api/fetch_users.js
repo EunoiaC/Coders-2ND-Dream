@@ -87,10 +87,10 @@ async function loadFree(userData, doc) {
             currentMatchPool: uids
         });
 
-        return Array.from(users.values());
+        return {users: Array.from(users.values())};
     } else {
         // return a message that it's been too close since the last attempt
-        return { message: "Wait at least a week before trying again." };
+        return {message: "Wait at least a week before trying again."};
     }
 }
 
@@ -103,7 +103,7 @@ export default async function fetch_users(req, res) {
     // Check auth header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({error: "Unauthorized"});
     }
 
     const idToken = authHeader.split("Bearer ")[1];
@@ -132,10 +132,10 @@ export default async function fetch_users(req, res) {
             case 1:
                 break;
             default:
-                return res.status(400).json({ error: "Invalid membership type" });
+                return res.status(400).json({error: "Invalid membership type"});
         }
     } catch (error) {
         console.log("Error verifying token:", error);
-        return res.status(401).json({ error: "Invalid token" });
+        return res.status(401).json({error: "Invalid token"});
     }
 }
