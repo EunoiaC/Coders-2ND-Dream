@@ -130,7 +130,7 @@ export default async function fetch_users(req, res) {
 
         switch (userData.get("membership")) {
             case 1:
-
+                break;
             default:
                 return res.status(400).json({ error: "Invalid membership type" });
         }

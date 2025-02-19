@@ -15,6 +15,8 @@ import {doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
 // TODO: use a serverless function to make matches, check the user subscription level and info to stop inspect-elemented matches
 // TODO: tally number of match requests/profile views, and lock an account if reaching membership limits. Set a timestamp, wait a week to unlock acc
 
+// TODO: when plan changes, set lastFetch to null
+
 // TODO:
 //  Add an incoming match requests list with the UID of pending matches that can be rejected or accepted
 //  - Accepting a match leads to the creation of a chatroom stored in the openChats list in both user documents
@@ -700,15 +702,60 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
 async function loadUsers() {
     const token = await getBearerToken();
 
-    // TODO: implement loading from cookies
-    const res = await fetch('/api/fetch_users', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    return await res.json();
+    let lastFetch = localStorage.getItem("lastFetch");
+
+    async function apiFetch() {
+        const res = await fetch('/api/fetch_users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return await res.json();
+    }
+
+    // user never fetched before; let them try
+    if (!lastFetch) {
+        localStorage.setItem("lastFetch", (new Date()).toISOString());
+
+        let res = await apiFetch();
+        localStorage.setItem("matchpool", JSON.stringify(res));
+        return {users: res};
+    }
+
+    let now = new Date();
+    let date = new Date(lastFetch);
+
+    const timeDiff = now - date; // Difference in milliseconds
+    const seconds = Math.floor(timeDiff / 1000);
+
+    let cooldownMsg = "";
+
+    switch (currentProfileData.membership) {
+        case 0:
+            // 1 week cooldown
+            if (seconds > 604800) {
+                localStorage.setItem("lastFetch", (new Date()).toISOString());
+
+                let res = await apiFetch();
+                localStorage.setItem("matchpool", JSON.stringify(res));
+                return {users: res};
+            }
+            // since it is less than a week, give a message
+            let secondsLeft = 604800 - seconds;
+            // convert seconds to days
+            let days = Math.floor(secondsLeft / 60 / 60);
+            cooldownMsg = `You have ${days} days left until you can find new users to match with, or you can upgrade your plan`;
+            break;
+        // TODO: add more cases
+    }
+
+    // if none of them returned, then give the users saved in local storage
+    return {
+        users: JSON.parse(localStorage.getItem("matchpool")),
+        message: cooldownMsg
+    };
 }
 
 function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc) {
@@ -745,8 +792,15 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc)
 
 async function showMatchPool() {
     document.getElementById("matchpool-container").innerHTML = "";
-    let users = await loadUsers();
-    console.log(users);
+    let res = await loadUsers();
+    console.log(res);
+
+    let users = res.users;
+    let msg = res.message;
+
+    if (msg) {
+        window.alert(msg);
+    }
 
     for (let i = 0; i < users.length; i++) {
         let user = users[i];
