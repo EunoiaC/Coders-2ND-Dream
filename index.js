@@ -723,7 +723,7 @@ async function loadUsers() {
             return;
         }
         localStorage.setItem("lastFetch", (new Date()).toISOString());
-        localStorage.setItem("matchpool", JSON.stringify(res));
+        localStorage.setItem("matchpool", JSON.stringify(res.users));
         return res;
     }
 
@@ -747,7 +747,7 @@ async function loadUsers() {
                 }
 
                 localStorage.setItem("lastFetch", (new Date()).toISOString());
-                localStorage.setItem("matchpool", JSON.stringify(res));
+                localStorage.setItem("matchpool", JSON.stringify(res.users));
                 return res;
             }
             // since it is less than a week, give a message
@@ -830,6 +830,9 @@ async function showMatchPool() {
     }
 
     // TODO: stylised alert using `msg` variable
+    if (msg) {
+        setTimeout(() => alert(msg), 0);
+    }
 }
 
 function loadProfilePage() {
