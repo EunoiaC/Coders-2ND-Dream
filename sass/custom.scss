@@ -275,6 +275,12 @@ $terminal-error: $secondary;
   filter: brightness(0.8); /* Slightly increases brightness */
 }
 
+.profile-name {
+  font-size: 22px;
+  padding: 5px;
+  color: #fff;
+}
+
 // Profile Page Styling
 #profile {
   display: flex;
@@ -466,7 +472,7 @@ $terminal-error: $secondary;
   cursor: pointer;
 }
 
-#profile-name, .profile-name {
+#profile-name {
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
   background-color: $dark;
 }
