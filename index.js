@@ -745,7 +745,7 @@ async function loadUsers() {
             // since it is less than a week, give a message
             let secondsLeft = 604800 - seconds;
             // convert seconds to days
-            let days = Math.floor(secondsLeft / 60 / 60);
+            let days = Math.floor(secondsLeft / 86400);
             cooldownMsg = `You have ${days} days left until you can find new users to match with, or you can upgrade your plan`;
             break;
         // TODO: add more cases
@@ -798,10 +798,6 @@ async function showMatchPool() {
     let users = res.users;
     let msg = res.message;
 
-    if (msg) {
-        window.alert(msg);
-    }
-
     for (let i = 0; i < users.length; i++) {
         let user = users[i];
         let bday = new Date(user.bday[2] + "-" + user.bday[0] + "-" + user.bday[1]);
@@ -815,6 +811,11 @@ async function showMatchPool() {
 
         // TODO: update rank
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink);
+    }
+
+    // show the message after things are loaded
+    if (msg) {
+        window.alert(msg);
     }
 }
 
