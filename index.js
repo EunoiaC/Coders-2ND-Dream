@@ -746,8 +746,10 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc)
 async function showMatchPool() {
     document.getElementById("matchpool-container").innerHTML = "";
     let users = await loadUsers();
+    console.log(users);
 
-    for (let user of users) {
+    for (let i = 0; i < users.length; i++) {
+        let user = users[i];
         let bday = new Date(user.bday[2] + "-" + user.bday[0] + "-" + user.bday[1]);
         let ageDifMs = Date.now() - bday.getTime();
         let ageDate = new Date(ageDifMs); // miliseconds from epoch
