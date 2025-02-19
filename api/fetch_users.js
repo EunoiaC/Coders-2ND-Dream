@@ -89,8 +89,8 @@ async function loadFree(userData, doc) {
 
         return Array.from(users.values());
     } else {
-        // return that it's been too close since the last attempt
-        return { error: "Wait at least a week before trying again." };
+        // return a message that it's been too close since the last attempt
+        return { message: "Wait at least a week before trying again." };
     }
 }
 

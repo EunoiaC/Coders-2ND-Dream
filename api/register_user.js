@@ -46,7 +46,7 @@ export default async function register_user(req, res) {
         }
 
     } catch (error) {
-        console.error("Error verifying token:", error);
+        console.log("Error verifying token:", error);
         return res.status(401).json({ error: "Invalid token" });
     }
 }
