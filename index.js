@@ -769,7 +769,7 @@ async function loadUsers() {
 function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc) {
     // Create a div with the same structure as the provided profile template
     const profileDiv = document.createElement("div");
-    profileDiv.className = "col-12 col-sm-3"; // Ensures 4 per row
+    profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
 
     profileDiv.innerHTML = `
         <div class="profile-left-container">
@@ -795,7 +795,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc)
     `;
 
     // Append to the container
-    document.getElementById("matchpool-profiles").appendChild(profileDiv);
+    document.getElementById("matchpool-container").appendChild(profileDiv);
 }
 
 async function showMatchPool() {
@@ -810,8 +810,7 @@ async function showMatchPool() {
     `;
     let res = await loadUsers();
     console.log(res);
-    // add the container for the matchpool profiles
-    matchpoolContainer.innerHTML = `<div class="profile" id="matchpool-profiles"></div>`;
+    matchpoolContainer.innerHTML = ""; // empty so we can append
 
     let users = res.users;
     let msg = res.message;
