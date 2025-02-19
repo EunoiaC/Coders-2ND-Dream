@@ -791,9 +791,18 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc)
 }
 
 async function showMatchPool() {
-    document.getElementById("matchpool-container").innerHTML = "";
+    // show a loading spinner
+    let matchpoolContainer = document.getElementById("matchpool-container");
+    matchpoolContainer.innerHTML = `
+    <div class="d-flex justify-content-center">
+        <div class="spinner-grow" style="width: 10rem; height: 10rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    `;
     let res = await loadUsers();
     console.log(res);
+    matchpoolContainer.innerHTML = ""; // empty so we can append
 
     let users = res.users;
     let msg = res.message;
@@ -813,10 +822,7 @@ async function showMatchPool() {
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink);
     }
 
-    // show the message after things are loaded
-    if (msg) {
-        window.alert(msg);
-    }
+    // TODO: stylised alert using `msg` variable
 }
 
 function loadProfilePage() {
