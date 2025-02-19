@@ -719,18 +719,18 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc)
     profileDiv.innerHTML = `
         <div class="profile-left-container">
             <div class="profile-name-image mb-2 w-100">
-                <img class="img-fluid rounded-top" src="${imgSrc}" alt="Profile Picture">
-                <h1 class="rounded-bottom">${name}</h1>
+                <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}" alt="Profile Picture">
+                <h1 class="rounded-bottom profile-name">${name}</h1>
             </div>
             <div class="badge w-100 m-0 mb-2">
-                <span class="m-1">${age}</span>
-                <span>Aura: ${formatNumberWithUnits(aura)}🔥</span>
+                <span class="m-1 profile-age">Age: ${age}</span>
+                <span class="profile-aura">Aura: ${formatNumberWithUnits(aura)}🔥</span>
             </div>
             <div class="badge m-0 p-3 w-100" id="profile-edit-bounds">
                 <span class="badge rank-jobless w-100">${rank}</span>
                 <br>
-                <span class="badge mt-1"><i class="fa-solid fa-code"></i> ${self}</span>
-                <span class="badge mt-1"><i class="fa-solid fa-magnifying-glass"></i> ${lookingFor}</span>
+                <span class="badge mt-1 profile-self"><i class="fa-solid fa-code"></i> ${self}</span>
+                <span class="badge mt-1 profile-looking-for"><i class="fa-solid fa-magnifying-glass"></i> ${lookingFor}</span>
             </div>
             <hr>
             <button class="btn btn-primary">
@@ -760,7 +760,7 @@ async function showMatchPool() {
         let stack = ["Front End", "Back End", "Full Stack"]; // space in front bc the element has a space after the font awesome
 
         // TODO: update rank
-        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack.indexOf(user.selfCapabilities), stack.indexOf(user.lookingFor), user.pfpLink);
+        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink);
     }
 }
 

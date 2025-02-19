@@ -267,7 +267,7 @@ $terminal-error: $secondary;
   pointer-events: none; /* Prevent interaction */
 }
 
-#profile-pfp {
+#profile-pfp, .profile-pfp {
   transition: filter 0.15s ease-out;
 }
 
@@ -294,7 +294,7 @@ $terminal-error: $secondary;
       padding: 5px;
     }
 
-    #profile-aura {
+    #profile-aura, .profile-aura {
       color: #f0db4f; // Yellow/gold accent
       font-size: 20px;
     }
@@ -365,7 +365,7 @@ $terminal-error: $secondary;
   }
 }
 
-#profile-self {
+#profile-self, .profile-self {
   color: $primary;
   border: $primary solid 1px;
 }
@@ -374,7 +374,7 @@ $terminal-error: $secondary;
   color: $primary;
 }
 
-#profile-looking-for {
+#profile-looking-for, .profile-looking-for {
   color: $warning;
   border: $warning solid 1px;
 }
@@ -466,7 +466,7 @@ $terminal-error: $secondary;
   cursor: pointer;
 }
 
-#profile-name {
+#profile-name, .profile-name {
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
   background-color: $dark;
 }
@@ -476,7 +476,7 @@ $terminal-error: $secondary;
   cursor: pointer;
 }
 
-#profile-age {
+#profile-age, .profile-age {
   font-size: 20px;
 }
 

@@ -12092,7 +12092,7 @@ textarea.form-control-lg {
   pointer-events: none; /* Prevent interaction */
 }
 
-#profile-pfp {
+#profile-pfp, .profile-pfp {
   transition: filter 0.15s ease-out;
 }
 
@@ -12117,7 +12117,7 @@ textarea.form-control-lg {
   font-size: 22px;
   padding: 5px;
 }
-#profile .profile-left-container #profile-aura {
+#profile .profile-left-container #profile-aura, #profile .profile-left-container .profile-aura {
   color: #f0db4f;
   font-size: 20px;
 }
@@ -12176,7 +12176,7 @@ textarea.form-control-lg {
   overflow-y: auto;
 }
 
-#profile-self {
+#profile-self, .profile-self {
   color: #56B6C2;
   border: #56B6C2 solid 1px;
 }
@@ -12185,7 +12185,7 @@ textarea.form-control-lg {
   color: #56B6C2;
 }
 
-#profile-looking-for {
+#profile-looking-for, .profile-looking-for {
   color: #D19A66;
   border: #D19A66 solid 1px;
 }
@@ -12271,7 +12271,7 @@ textarea.form-control-lg {
   cursor: pointer;
 }
 
-#profile-name {
+#profile-name, .profile-name {
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
   background-color: #282C34;
 }
@@ -12281,7 +12281,7 @@ textarea.form-control-lg {
   cursor: pointer;
 }
 
-#profile-age {
+#profile-age, .profile-age {
   font-size: 20px;
 }
 
