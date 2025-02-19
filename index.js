@@ -717,9 +717,12 @@ async function loadUsers() {
 
     // user never fetched before; let them try
     if (!lastFetch) {
-        localStorage.setItem("lastFetch", (new Date()).toISOString());
-
         let res = await apiFetch();
+        if (res.error) {
+            window.alert("There was an error. Please try again.");
+            return;
+        }
+        localStorage.setItem("lastFetch", (new Date()).toISOString());
         localStorage.setItem("matchpool", JSON.stringify(res));
         return {users: res};
     }
@@ -736,9 +739,14 @@ async function loadUsers() {
         case 0:
             // 1 week cooldown
             if (seconds > 604800) {
-                localStorage.setItem("lastFetch", (new Date()).toISOString());
-
                 let res = await apiFetch();
+
+                if (res.error) {
+                    window.alert("There was an error. Please try again.");
+                    return;
+                }
+
+                localStorage.setItem("lastFetch", (new Date()).toISOString());
                 localStorage.setItem("matchpool", JSON.stringify(res));
                 return {users: res};
             }
@@ -807,6 +815,7 @@ async function showMatchPool() {
     let users = res.users;
     let msg = res.message;
 
+    let stack = ["Front End", "Back End", "Full Stack"];
     for (let i = 0; i < users.length; i++) {
         let user = users[i];
         let bday = new Date(user.bday[2] + "-" + user.bday[0] + "-" + user.bday[1]);
@@ -815,8 +824,6 @@ async function showMatchPool() {
         let ageNum = Math.abs(ageDate.getUTCFullYear() - 1970);
 
         let auraNum = calculateAura(user.selfRequestedMatches, user.otherRequestedMatches, user.successfulMatches, user.selfCapabilities);
-
-        let stack = ["Front End", "Back End", "Full Stack"]; // space in front bc the element has a space after the font awesome
 
         // TODO: update rank
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink);

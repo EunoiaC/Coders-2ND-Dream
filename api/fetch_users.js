@@ -135,7 +135,7 @@ export default async function fetch_users(req, res) {
                 return res.status(400).json({ error: "Invalid membership type" });
         }
     } catch (error) {
-        console.error("Error verifying token:", error);
+        console.log("Error verifying token:", error);
         return res.status(401).json({ error: "Invalid token" });
     }
 }
