@@ -73,7 +73,9 @@ async function loadFree(userData, doc) {
                 .limit(1)
                 .get();
             let doc = matchesQuery.docs[0];
-            users.set(doc.id, doc.data());
+            let data = doc.data();
+            data.uid = doc.id;
+            users.set(doc.id, data);
         }
 
         // add loaded UIDs to the user's document to show who they can match with
