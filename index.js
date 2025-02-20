@@ -718,7 +718,7 @@ async function loadUsers() {
         let res = await apiFetch();
 
         localStorage.setItem("lastFetch", (new Date()).toISOString());
-        localStorage.setItem("matchpool", res.users);
+        localStorage.setItem("matchpool", JSON.stringify(res.users));
 
         return res;
     }
@@ -741,14 +741,14 @@ async function loadUsers() {
         let res = await apiFetch();
 
         localStorage.setItem("lastFetch", (new Date()).toISOString());
-        localStorage.setItem("matchpool", res.users);
+        localStorage.setItem("matchpool", JSON.stringify(res.users)));
 
         return res;
     }
 
     // return cached data
     return {
-        users: localStorage.getItem("matchpool"),
+        users: JSON.parse(localStorage.getItem("matchpool")),
         // 86400 seconds in a day
         message: `You have ${Math.floor((limit - seconds)/86400)} days left until you receive a new match pool`
     }
