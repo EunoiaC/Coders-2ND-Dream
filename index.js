@@ -130,10 +130,9 @@ async function showPage(page, data = null) {
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
         pfp.src = data.pfpLink;
 
-        let bday = new Date(data.bday[2] + "-" + data.bday[0] + "-" + data.bday[1]);
+        let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
-        let ageDate = new Date(ageDifMs); // miliseconds from epoch
-        let ageNum = Math.abs(ageDate.getUTCFullYear() - 1970);
+        let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
 
         name.textContent = data.displayName;
         age.textContent = "Age: " + ageNum;
@@ -806,10 +805,9 @@ async function showMatchPool() {
     let stack = ["Front End", "Back End", "Full Stack"];
     for (let i = 0; i < users.length; i++) {
         let user = users[i];
-        let bday = new Date(user.bday[2] + "-" + user.bday[0] + "-" + user.bday[1]);
+        let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
-        let ageDate = new Date(ageDifMs); // miliseconds from epoch
-        let ageNum = Math.abs(ageDate.getUTCFullYear() - 1970);
+        let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
 
         let auraNum = calculateAura(user.selfRequestedMatches, user.otherRequestedMatches, user.successfulMatches, user.selfCapabilities);
 
