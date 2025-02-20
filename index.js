@@ -702,16 +702,56 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
 async function loadUsers() {
     const token = await getBearerToken();
 
-    let lastFetch = localStorage.getItem("lastFetch");
+    async function apiFetch() {
+        const res = await fetch('/api/fetch_users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return await res.json();
+    }
 
-    const res = await fetch('/api/fetch_users', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    return await res.json();
+    let lastFetch = localStorage.getItem("lastFetch");
+    if (!lastFetch) { // user has never fetched; make an api call
+        let res = await fetch(lastFetch);
+
+        localStorage.setItem("lastFetch", (new Date()).toISOString());
+        localStorage.setItem("matchpool", res.users);
+
+        return res;
+    }
+
+    let limit = 0;
+    switch (currentProfileData.membership) {
+        case 0:
+            limit = 604800; // 1 week in seconds
+            break;
+        // TODO: add other membership levels
+    }
+
+    lastFetch = new Date(lastFetch);
+    let now = new Date();
+
+    const timeDiff = now - lastFetch; // Difference in milliseconds
+    let seconds = Math.floor(timeDiff / 1000);
+
+    if (seconds > limit) { // return a new match pool with an api call
+        let res = await fetch(lastFetch);
+
+        localStorage.setItem("lastFetch", (new Date()).toISOString());
+        localStorage.setItem("matchpool", res.users);
+
+        return res;
+    }
+
+    // return cached data
+    return {
+        users: localStorage.getItem("matchpool"),
+        // 86400 seconds in a day
+        message: `You have ${Math.floor((limit - seconds)/86400)} days left until you receive a new match pool`
+    }
 }
 
 function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc) {
