@@ -715,7 +715,7 @@ async function loadUsers() {
 
     let lastFetch = localStorage.getItem("lastFetch");
     if (!lastFetch) { // user has never fetched; make an api call
-        let res = await fetch(lastFetch);
+        let res = await apiFetch();
 
         localStorage.setItem("lastFetch", (new Date()).toISOString());
         localStorage.setItem("matchpool", res.users);
@@ -738,7 +738,7 @@ async function loadUsers() {
     let seconds = Math.floor(timeDiff / 1000);
 
     if (seconds > limit) { // return a new match pool with an api call
-        let res = await fetch(lastFetch);
+        let res = await apiFetch();
 
         localStorage.setItem("lastFetch", (new Date()).toISOString());
         localStorage.setItem("matchpool", res.users);
