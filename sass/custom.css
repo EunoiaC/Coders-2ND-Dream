@@ -12251,7 +12251,7 @@ textarea.form-control-lg {
   }
 }
 @media (max-width: 1100px) and (min-width: 575px) {
-  #profile-age, #profile-aura {
+  #profile-age, #profile-aura, .profile-aura, .profile-age {
     display: block; /* Makes each badge take full width */
     width: 100%;
   }

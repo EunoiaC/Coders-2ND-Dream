@@ -442,7 +442,7 @@ $terminal-error: $secondary;
 }
 
 @media (max-width: 1100px) and (min-width: 575px) {
-  #profile-age, #profile-aura { // prevent overflow on screens between that pixel count
+  #profile-age, #profile-aura, .profile-aura, .profile-age { // prevent overflow on screens between that pixel count
     display: block; /* Makes each badge take full width */
     width: 100%;
   }
