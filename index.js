@@ -764,6 +764,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc)
                 <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}" alt="Profile Picture">
                 <h1 class="rounded-bottom text-center profile-name">${name}</h1>
             </div>
+            <hr>
             <div class="badge m-0 p-3 w-100">
                 <div class="w-100 m-0 mb-2">
                     <span class="m-1 profile-age">Age: ${age}</span>
