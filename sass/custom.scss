@@ -269,6 +269,9 @@ $terminal-error: $secondary;
 
 #profile-pfp, .profile-pfp {
   transition: filter 0.15s ease-out;
+  object-fit: cover;
+  width: 300px;
+  height: 300px;
 }
 
 #profile-pfp:hover {
