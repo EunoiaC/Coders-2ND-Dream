@@ -93,7 +93,7 @@ async function loadFree(userData, doc) {
     } else {
         // return a message that it's been too close since the last attempt, and return cached match pool
         let secondsLeft = 604800 - seconds;
-        return {users: userData.get("matchpool"), message: `You have ${Math.floor(secondsLeft/86400)} days left until you receive a new match pool`};
+        return {users: userData.get("matchpool"), message: `You have ${Math.floor(secondsLeft/86400)} days left until you receive a new match pool.`};
     }
 }
 
