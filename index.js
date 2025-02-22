@@ -16,6 +16,7 @@ import {doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
 // TODO: tally number of match requests/profile views, and lock an account if reaching membership limits. Set a timestamp, wait a week to unlock acc
 
 // TODO: when plan changes, set lastFetch to null
+// TODO: compare firebase lastFetch with localstorage lastFetch to determine whether to make an API call
 
 // TODO:
 //  Add an incoming match requests list with the UID of pending matches that can be rejected or accepted
