@@ -870,40 +870,78 @@ function loadProfilePage() {
         }
     }
 
-    const urlInput = document.getElementById("pfp-url-input");
-    const pfpConfirm = document.getElementById("pfp-save-url");
+    const pfpConfirm = document.getElementById("pfp-save");
     const editPfpModal = new bootstrap.Modal(document.getElementById("pfpModal"));
+    const fileInput = document.getElementById("pfp-file-input");
+    const previewImage = document.getElementById("pfp-preview");
+    let cropper;
+
+    fileInput.addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+                previewImage.style.display = "block";
+
+                if (cropper) cropper.destroy(); // Destroy previous cropper instance
+                cropper = new Cropper(previewImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    autoCropArea: 1
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
     pfpConfirm.onclick = async (event) => {
-
-        // validate link
-        function isImageValid(url) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = url;
+        if (cropper) {
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: 450, height: 450 // Adjust size as needed
             });
+            croppedCanvas.toBlob(async (blob) => {
+                if (blob.size <= 300 * 1024) { // 300KB limit
+                    const fileExtension = blob.type.split("/")[1];
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = async function () {
+                        const base64data = reader.result.split(",")[1];
+                        console.log("File Extension:", fileExtension);
+                        // send cropped image data to vercel function
+                        const token = await getBearerToken();
+
+                        const response = await fetch('/api/upload_pfp', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                fileExtension: fileExtension,
+                                fileData: base64data,
+                            })
+                        });
+
+                        let responseData = await response.json();
+
+                        currentProfileData.pfpLink = responseData.url;
+                        pfp.src = responseData.url;
+
+                        // update the current user's pfp in firebase
+                        const docRef = doc(db, "users", auth.currentUser.uid);
+                        await updateDoc(docRef, currentProfileData).then(() => {
+                            console.log('Document was updated successfully.');
+                        });
+                    };
+                } else {
+                    alert("Cropped image exceeds 300KB limit. Please crop further or choose another image.");
+                }
+            }, "image/png");
         }
-        isImageValid(urlInput.value).then(async (isValid) => {
-            if (isValid && urlInput.value !== currentProfileData.pfpLink) {
-                const docRef = doc(db, "users", auth.currentUser.uid);
-                currentProfileData.pfpLink = urlInput.value;
-                await updateDoc(docRef, currentProfileData).then(() => {
-                    console.log('Document was updated successfully.');
-                });
-                pfp.src = urlInput.value;
-                editPfpModal.hide();
-            } else {
-                urlInput.classList.add("is-invalid");  // Show error
-            }
-        });
     }
 
     pfp.onclick = (event) => {
-        urlInput.classList.remove("is-invalid");  // hide error
-        urlInput.value = currentProfileData.pfpLink;
-
         editPfpModal.show();
     }
 
