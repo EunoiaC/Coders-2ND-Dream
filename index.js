@@ -933,11 +933,13 @@ function loadProfilePage() {
                         await updateDoc(docRef, currentProfileData).then(() => {
                             console.log('Document was updated successfully.');
                         });
+
+                        editPfpModal.hide();
                     };
                 } else {
                     alert("Cropped image exceeds 300KB limit. Please crop further or choose another image.");
                 }
-            }, "image/png");
+            }, "image/webp", 0.8);
         }
     }
 
