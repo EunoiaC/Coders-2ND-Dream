@@ -764,7 +764,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
     profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
 
     if (version) {
-        imgSrc += "?=" + version;
+        imgSrc += "?v=" + version;
     }
 
     profileDiv.innerHTML = `
