@@ -128,7 +128,7 @@ async function showPage(page, data = null) {
         lookingFor.innerHTML = "<i class=\"fa-solid fa-magnifying-glass\"></i> " + stack[data.lookingFor];
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
-        pfp.src = data.pfpLink;
+        pfp.src = data.pfpLink + "#" + new Date().getTime(); // bypass cache
 
         let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
@@ -926,7 +926,7 @@ function loadProfilePage() {
                         let responseData = await response.json();
 
                         currentProfileData.pfpLink = responseData.url;
-                        pfp.src = responseData.url;
+                        pfp.src = responseData.url + "#" + new Date().getTime(); // bypass cache
 
                         // update the current user's pfp in firebase
                         const docRef = doc(db, "users", auth.currentUser.uid);
