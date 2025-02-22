@@ -56,11 +56,6 @@ async function loadFree(userData, doc) {
         const lookingFor = userData.get("lookingFor");
         const { min, max } = ranges[lookingFor];
 
-        // TODO: remove b/c this is for testing
-        // if (docNum <= requiredAmnt) {
-        //     startAtVal = min;
-        // }
-
         let users = new Map(); // use a map because if a second query is made, overlapping users will be accounted for
 
         // get 5 random documents by finding each one closest to the match seed
@@ -79,9 +74,6 @@ async function loadFree(userData, doc) {
             delete data.matchpool; // dont return the matchpool, sensitive info
             users.set(doc.id, data);
         }
-
-        // add loaded UIDs to the user's document to show who they can match with
-        let uids = Array.from(users.keys());
 
         // update the timestamp in the doc and currently matching users
         await doc.update({

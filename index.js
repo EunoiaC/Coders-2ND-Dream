@@ -16,7 +16,6 @@ import {doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
 // TODO: tally number of match requests/profile views, and lock an account if reaching membership limits. Set a timestamp, wait a week to unlock acc
 
 // TODO: when plan changes, set lastFetch to null
-// TODO: compare firebase lastFetch with localstorage lastFetch to determine whether to make an API call
 
 // TODO:
 //  Add an incoming match requests list with the UID of pending matches that can be rejected or accepted
@@ -718,14 +717,9 @@ async function loadUsers() {
         return await res.json();
     }
 
-    let lastFetch = localStorage.getItem("lastFetch");
+    let lastFetch = currentProfileData.lastFetch;
     if (!lastFetch) { // user has never fetched; make an api call
-        let res = await apiFetch();
-
-        localStorage.setItem("lastFetch", (new Date()).toISOString());
-        localStorage.setItem("matchpool", JSON.stringify(res.users));
-
-        return res;
+        return await apiFetch();
     }
 
     let limit = 0;
@@ -736,24 +730,19 @@ async function loadUsers() {
         // TODO: add other membership levels
     }
 
-    lastFetch = new Date(lastFetch);
+    lastFetch = lastFetch.toDate();
     let now = new Date();
 
     const timeDiff = now - lastFetch; // Difference in milliseconds
     let seconds = Math.floor(timeDiff / 1000);
 
     if (seconds > limit) { // return a new match pool with an api call
-        let res = await apiFetch();
-
-        localStorage.setItem("lastFetch", (new Date()).toISOString());
-        localStorage.setItem("matchpool", JSON.stringify(res.users));
-
-        return res;
+        return await apiFetch();
     }
 
-    // return cached data
+    // return previous data
     return {
-        users: JSON.parse(localStorage.getItem("matchpool")),
+        users: currentProfileData.matchpool,
         // 86400 seconds in a day
         message: `You have ${Math.floor((limit - seconds)/86400)} days left until you receive a new match pool`
     }
