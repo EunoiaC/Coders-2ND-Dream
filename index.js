@@ -797,6 +797,9 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
 }
 
 async function showMatchPool() {
+    // hide alert
+    const repeatAlert = document.getElementById("alert-repeat-match");
+    repeatAlert.classList.add("d-none");
     // show a loading spinner
     let matchpoolContainer = document.getElementById("matchpool-container");
     matchpoolContainer.innerHTML = `
@@ -828,7 +831,10 @@ async function showMatchPool() {
 
     // TODO: stylised alert using `msg` variable
     if (msg) {
-        setTimeout(() => alert(msg), 0);
+        const repeatAlert = document.getElementById("alert-repeat-match");
+        repeatAlert.classList.remove("d-none");
+        const text = document.getElementById("matchpool-reset-text");
+        text.innerText = msg;
     }
 }
 
