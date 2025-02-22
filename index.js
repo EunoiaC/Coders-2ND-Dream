@@ -129,7 +129,7 @@ async function showPage(page, data = null) {
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
 
-        pfp.src = data.pfpLink + '';
+        pfp.src = data.pfpLink + '#' + new Date().getTime();;
 
         let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
@@ -762,7 +762,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc)
     profileDiv.innerHTML = `
         <div class="profile-left-container">
             <div class="profile-name-image mb-2 w-100">
-                <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}?t=${new Date().getTime()}" alt="Profile Picture">
+                <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}#${new Date().getTime()}" alt="Profile Picture">
                 <h1 class="rounded-bottom text-center profile-name">${name}</h1>
             </div>
             <hr>
@@ -927,7 +927,7 @@ function loadProfilePage() {
                         let responseData = await response.json();
 
                         currentProfileData.pfpLink = responseData.url;
-                        pfp.src = responseData.url + '';
+                        pfp.src = responseData.url + '#' + new Date().getTime();;
 
 
                         // update the current user's pfp in firebase
