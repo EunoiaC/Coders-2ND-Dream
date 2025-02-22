@@ -2,6 +2,14 @@ import { put } from '@vercel/blob';
 import fs from 'fs';
 import admin from "firebase-admin";
 
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
+
 export default async function upload_pfp(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Only POST requests allowed' });
