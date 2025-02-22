@@ -942,7 +942,7 @@ function loadProfilePage() {
                         }
 
                         currentProfileData.pfpLink = responseData.url + "?v=" + currentProfileData.pfpVersion;
-                        pfp.src = responseData.url;
+                        pfp.src = currentProfileData.pfpLink;
 
                         // update the current user's pfp in firebase
                         const docRef = doc(db, "users", auth.currentUser.uid);
