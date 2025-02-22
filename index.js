@@ -129,7 +129,7 @@ async function showPage(page, data = null) {
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
 
-        pfp.src = data.pfpLink;
+        pfp.src = `${data.pfpLink}?t=${new Date().getTime()}`;
 
         let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
@@ -927,7 +927,8 @@ function loadProfilePage() {
                         let responseData = await response.json();
 
                         currentProfileData.pfpLink = responseData.url;
-                        pfp.src = responseData.url;
+                        pfp.src = `${responseData.url}?t=${new Date().getTime()}`;
+
 
                         // update the current user's pfp in firebase
                         const docRef = doc(db, "users", auth.currentUser.uid);
