@@ -129,7 +129,6 @@ async function showPage(page, data = null) {
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
 
-        await fetch(data.pfpLink, {cache: 'reload', mode: 'no-cors'}); // bypass cache
         pfp.src = data.pfpLink;
 
         let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
@@ -928,7 +927,6 @@ function loadProfilePage() {
                         let responseData = await response.json();
 
                         currentProfileData.pfpLink = responseData.url;
-                        await fetch(responseData.url, {cache: 'reload', mode: 'no-cors'}); // bypass cache
                         pfp.src = responseData.url;
 
                         // update the current user's pfp in firebase

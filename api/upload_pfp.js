@@ -55,6 +55,7 @@ export default async function upload_pfp(req, res) {
             access: 'public', // Make the file publicly accessible
             token: process.env.BLOB_READ_WRITE_TOKEN, // Use the environment variable
             addRandomSuffix: false, // we want the file to be overwriteable
+            cacheControlMaxAge: 0 // force reload
         });
 
         // Return the public URL of the uploaded file
