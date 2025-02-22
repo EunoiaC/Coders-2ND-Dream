@@ -52,6 +52,7 @@ export default async function upload_pfp(req, res) {
         const { url } = await put(fileName, buffer, {
             access: 'public', // Make the file publicly accessible
             token: process.env.BLOB_READ_WRITE_TOKEN, // Use the environment variable
+            addRandomSuffix: false, // we want the file to be overwriteable
         });
 
         // Return the public URL of the uploaded file
