@@ -1,4 +1,4 @@
-import { put, del } from '@vercel/blob';
+import { put } from '@vercel/blob';
 import fs from 'fs';
 import admin from "firebase-admin";
 
@@ -47,8 +47,6 @@ export default async function upload_pfp(req, res) {
         let uid = decodedToken.uid;
 
         let fileName = "pfp/" + uid + "." + fileExtension;
-
-        await del(fileName);
 
         // Upload the file to Vercel Blob
         const { url } = await put(fileName, buffer, {

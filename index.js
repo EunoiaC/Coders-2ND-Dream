@@ -129,7 +129,11 @@ async function showPage(page, data = null) {
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
 
-        pfp.src = data.pfpLink;
+        if (data.pfpVersion) {
+            pfp.src = data.pfpLink + "?v=" + data.pfpVersion;
+        } else {
+            pfp.src = data.pfpLink;
+        }
 
         let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
@@ -754,10 +758,14 @@ async function loadUsers() {
     }
 }
 
-function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc) {
+function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc, version) {
     // Create a div with the same structure as the provided profile template
     const profileDiv = document.createElement("div");
     profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
+
+    if (version) {
+        imgSrc += "?=" + version;
+    }
 
     profileDiv.innerHTML = `
         <div class="profile-left-container">
@@ -814,7 +822,7 @@ async function showMatchPool() {
         let auraNum = calculateAura(user.selfRequestedMatches, user.otherRequestedMatches, user.successfulMatches, user.selfCapabilities);
 
         // TODO: update rank
-        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink);
+        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion);
     }
 
     // TODO: stylised alert using `msg` variable
@@ -926,9 +934,14 @@ function loadProfilePage() {
 
                         let responseData = await response.json();
 
-                        currentProfileData.pfpLink = responseData.url;
-                        pfp.src = responseData.url;
+                        if (!currentProfileData.pfpVersion) {
+                            currentProfileData.pfpVersion = 1;
+                        } else {
+                            currentProfileData.pfpVersion++;
+                        }
 
+                        currentProfileData.pfpLink = responseData.url + "?v=" + currentProfileData.pfpVersion;
+                        pfp.src = responseData.url;
 
                         // update the current user's pfp in firebase
                         const docRef = doc(db, "users", auth.currentUser.uid);
