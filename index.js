@@ -744,7 +744,7 @@ async function loadUsers() {
     return {
         users: currentProfileData.matchpool,
         // 86400 seconds in a day
-        message: `You have ${Math.floor((limit - seconds)/86400)} days left until you receive a new match pool`
+        message: `You have ${Math.floor((limit - seconds)/86400)} days left until you receive a new match pool.`
     }
 }
 
