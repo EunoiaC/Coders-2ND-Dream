@@ -12302,6 +12302,10 @@ textarea.form-control-lg {
   width: 100%;
 }
 
+#matchpool h1, #matchpool .h1 {
+  font-family: "Quicksand", serif;
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;

@@ -42,12 +42,11 @@ const db = getFirestore(app);
 // const analytics = getAnalytics(app);
 
 const loginPage = document.getElementById("login");
-const homePage = document.getElementById("home");
 const registerPage = document.getElementById("register");
 const profilePage = document.getElementById("profile");
 const matchpoolPage = document.getElementById("matchpool");
 
-let pages = [loginPage, homePage, registerPage, profilePage, matchpoolPage];
+let pages = [loginPage, registerPage, profilePage, matchpoolPage];
 let viewingSelf = false;
 let currentProfileData = null
 
@@ -102,16 +101,18 @@ async function showPage(page, data = null) {
         const aura = document.getElementById("profile-aura");
 
         const profileEditReadme = document.getElementById("profile-edit-readme");
+        profileEditReadme.classList.add("d-none"); // hide the edit button since viewing a different profile
+        if (viewingSelf) {
+            profileEditReadme.classList.remove("d-none");
 
-        // only read the current user's data unless a different user data is passed as an arg
+        }
+
+        // only read the current user's data unless user data is passed as an arg
         if (!data) {
             const docRef = doc(db, "users", auth.currentUser.uid);
             const docSnap = await getDoc(docRef);
             data = docSnap.data();
-            profileEditReadme.classList.remove("d-none");
-        } else {
-            profileEditReadme.classList.add("d-none"); // hide the edit button since viewing a different profile
-        }
+        } else
 
         currentProfileData = data;
 
@@ -196,10 +197,10 @@ const authListener = async (user) => {
         if (docSnap.exists()) { // registered user
             viewingSelf = true;
             if (currentPage() === null) { // show page immediately
-                showPage(profilePage);
+                showPage(profilePage, docSnap.data());
             } else { // at login
                 setTimeout(() => {
-                    showPage(profilePage);
+                    showPage(profilePage, docSnap.data());
                 }, 2000);
             }
         } else { // unregistered user
@@ -229,7 +230,15 @@ function begin() {
     loadConfig(); // only load once
     loadProfilePage();
     initSubscribe();
+    loadMatchpool();
     onAuthStateChanged(auth, authListener);
+}
+
+function loadMatchpool() {
+    const backBtn = document.getElementById("matchpool-back");
+    backBtn.onclick = (event) => {
+        showPage(profilePage, currentProfileData);
+    }
 }
 
 function initSubscribe() {
@@ -755,7 +764,14 @@ async function loadUsers() {
     }
 }
 
-function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc, version) {
+function viewMatchpoolProfile(idx) {
+    let prevData = currentProfileData;
+    currentProfileData = currentProfileData.matchpool[idx];
+    viewingSelf = false;
+    showPage(profilePage, currentProfileData);
+}
+
+function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc, version, idx) {
     // Create a div with the same structure as the provided profile template
     const profileDiv = document.createElement("div");
     profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
@@ -782,14 +798,24 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
                 <span class="badge mt-1 profile-looking-for"><i class="fa-solid fa-magnifying-glass"></i> ${lookingFor}</span>
             </div>
             <hr>
-            <button class="btn btn-primary">
-                <i class="fa-solid fa-arrow-left"></i> Start Matching!
-            </button>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary p-2">
+                    <i class="fa-regular fa-message"></i> Match
+                </button>
+                <button class="btn btn-warning" id="view-matchpool-${idx}">
+                    <i class="fa-regular fa-user"></i> View
+                </button>
+            </div>
         </div>
     `;
 
     // Append to the container
     document.getElementById("matchpool-container").appendChild(profileDiv);
+
+    let viewProfile = document.getElementById(`view-matchpool-${idx}`);
+    viewProfile.onclick = (e) => {
+        viewMatchpoolProfile(idx);
+    }
 }
 
 async function showMatchPool() {
@@ -822,7 +848,7 @@ async function showMatchPool() {
         let auraNum = calculateAura(user.selfRequestedMatches, user.otherRequestedMatches, user.successfulMatches, user.selfCapabilities);
 
         // TODO: update rank
-        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion);
+        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i);
     }
 
     // TODO: stylised alert using `msg` variable

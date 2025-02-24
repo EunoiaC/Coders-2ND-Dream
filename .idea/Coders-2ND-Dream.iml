@@ -11,5 +11,6 @@
     <orderEntry type="library" name="firebase-app" level="application" />
     <orderEntry type="library" name="firebase-auth" level="application" />
     <orderEntry type="library" name="cropperjs" level="application" />
+    <orderEntry type="library" name="bootstrap-icons" level="application" />
   </component>
 </module>
