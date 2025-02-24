@@ -28,9 +28,6 @@ export default async function register_user(req, res) {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
         let uid = decodedToken.uid;
 
-        let docNumSnap = await db.collection("users").count().get();
-        let docNum = docNumSnap.data().count;
-
         const docRef = db.collection("users").doc(uid);
         try {
             await docRef.update({
