@@ -695,7 +695,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
 
         if (!response.ok) {
             window.alert("Failed to register user");
-            throw new Error('Failed to register user');
+            throw new Error((await response.json()).error);
         } else {
             viewingSelf = true;
             showPage(profilePage);
