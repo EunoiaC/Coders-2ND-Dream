@@ -13,12 +13,14 @@ const db = admin.firestore();
 // Main API handler
 export default async function register_user(req, res) {
     if (req.method !== 'POST') {
+        console.error("Method not allowed");
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     // check auth header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        console.error('Unauthorized');
         return res.status(401).json({ error: "Unauthorized" });
     }
 
@@ -39,11 +41,13 @@ export default async function register_user(req, res) {
             });
             return res.status(200).json();
         } catch (e) {
+            console.error(e);
             return res.status(500).json({ error: e });
         }
 
     } catch (error) {
         console.log("Error verifying token:", error);
+        console.error(error);
         return res.status(401).json({ error: "Invalid token" });
     }
 }
