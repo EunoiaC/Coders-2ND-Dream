@@ -154,8 +154,14 @@ async function showPage(page, data = null) {
             if (lang === "c#") {
                 lang = "csharp";
             }
+            lang += "logo";
+            if (lang === "csslogo") {
+                lang += ".svg"
+            } else {
+                lang += ".png"
+            }
             profileLanguages.innerHTML += `
-            <img class="profile-lang-img" src="${lang}logo.png">
+            <img class="profile-lang-img" src="${lang}">
             `
         }
     }
