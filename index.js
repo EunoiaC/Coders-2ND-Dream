@@ -850,10 +850,9 @@ async function showMatchPool() {
     </div>
     `;
     let res = await loadUsers();
-    // set currentProfileData's matchpool to users, if this is the first time calling
-    if (!currentProfileData.matchpool) {
-        currentProfileData.matchpool = res.users;
-    }
+    // set currentProfileData's matchpool to users, since we are either updating or creating a matchpool
+    currentProfileData.matchpool = res.users;
+
     console.log(res);
     matchpoolContainer.innerHTML = ""; // empty so we can append
 
