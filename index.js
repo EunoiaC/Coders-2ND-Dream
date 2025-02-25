@@ -934,6 +934,9 @@ function loadProfilePage() {
     let cropper;
 
     fileInput.addEventListener("change", function (event) {
+        if (!viewingSelf) {
+            return;
+        }
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -953,7 +956,7 @@ function loadProfilePage() {
     });
 
     pfpConfirm.onclick = async (event) => {
-        if (cropper && viewingSelf) {
+        if (cropper) {
             const croppedCanvas = cropper.getCroppedCanvas({
                 width: 450, height: 450 // Adjust size as needed
             });
