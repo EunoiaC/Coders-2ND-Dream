@@ -774,12 +774,15 @@ function viewMatchpoolProfile(idx) {
     showPage(profilePage, currentProfileData);
     let match = document.getElementById("profile-match");
     let leave = document.getElementById("profile-leave");
+    let logout = document.getElementById("profile-logout");
+    logout.classList.add("d-none");
     match.classList.remove("d-none");
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
 
     leave.onclick = (event) => {
-        leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Start Matching!`;
+        leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
         match.classList.add("d-none");
+        logout.classList.remove("d-none");
         currentProfileData = prevData;
         viewingSelf = true;
         showPage(matchpoolPage);
@@ -888,6 +891,18 @@ function loadProfilePage() {
     const displayName = document.getElementById("profile-name");
     const subscription = document.getElementById("profile-rank");
     const leaveProfile = document.getElementById("profile-leave");
+    const logout = document.getElementById("profile-logout");
+    const confirmLogout = document.getElementById("confirmLogout");
+    const logoutModal = new bootstrap.Modal(document.getElementById("logoutModal")); // Create once
+
+    logout.onclick = (e) => {
+        logoutModal.show();
+    }
+
+    confirmLogout.onclick = (e) => {
+        logoutModal.hide();
+        signOut();
+    }
 
     // start matching if on our page
     leaveProfile.onclick = async (event) => {

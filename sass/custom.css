@@ -12146,7 +12146,6 @@ textarea.form-control-lg {
   background: #1e1e1e;
   border-radius: 12px;
   height: 80vh;
-  max-width: 800px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 #profile .profile-right-container #profile-readme-text, .profile .profile-right-container #profile-readme-text {
