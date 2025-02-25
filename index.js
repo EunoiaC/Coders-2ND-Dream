@@ -102,9 +102,10 @@ async function showPage(page, data = null) {
 
         const profileEditReadme = document.getElementById("profile-edit-readme");
         profileEditReadme.classList.add("d-none"); // hide the edit button since viewing a different profile
+        name.contentEditable = false;
         if (viewingSelf) {
             profileEditReadme.classList.remove("d-none");
-
+            name.contentEditable = true;
         }
 
         // only read the current user's data unless user data is passed as an arg
@@ -780,6 +781,7 @@ function viewMatchpoolProfile(idx) {
         leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Start Matching!`;
         match.classList.add("d-none");
         currentProfileData = prevData;
+        viewingSelf = true;
         showPage(matchpoolPage);
 
         // set the leave onclick listener
@@ -951,7 +953,7 @@ function loadProfilePage() {
     });
 
     pfpConfirm.onclick = async (event) => {
-        if (cropper) {
+        if (cropper && viewingSelf) {
             const croppedCanvas = cropper.getCroppedCanvas({
                 width: 450, height: 450 // Adjust size as needed
             });
