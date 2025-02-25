@@ -769,6 +769,22 @@ function viewMatchpoolProfile(idx) {
     currentProfileData = currentProfileData.matchpool[idx];
     viewingSelf = false;
     showPage(profilePage, currentProfileData);
+    let match = document.getElementById("profile-match");
+    let leave = document.getElementById("profile-leave");
+    match.classList.remove("d-none");
+    leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
+
+    leave.onclick = (event) => {
+        leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Start Matching!`;
+        match.classList.add("d-none");
+        currentProfileData = prevData;
+        showPage(matchpoolPage);
+
+        // set the leave onclick listener
+        leave.onclick = (event) => {
+            showPage(matchpoolPage);
+        }
+    }
 }
 
 function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc, version, idx) {

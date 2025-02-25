@@ -12230,6 +12230,18 @@ textarea.form-control-lg {
   font-weight: 100;
 }
 
+.profile-badges-container {
+  display: flex;
+  justify-content: space-between; /* Ensures spacing between badges */
+  flex-wrap: wrap; /* Makes sure they stack on small screens */
+}
+
+.profile-badges-container .badge {
+  flex: 1; /* Makes both badges share equal width */
+  text-align: center; /* Keeps text centered */
+  min-width: 40%; /* Prevents excessive shrinking */
+}
+
 .badge img {
   width: 15px;
 }
@@ -12243,6 +12255,9 @@ textarea.form-control-lg {
   .badge {
     display: block; /* Makes each badge take full width */
     width: 100%;
+  }
+  .profile-badges-container {
+    flex-direction: column;
   }
   br {
     display: none;

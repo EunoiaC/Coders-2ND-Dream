@@ -286,14 +286,20 @@ Requires a value of type `Date`
                         <span id="profile-aura"></span>
                     </div>
                     <span class="badge rank-jobless w-100" id="profile-rank">Jobless</span>
-                    <br>
-                    <span class="badge mt-1" id="profile-self"></span>
-                    <span class="badge mt-1" id="profile-looking-for"></span>
+                    <div class="d-flex gap-2 flex-wrap profile-badges-container mt-1">
+                        <span class="badge" id="profile-self"></span>
+                        <span class="badge" id="profile-looking-for"></span>
+                    </div>
                 </div>
                 <hr>
-                <button class="btn btn-primary" id="profile-leave">
-                    <i class="fa-solid fa-arrow-left"></i> Start Matching!
-                </button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" id="profile-leave">
+                        <i class="fa-solid fa-arrow-left"></i> Start Matching!
+                    </button>
+                    <button class="btn btn-warning d-none" id="profile-match">
+                        <i class="fa-regular fa-message"></i> Match
+                    </button>
+                </div>
             </div>
         </div>
 
