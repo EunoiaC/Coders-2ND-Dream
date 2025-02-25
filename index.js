@@ -814,14 +814,9 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
                 <span class="badge mt-1 profile-looking-for"><i class="fa-solid fa-magnifying-glass"></i> ${lookingFor}</span>
             </div>
             <hr>
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary p-2">
-                    <i class="fa-regular fa-message"></i> Match
-                </button>
-                <button class="btn btn-warning" id="view-matchpool-${idx}">
-                    <i class="fa-regular fa-user"></i> View
-                </button>
-            </div>
+            <button class="btn btn-primary" id="view-matchpool-${idx}">
+                <i class="fa-regular fa-user"></i> View
+            </button>
         </div>
     `;
 
