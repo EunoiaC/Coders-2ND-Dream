@@ -934,9 +934,6 @@ function loadProfilePage() {
     let cropper;
 
     fileInput.addEventListener("change", function (event) {
-        if (!viewingSelf) {
-            return;
-        }
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -1010,7 +1007,9 @@ function loadProfilePage() {
     }
 
     pfp.onclick = (event) => {
-        editPfpModal.show();
+        if (viewingSelf) {
+            editPfpModal.show();
+        }
     }
 
     displayName.contentEditable = true;
