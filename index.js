@@ -9,6 +9,7 @@ import {
     updateProfile
 } from "firebase/auth";
 import {doc, getDoc, getFirestore, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import {deleteField} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
@@ -16,9 +17,15 @@ import {doc, getDoc, getFirestore, setDoc, updateDoc, Timestamp } from 'firebase
 // TODO: tally number of match requests/profile views, and lock an account if reaching membership limits. Set a timestamp, wait a week to unlock acc
 
 // TODO: when plan changes, set lastFetch to null
+// TODO: solve code together in chatrooms
+// TODO: chatroom home page styled as stackoverflow? https://stackoverflow.com/questions
+//      - The chats will be listed as the stackoverflow questions page
+//      - Questions will be how many messages the logged in user sent
+//      - Answers will be how many messages the other user sent
+//      - Views will be how many time each user opened the chat
 
 // TODO:
-//  Add an incoming match requests list with the UID of pending matches that can be rejected or accepted
+//  Add an incoming pull requests list with the UID of pending matches that can be rejected or accepted
 //  - Accepting a match leads to the creation of a chatroom stored in the openChats list in both user documents
 //  - Need to create a "chats" collection where a chat can only be read by the two users, not written
 
@@ -622,6 +629,24 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
                `, 500)
                 return;
             }
+
+            // parse the birthday as a date, (-1 from date cuz date indexing starts at zero)
+            let bday  = new Date(result[2], result[0]-1, result[1]);
+            let diff = Date.now() - bday;
+            const millisecondsInYear = 365.25 * 24 * 60 * 60 * 1000; // Account for leap years
+            diff = diff / millisecondsInYear;
+
+            if (diff < 13) {
+                await displayOutput(`
+               <span style="color: red">Error:</span> Birthday's Date field must be 13+ years ago
+               <br><br>
+               Process failed with exit code 1.
+               `, 500)
+                return;
+            }
+
+            // get difference in years
+
         }
 
         if (selfCapabilities.classList.contains("error") || seeking.classList.contains("error")) {
