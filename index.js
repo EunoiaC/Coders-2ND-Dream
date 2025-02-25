@@ -8,7 +8,7 @@ import {
     signInWithPopup,
     updateProfile
 } from "firebase/auth";
-import {doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
+import {doc, getDoc, getFirestore, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
@@ -735,6 +735,8 @@ async function loadUsers() {
 
     let lastFetch = currentProfileData.lastFetch;
     if (!lastFetch) { // user has never fetched; make an api call
+        // for the current app session, just set last fetch to right now
+        currentProfileData.lastFetch = Timestamp.now();
         return await apiFetch();
     }
 
@@ -843,6 +845,10 @@ async function showMatchPool() {
     </div>
     `;
     let res = await loadUsers();
+    // set currentProfileData's matchpool to users, if this is the first time calling
+    if (!currentProfileData.matchpool) {
+        currentProfileData.matchpool = res.users;
+    }
     console.log(res);
     matchpoolContainer.innerHTML = ""; // empty so we can append
 
