@@ -112,7 +112,7 @@ async function showPage(page, data = null) {
             const docRef = doc(db, "users", auth.currentUser.uid);
             const docSnap = await getDoc(docRef);
             data = docSnap.data();
-        } else
+        }
 
         currentProfileData = data;
 
