@@ -27,6 +27,7 @@ export default async function register_user(req, res) {
     const idToken = authHeader.split("Bearer ")[1];
 
     const { displayName, bday, selfCapabilities, lookingFor, matchSeed, knownLangs, pfpLink, readme, pfpVersion } = req.body;
+    console.log(req.body);
 
     if (!displayName || !bday || !selfCapabilities || !lookingFor || !matchSeed || !knownLangs || !pfpLink || !readme || !pfpVersion) {
         console.error('Incorrect arguments');
