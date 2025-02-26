@@ -705,7 +705,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
         let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
         let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
-        const data = {
+        let data = {
             displayName: displayName.innerText,
             bday: birthDate.innerText.trim().split(/,\s*/).map(num => num.trim()).map(Number),
             selfCapabilities: stack.indexOf(selfCapabilities.innerText),
@@ -720,15 +720,6 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             pfpVersion: 0
         }
 
-        const docRef = doc(db, "users", user.uid);
-        setDoc(docRef, data)
-            .then(() => {
-                console.log('Document written with ID: ', docRef.id);
-            })
-            .catch((error) => {
-                console.error('Error adding document: ', error);
-            });
-
         const token = await getBearerToken();
 
         const response = await fetch('/api/register_user', {
@@ -736,15 +727,17 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            body: JSON.stringify(data)
         });
 
         if (!response.ok) {
             window.alert("Failed to register user");
             throw new Error('Failed to register user');
         } else {
+            data = await response.json(); 
             viewingSelf = true;
-            showPage(profilePage);
+            showPage(profilePage, data);
         }
     });
 }

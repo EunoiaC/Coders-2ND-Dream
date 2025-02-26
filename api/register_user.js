@@ -26,24 +26,40 @@ export default async function register_user(req, res) {
 
     const idToken = authHeader.split("Bearer ")[1];
 
+    const { displayName, bday, selfCapabilities, lookingFor, matchSeed, knownLangs, pfpLink, readme, pfpVersion } = req.body;
+
+    if (!displayName || !bday || !selfCapabilities || !lookingFor || !matchSeed || !knownLangs || !knownLangs.length || !pfpLink || !readme || !pfpVersion) {
+        return res.status(400).json({ message: 'Incorrect passed values' });
+    }
+
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
         let uid = decodedToken.uid;
 
+        const vals = {
+            displayName: displayName,
+            bday: bday,
+            selfCapabilities: selfCapabilities,
+            lookingFor: lookingFor,
+            matchSeed: matchSeed,
+            knownLangs: knownLangs,
+            pfpLink: pfpLink,
+            readme: readme,
+            pfpVersion: pfpVersion,
+            selfRequestedMatches: 0,
+            otherRequestedMatches: 0,
+            successfulMatches: 0,
+            membership: 0, // tier 0 membership (free)
+            outgoingRequests: [],
+            incomingRequests: [],
+            matchpool: [],
+            lastFetch: null
+        }
+
         const docRef = db.collection("users").doc(uid);
         try {
-            await docRef.update({
-                selfRequestedMatches: 0,
-                otherRequestedMatches: 0,
-                successfulMatches: 0,
-                membership: 0, // tier 0 membership (free)
-                outgoingRequests: [],
-                incomingRequests: [],
-                matchpool: [],
-                lastFetch: null
-                // userIdx: docNum - 1 // subtract 1 because the user already has their own document; we need start at zero indexing
-            });
-            return res.status(200).json();
+            await docRef.set(vals);
+            return res.status(200).json(vals);
         } catch (e) {
             console.error(e);
             return res.status(500).json({ error: e });
