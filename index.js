@@ -914,9 +914,9 @@ async function showMatchPool() {
     if (msg) {
         try{
             repeatAlert.classList.remove("d-none");
+            const text = document.getElementById("matchpool-reset-text");
+            text.innerText = msg;
         } catch(error) {}
-        const text = document.getElementById("matchpool-reset-text");
-        text.innerText = msg;
     }
 }
 
