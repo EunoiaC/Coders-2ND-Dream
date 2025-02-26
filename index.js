@@ -18,6 +18,7 @@ import {deleteField} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-fi
 
 // TODO: when plan changes, set lastFetch to null
 // TODO: solve code together in chatrooms
+// TODO: when opening a chatroom, the chatroom id will be {smallerUID}-{largerUID}
 // TODO: chatroom home page styled as stackoverflow? https://stackoverflow.com/questions
 //      - The chats will be listed as the stackoverflow questions page
 //      - Questions will be how many messages the logged in user sent
@@ -91,6 +92,17 @@ function formatNumberWithUnits(number) {
     }
 }
 
+function calculateSuccessfulMatches(incoming, outgoing) {
+    let successfulMatches = [];
+    const set1 = new Set(incoming); // Convert first array to a Set for quick lookup
+    outgoing.incomingRequests.forEach(value => {
+        if (set1.has(value)) {
+            successfulMatches.push(value);
+        }
+    });
+    return successfulMatches;
+}
+
 async function showPage(page, data = null) {
     // hide all possible other pages
     for (let i = 0; i < pages.length; i++) {
@@ -155,8 +167,11 @@ async function showPage(page, data = null) {
         name.textContent = data.displayName;
         age.textContent = "Age: " + ageNum;
 
+        // calculate successful matches (the amount of same values in both arrays)
+        let successfulMatches = calculateSuccessfulMatches(data.incomingRequests, data.outgoingRequests);
+
         // TODO: add subscription level to aura
-        let auraNum = calculateAura(data.selfRequestedMatches, data.otherRequestedMatches, data.successfulMatches, data.selfCapabilities);
+        let auraNum = calculateAura(data.outgoingRequests.length, data.incomingRequests.length, successfulMatches.length, data.selfCapabilities);
         aura.innerText = "Aura: " + formatNumberWithUnits(auraNum) + "🔥";
 
         let knownLangs = data.knownLangs;
@@ -886,7 +901,8 @@ async function showMatchPool() {
         let ageDifMs = Date.now() - bday.getTime();
         let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
 
-        let auraNum = calculateAura(user.selfRequestedMatches, user.otherRequestedMatches, user.successfulMatches, user.selfCapabilities);
+        let successfulMatches = calculateSuccessfulMatches(user.incomingRequests, user.outgoingRequests);
+        let auraNum = calculateAura(user.outgoingRequests.length, user.incomingRequests.length, successfulMatches.length, user.selfCapabilities);
 
         // TODO: update rank
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i);

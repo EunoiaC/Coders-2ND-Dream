@@ -47,9 +47,9 @@ export default async function register_user(req, res) {
             pfpLink: pfpLink,
             readme: "# Edit your README!",
             pfpVersion: 0,
-            selfRequestedMatches: 0,
-            otherRequestedMatches: 0,
-            successfulMatches: 0,
+            // selfRequestedMatches: 0,
+            // otherRequestedMatches: 0,
+            // successfulMatches: 0,
             membership: 0, // tier 0 membership (free)
             outgoingRequests: [],
             incomingRequests: [],
@@ -67,8 +67,7 @@ export default async function register_user(req, res) {
         }
 
     } catch (error) {
-        console.log("Error verifying token:", error);
-        console.error(error);
+        console.error("Error verifying token:", error);
         return res.status(401).json({ error: "Invalid token" });
     }
 }
