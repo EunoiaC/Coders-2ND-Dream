@@ -879,13 +879,15 @@ async function showMatchPool() {
     } catch(error) {}
     // show a loading spinner
     let matchpoolContainer = document.getElementById("matchpool-container");
-    matchpoolContainer.innerHTML = `
+    if (matchpoolContainer.innerHTML === "") { // only show the loader if its empty
+        matchpoolContainer.innerHTML = `
     <div class="d-flex justify-content-center">
         <div class="spinner-grow text-primary" style="width: 30rem; height: 30rem" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
     `;
+    }
     let res = await loadUsers();
     // set currentProfileData's matchpool to users, since we are either updating or creating a matchpool
     currentProfileData.matchpool = res.users;
