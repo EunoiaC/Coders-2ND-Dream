@@ -39,6 +39,8 @@ export default async function register_user(req, res) {
                 membership: 0, // tier 0 membership (free)
                 outgoingRequests: [],
                 incomingRequests: [],
+                matchpool: [],
+                lastFetch: null
                 // userIdx: docNum - 1 // subtract 1 because the user already has their own document; we need start at zero indexing
             });
             return res.status(200).json();
