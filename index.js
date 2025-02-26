@@ -871,23 +871,27 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
     }
 }
 
+let loadedMatches = false;
+
 async function showMatchPool() {
     // hide alert
     const repeatAlert = document.getElementById("alert-repeat-match");
     try{
         repeatAlert.classList.add("d-none");
     } catch(error) {}
-    // show a loading spinner
     let matchpoolContainer = document.getElementById("matchpool-container");
-    if (matchpoolContainer.innerHTML === "") { // only show the loader if its empty
+    // show a loading spinner only if the container is unpopulated
+    if (!loadedMatches) {
         matchpoolContainer.innerHTML = `
-    <div class="d-flex justify-content-center">
-        <div class="spinner-grow text-primary" style="width: 30rem; height: 30rem" role="status">
-            <span class="visually-hidden">Loading...</span>
+        <div class="d-flex justify-content-center">
+            <div class="spinner-grow text-primary" style="width: 30rem; height: 30rem" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
-    </div>
-    `;
+        `;
     }
+    loadedMatches = true;
+
     let res = await loadUsers();
     // set currentProfileData's matchpool to users, since we are either updating or creating a matchpool
     currentProfileData.matchpool = res.users;
