@@ -95,7 +95,7 @@ function formatNumberWithUnits(number) {
 function calculateSuccessfulMatches(incoming, outgoing) {
     let successfulMatches = [];
     const set1 = new Set(incoming); // Convert first array to a Set for quick lookup
-    outgoing.incomingRequests.forEach(value => {
+    outgoing.forEach(value => {
         if (set1.has(value)) {
             successfulMatches.push(value);
         }
