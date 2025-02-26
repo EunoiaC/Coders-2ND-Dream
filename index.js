@@ -26,8 +26,12 @@ import {deleteField} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-fi
 
 // TODO:
 //  Add an incoming pull requests list with the UID of pending matches that can be rejected or accepted
+//  - Users will have an "incomingRequests" and "outgoingRequests" field
+//      - Sending a request will add the current user's "outgoingRequests"
+//      - The receiving user will get the requesting user's uid added to "incomingRequests"
+//      - The API will check if they have mutually requested each other before, and match if so
 //  - Accepting a match leads to the creation of a chatroom stored in the openChats list in both user documents
-//  - Need to create a "chats" collection where a chat can only be read by the two users, not written
+//  - Need to create a "chats" collection where a chat can only be read by the two users, not written. Only server can write
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
