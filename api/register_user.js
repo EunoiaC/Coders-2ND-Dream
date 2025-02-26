@@ -28,7 +28,7 @@ export default async function register_user(req, res) {
 
     const { displayName, bday, selfCapabilities, lookingFor, matchSeed, knownLangs, pfpLink, readme, pfpVersion } = req.body;
 
-    if (!displayName || !bday || !selfCapabilities || !lookingFor || !matchSeed || !knownLangs || !knownLangs.length || !pfpLink || !readme || !pfpVersion) {
+    if (!displayName || !bday || !selfCapabilities || !lookingFor || !matchSeed || !knownLangs || !pfpLink || !readme || !pfpVersion) {
         console.error('Incorrect arguments');
         return res.status(400).json({ message: 'Incorrect passed values' });
     }
