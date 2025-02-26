@@ -715,9 +715,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             // FULL_STACK seeds: (3/3)Number.MAX_VALUE -> maxSeed
             matchSeed: random,
             knownLangs: values,
-            pfpLink: user.providerData[0].photoURL,
-            readme: "# Edit your README!",
-            pfpVersion: 0
+            pfpLink: user.providerData[0].photoURL
         }
 
         const token = await getBearerToken();

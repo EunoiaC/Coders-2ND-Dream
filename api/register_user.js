@@ -26,10 +26,9 @@ export default async function register_user(req, res) {
 
     const idToken = authHeader.split("Bearer ")[1];
 
-    const { displayName, bday, selfCapabilities, lookingFor, matchSeed, knownLangs, pfpLink, readme, pfpVersion } = req.body;
-    console.log(req.body);
+    const { displayName, bday, selfCapabilities, lookingFor, matchSeed, knownLangs, pfpLink } = req.body;
 
-    if (!displayName || !bday || !selfCapabilities || !lookingFor || !matchSeed || !knownLangs || !pfpLink || !readme || !pfpVersion) {
+    if (!displayName || !bday || !selfCapabilities || !lookingFor || !matchSeed || !knownLangs || !pfpLink) {
         console.error('Incorrect arguments');
         return res.status(400).json({ message: 'Incorrect passed values' });
     }
@@ -46,8 +45,8 @@ export default async function register_user(req, res) {
             matchSeed: matchSeed,
             knownLangs: knownLangs,
             pfpLink: pfpLink,
-            readme: readme,
-            pfpVersion: pfpVersion,
+            readme: "# Edit your README!",
+            pfpVersion: 0,
             selfRequestedMatches: 0,
             otherRequestedMatches: 0,
             successfulMatches: 0,
