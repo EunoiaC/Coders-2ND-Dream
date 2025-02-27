@@ -834,6 +834,13 @@ function viewMatchpoolProfile(idx) {
         }
 
         // send a match req
+        let oldInnerHtml = match.innerHTML; // show a spinner
+        match.innerHTML = `
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        `;
+        
         const token = await getBearerToken();
 
         const response = await fetch('/api/request_match', {
@@ -847,6 +854,10 @@ function viewMatchpoolProfile(idx) {
             })
         });
 
+        match.innerHTML = oldInnerHtml; // close the spinner
+
+        // TODO: add special alert on chatroom creation
+
         if (response.ok) {
             currentUserData.outgoingRequests.push(uid);
             // show success
@@ -859,13 +870,13 @@ function viewMatchpoolProfile(idx) {
         } else {
             profileAlertContainer.innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                You have already tried pulling this user.
+                Error with server.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             `
         }
 
-        let result = await response.json();
+        // let result = await response.json();
     }
 
     leave.onclick = (event) => {
