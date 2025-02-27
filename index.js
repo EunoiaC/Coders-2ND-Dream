@@ -955,18 +955,29 @@ async function showMatchPool() {
         </div>
         `;
     }
-    loadedMatches = true;
 
     let res = await loadUsers();
     // set currentProfileData's matchpool to users, since we are either updating or creating a matchpool
     currentProfileData.matchpool = res.users;
 
     console.log(res);
-    matchpoolContainer.innerHTML = ""; // empty so we can append
 
     let users = res.users;
     let msg = res.message;
+    // TODO: stylised alert using `msg` variable
+    if (msg) {
+        try{
+            repeatAlert.classList.remove("d-none");
+            const text = document.getElementById("matchpool-reset-text");
+            text.innerText = msg;
+        } catch(error) {}
+        if (loadedMatches) { // if we have loaded the users already AND there is a message (means no update), we can return
+            return;
+        }
+    }
 
+    loadedMatches = true;
+    matchpoolContainer.innerHTML = ""; // empty so we can append
     let stack = ["Front End", "Back End", "Full Stack"];
     for (let i = 0; i < users.length; i++) {
         let docRef = doc(db, "users", users[i]);
@@ -980,15 +991,6 @@ async function showMatchPool() {
 
         // TODO: update rank
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
-    }
-
-    // TODO: stylised alert using `msg` variable
-    if (msg) {
-        try{
-            repeatAlert.classList.remove("d-none");
-            const text = document.getElementById("matchpool-reset-text");
-            text.innerText = msg;
-        } catch(error) {}
     }
 
     // load the incoming requests, with labels indicating new requests
