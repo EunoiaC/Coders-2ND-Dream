@@ -816,6 +816,7 @@ function viewMatchpoolProfile(idx) {
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
 
     match.onclick = async (event) => {
+        console.log("attempting to match with " + currentProfileData.uid)
         // check if the currentUser already sent an outgoing request
         const profileAlertContainer = document.getElementById("profile-alerts");
         let uid = currentProfileData.uid;

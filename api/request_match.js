@@ -25,6 +25,7 @@ export default async function request_match(req, res) {
 
     let { matchpoolIdx } = req.body;
     if (!matchpoolIdx) {
+        console.error("Missing required fields");
         return res.status(401).json({ error: "Missing matchpoolId" });
     }
 
