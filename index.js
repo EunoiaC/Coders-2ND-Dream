@@ -25,8 +25,6 @@ import {deleteField} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-fi
 //      - Answers will be how many messages the other user sent
 //      - Views will be how many time each user opened the chat
 
-// TODO: When adding incomingRequest notifications, store seen notifications in local storage with key "viewednotifs-{UID}"
-
 // TODO:
 //  Add an incoming pull requests list with the UID of pending matches that can be rejected or accepted
 //  - Users will have an "incomingRequests" and "outgoingRequests" field
@@ -106,115 +104,95 @@ function calculateSuccessfulMatches(incoming, outgoing) {
 }
 
 async function showPage(page, data = null) {
-    // get the current showing page (doesn't have d-none)
-    let currentPage = null;
     // hide all possible other pages
     for (let i = 0; i < pages.length; i++) {
-        let page = pages[i];
-        if (!page.classList.contains("d-none")) {
-            currentPage = page;
-            console.log(currentPage.id);
-            break;
+        pages[i].classList.add("d-none");
+    }
+
+    page.classList.remove("d-none");
+
+    if (page === registerPage) {
+        // clear the config console
+        const console = document.getElementById("configConsoleOutput");
+        console.innerText = ""
+    } else if (page === matchpoolPage) {
+        await showMatchPool();
+    } else if (page === profilePage) {
+        const pfp = document.getElementById("profile-pfp");
+        const name = document.getElementById("profile-name");
+        const age = document.getElementById("profile-age");
+        const aura = document.getElementById("profile-aura");
+
+        const profileEditReadme = document.getElementById("profile-edit-readme");
+        profileEditReadme.classList.add("d-none"); // hide the edit button since viewing a different profile
+        name.contentEditable = false;
+        if (viewingSelf) {
+            profileEditReadme.classList.remove("d-none");
+            name.contentEditable = true;
         }
-    }
 
-    if (currentPage) {
-        currentPage.classList.add("hiding");
-        setTimeout(() => {
-            currentPage.classList.add("d-none");
-            currentPage.classList.remove("hiding", "showing");
-        }, 400); // Matches CSS transition time
-    }
+        // only read the current user's data unless user data is passed as an arg
+        if (!data) {
+            const docRef = doc(db, "users", auth.currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            data = docSnap.data();
+        }
 
-    // Delay showing the new page slightly for smooth transition
-    setTimeout(async () => {
-        page.classList.remove("d-none");
-        page.classList.add("page-transition", "showing");
+        currentProfileData = data;
 
-        if (page === registerPage) {
-            // clear the config console
-            const console = document.getElementById("configConsoleOutput");
-            console.innerText = ""
-        } else if (page === matchpoolPage) {
-            await showMatchPool();
-        } else if (page === profilePage) {
-            const pfp = document.getElementById("profile-pfp");
-            const name = document.getElementById("profile-name");
-            const age = document.getElementById("profile-age");
-            const aura = document.getElementById("profile-aura");
+        const profileReadmeText = document.getElementById("profile-readme-text");
 
-            const profileEditReadme = document.getElementById("profile-edit-readme");
-            profileEditReadme.classList.add("d-none"); // hide the edit button since viewing a different profile
-            name.contentEditable = false;
-            if (viewingSelf) {
-                profileEditReadme.classList.remove("d-none");
-                name.contentEditable = true;
+        const selfCapabilities = document.getElementById("profile-self");
+        const langTitle = document.getElementById("profile-self-lang");
+        const lookingFor = document.getElementById("profile-looking-for");
+
+        let stack = ["Front End", "Back End", "Full Stack"]
+
+        selfCapabilities.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
+        langTitle.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
+        lookingFor.innerHTML = "<i class=\"fa-solid fa-magnifying-glass\"></i> " + stack[data.lookingFor];
+
+        profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
+
+        if (data.pfpVersion) {
+            pfp.src = data.pfpLink + "?v=" + data.pfpVersion;
+        } else {
+            pfp.src = data.pfpLink;
+        }
+
+        let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
+        let ageDifMs = Date.now() - bday.getTime();
+        let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
+
+        name.textContent = data.displayName;
+        age.textContent = "Age: " + ageNum;
+
+        // calculate successful matches (the amount of same values in both arrays)
+        let successfulMatches = calculateSuccessfulMatches(data.incomingRequests, data.outgoingRequests);
+
+        // TODO: add subscription level to aura
+        let auraNum = calculateAura(data.outgoingRequests.length, data.incomingRequests.length, successfulMatches.length, data.selfCapabilities);
+        aura.innerText = "Aura: " + formatNumberWithUnits(auraNum) + "🔥";
+
+        let knownLangs = data.knownLangs;
+        let profileLanguages = document.getElementById("profile-languages");
+        profileLanguages.innerHTML = "";
+        for (let i = 0; i < knownLangs.length; i++) {
+            let lang = knownLangs[i];
+            if (lang === "c#") {
+                lang = "csharp";
             }
-
-            // only read the current user's data unless user data is passed as an arg
-            if (!data) {
-                const docRef = doc(db, "users", auth.currentUser.uid);
-                const docSnap = await getDoc(docRef);
-                data = docSnap.data();
-            }
-
-            currentProfileData = data;
-
-            const profileReadmeText = document.getElementById("profile-readme-text");
-
-            const selfCapabilities = document.getElementById("profile-self");
-            const langTitle = document.getElementById("profile-self-lang");
-            const lookingFor = document.getElementById("profile-looking-for");
-
-            let stack = ["Front End", "Back End", "Full Stack"]
-
-            selfCapabilities.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
-            langTitle.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
-            lookingFor.innerHTML = "<i class=\"fa-solid fa-magnifying-glass\"></i> " + stack[data.lookingFor];
-
-            profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
-
-            if (data.pfpVersion) {
-                pfp.src = data.pfpLink + "?v=" + data.pfpVersion;
+            lang += "logo";
+            if (lang === "csslogo") {
+                lang += ".svg"
             } else {
-                pfp.src = data.pfpLink;
+                lang += ".png"
             }
-
-            let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
-            let ageDifMs = Date.now() - bday.getTime();
-            let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
-
-            name.textContent = data.displayName;
-            age.textContent = "Age: " + ageNum;
-
-            // calculate successful matches (the amount of same values in both arrays)
-            let successfulMatches = calculateSuccessfulMatches(data.incomingRequests, data.outgoingRequests);
-
-            // TODO: add subscription level to aura
-            let auraNum = calculateAura(data.outgoingRequests.length, data.incomingRequests.length, successfulMatches.length, data.selfCapabilities);
-            aura.innerText = "Aura: " + formatNumberWithUnits(auraNum) + "🔥";
-
-            let knownLangs = data.knownLangs;
-            let profileLanguages = document.getElementById("profile-languages");
-            profileLanguages.innerHTML = "";
-            for (let i = 0; i < knownLangs.length; i++) {
-                let lang = knownLangs[i];
-                if (lang === "c#") {
-                    lang = "csharp";
-                }
-                lang += "logo";
-                if (lang === "csslogo") {
-                    lang += ".svg"
-                } else {
-                    lang += ".png"
-                }
-                profileLanguages.innerHTML += `
+            profileLanguages.innerHTML += `
             <img class="profile-lang-img" src="${lang}">
             `
-            }
         }
-
-    }, 400);
+    }
 }
 
 function currentPage() {
@@ -770,7 +748,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             window.alert("Failed to register user");
             throw new Error('Failed to register user');
         } else {
-            data = await response.json(); 
+            data = await response.json();
             viewingSelf = true;
             showPage(profilePage, data);
         }
@@ -836,20 +814,18 @@ function viewMatchpoolProfile(idx) {
     match.classList.remove("d-none");
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
 
-    leave.onclick = async (event) => {
-        viewingSelf = true;
+    leave.onclick = (event) => {
+        leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
+        match.classList.add("d-none");
+        logout.classList.remove("d-none");
         currentProfileData = prevData;
+        viewingSelf = true;
+        showPage(matchpoolPage);
+
         // set the leave onclick listener
         leave.onclick = (event) => {
             showPage(matchpoolPage);
         }
-        showPage(matchpoolPage); // show the page first so we don't see elements change
-
-        setTimeout(() => {
-            leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
-            match.classList.add("d-none");
-            logout.classList.remove("d-none");
-        }, 400); // wait for transition to change elements
     }
 }
 

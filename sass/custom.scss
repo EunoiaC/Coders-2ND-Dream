@@ -513,38 +513,6 @@ $terminal-error: $secondary;
   font-family: "Quicksand", serif;
 }
 
-/* Page transitions */
-.page-transition {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.page-transition.showing {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.page-transition.hiding {
-  opacity: 0;
-  transform: translateY(-20px);
-}
-
-/* Slide effect */
-.slide-in {
-  transform: translateX(100%);
-  transition: transform 0.5s ease-in-out;
-}
-
-.slide-in.showing {
-  transform: translateX(0);
-}
-
-.slide-in.hiding {
-  transform: translateX(-100%);
-}
-
-
 footer {
   background-color: $dark;
   color: $light;
