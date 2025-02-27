@@ -135,6 +135,16 @@ Requires a value of type `Date`
 </div>
 
 <div id="matchpool" class="d-none container">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationContainer" aria-labelledby="notificationContainerLabel">
+        <div class="offcanvas-header bg-primary">
+            <h5 id="notificationContainerLabel">Notifications</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body bg-dark" id="matchpool-notifications">
+            ...
+        </div>
+    </div>
+
     <div class="alert alert-danger alert-dismissible fade show d-none" id="alert-repeat-match" role="alert">
         <strong id="matchpool-reset-text"></strong>
         <button type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -149,7 +159,7 @@ Requires a value of type `Date`
         <button class="btn btn-link text-white" id="matchpool-chats" aria-label="chats">
             <i class="bi bi-chat" style="font-size: 2rem;"></i>
         </button>
-        <button class="btn btn-link text-white" id="matchpool-mail" aria-label="mail">
+        <button class="btn btn-link text-white" id="matchpool-mail" aria-label="notifications" data-bs-toggle="offcanvas" data-bs-target="#notificationContainer" aria-controls="notificationContainer">
             <i class="bi bi-envelope" style="font-size: 2rem;"></i>
         </button>
     </nav>

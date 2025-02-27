@@ -804,8 +804,8 @@ async function loadUsers() {
     }
 }
 
-function viewMatchpoolProfile(idx) {
-    currentProfileData = currentProfileData.matchpool[idx];
+function viewMatchpoolProfile(idx, data) {
+    currentProfileData = data;
     viewingSelf = false;
     showPage(profilePage, currentProfileData);
     let match = document.getElementById("profile-match");
@@ -819,7 +819,7 @@ function viewMatchpoolProfile(idx) {
         console.log("attempting to match with " + currentProfileData.uid)
         // check if the currentUser already sent an outgoing request
         const profileAlertContainer = document.getElementById("profile-alerts");
-        let uid = currentProfileData.uid;
+        let uid = currentProfileData.matchpool[idx];
         for (let i = 0; i < currentUserData.outgoingRequests.length; i++) {
             if (currentUserData.outgoingRequests[i] === uid) { // the logged in user already tried matching with this user
                 // show an error
@@ -894,7 +894,7 @@ function viewMatchpoolProfile(idx) {
     }
 }
 
-function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc, version, idx) {
+function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc, version, idx, data) {
     // Create a div with the same structure as the provided profile template
     const profileDiv = document.createElement("div");
     profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
@@ -932,7 +932,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
 
     let viewProfile = document.getElementById(`view-matchpool-${idx}`);
     viewProfile.onclick = (e) => {
-        viewMatchpoolProfile(idx);
+        viewMatchpoolProfile(idx, data);
     }
 }
 
@@ -969,7 +969,8 @@ async function showMatchPool() {
 
     let stack = ["Front End", "Back End", "Full Stack"];
     for (let i = 0; i < users.length; i++) {
-        let user = users[i];
+        let docRef = doc(db, "users", users[i]);
+        let user = (await getDoc(docRef)).data();
         let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
         let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
@@ -978,7 +979,7 @@ async function showMatchPool() {
         let auraNum = calculateAura(user.outgoingRequests.length, user.incomingRequests.length, successfulMatches.length, user.selfCapabilities);
 
         // TODO: update rank
-        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i);
+        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
     }
 
     // TODO: stylised alert using `msg` variable
@@ -990,7 +991,12 @@ async function showMatchPool() {
         } catch(error) {}
     }
 
-    // load the mail
+    // load the incoming requests, with labels indicating new requests
+    const notifContainer = document.getElementById("matchpool-notifications");
+    notifContainer.innerHTML = "";
+    for (let i = currentUserData.incomingRequests.length - 1; i >= 0; i--) {
+        // create a small box for each incoming request
+    }
 }
 
 function loadProfilePage() {

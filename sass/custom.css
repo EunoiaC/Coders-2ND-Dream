@@ -12313,6 +12313,10 @@ textarea.form-control-lg {
   width: 100%;
 }
 
+#notificationContainerLabel {
+  font-family: "Quicksand", sans-serif;
+}
+
 #matchpool h1, #matchpool .h1 {
   font-family: "Quicksand", serif;
 }

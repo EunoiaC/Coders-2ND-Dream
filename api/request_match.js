@@ -40,7 +40,7 @@ export default async function request_match(req, res) {
         const selfDocRef = db.collection("users").doc(uid);
         let selfData = await selfDocRef.get();
 
-        let desiredMatchUID = selfData.get("matchpool")[matchpoolIdx].uid;
+        let desiredMatchUID = selfData.get("matchpool")[matchpoolIdx];
 
         // give an error if the user already requested a match for this user
         let outgoingRequests = selfData.get("outgoingRequests");

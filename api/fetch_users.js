@@ -66,12 +66,12 @@ async function loadFree(userData, doc) {
                 .limit(1)
                 .get();
             let doc = matchesQuery.docs[0];
-            let data = doc.data();
-            data.uid = doc.id;
-            delete data.matchpool; // dont return the matchpool, sensitive info
-            delete data.lastFetch; // dont return their lastFetch either
-            delete data.matchSeed; // dont need their matchseed
-            users.set(doc.id, data);
+            // let data = doc.data();
+            // data.uid = doc.id;
+            // delete data.matchpool; // dont return the matchpool, sensitive info
+            // delete data.lastFetch; // dont return their lastFetch either
+            // delete data.matchSeed; // dont need their matchseed
+            users.set(doc.id, doc.id);
         }
 
         // update the timestamp in the doc and currently matching users
