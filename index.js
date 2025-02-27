@@ -821,7 +821,7 @@ function viewMatchpoolProfile(idx) {
         const profileAlertContainer = document.getElementById("profile-alerts");
         let uid = currentProfileData.uid;
         for (let i = 0; i < currentUserData.outgoingRequests.length; i++) {
-            if (currentUserData.outgoingRequests[i].uid === uid) { // the logged in user already tried matching with this user
+            if (currentUserData.outgoingRequests[i] === uid) { // the logged in user already tried matching with this user
                 // show an error
                 profileAlertContainer.innerHTML = `
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
