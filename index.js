@@ -793,6 +793,7 @@ async function loadUsers() {
     let seconds = Math.floor(timeDiff / 1000);
 
     if (seconds > limit) { // return a new match pool with an api call
+        console.log("fetching with api");
         return await apiFetch();
     }
 
