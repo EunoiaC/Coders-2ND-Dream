@@ -60,7 +60,8 @@ const matchpoolPage = document.getElementById("matchpool");
 
 let pages = [loginPage, registerPage, profilePage, matchpoolPage];
 let viewingSelf = false;
-let currentProfileData = null
+let currentProfileData = null;
+let currentUserData = null;
 
 // calculate aura
 function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities) {
@@ -136,6 +137,7 @@ async function showPage(page, data = null) {
             const docRef = doc(db, "users", auth.currentUser.uid);
             const docSnap = await getDoc(docRef);
             data = docSnap.data();
+            currentUserData = data;
         }
 
         currentProfileData = data;
@@ -207,7 +209,6 @@ function currentPage() {
 
 const authListener = async (user) => {
     if (user) {
-
         const dname = document.getElementById("configDisplayName");
         const email = document.getElementById("configEmail");
 
@@ -223,11 +224,12 @@ const authListener = async (user) => {
 
         if (docSnap.exists()) { // registered user
             viewingSelf = true;
+            currentUserData = docSnap.data();
             if (currentPage() === null) { // show page immediately
-                showPage(profilePage, docSnap.data());
+                showPage(profilePage, currentUserData);
             } else { // at login
                 setTimeout(() => {
-                    showPage(profilePage, docSnap.data());
+                    showPage(profilePage, currentUserData);
                 }, 2000);
             }
         } else { // unregistered user
@@ -748,9 +750,9 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             window.alert("Failed to register user");
             throw new Error('Failed to register user');
         } else {
-            data = await response.json();
+            currentUserData = await response.json();
             viewingSelf = true;
-            showPage(profilePage, data);
+            showPage(profilePage, currentUserData);
         }
     });
 }
@@ -803,7 +805,6 @@ async function loadUsers() {
 }
 
 function viewMatchpoolProfile(idx) {
-    let prevData = currentProfileData;
     currentProfileData = currentProfileData.matchpool[idx];
     viewingSelf = false;
     showPage(profilePage, currentProfileData);
@@ -814,11 +815,41 @@ function viewMatchpoolProfile(idx) {
     match.classList.remove("d-none");
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
 
+    match.onclick = async (event) => {
+        // check if the currentUser already sent an outgoing request
+        let uid = currentProfileData.uid;
+        for (let i = 0; i < currentUserData.outgoingRequests.length; i++) {
+            if (currentProfileData.outgoingRequests[i].uid === uid) {
+                return; // don't let the function continue since they already tried matching with this user
+            }
+        }
+
+        // send a match req
+        const token = await getBearerToken();
+
+        const response = await fetch('/api/request_match', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                matchpoolIdx: idx,
+            })
+        });
+
+        if (response.ok) {
+            currentUserData.outgoingRequests.push(uid);
+        }
+
+        let result = await response.json();
+    }
+
     leave.onclick = (event) => {
         leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
         match.classList.add("d-none");
         logout.classList.remove("d-none");
-        currentProfileData = prevData;
+        currentProfileData = currentUserData;
         viewingSelf = true;
         showPage(matchpoolPage);
 
