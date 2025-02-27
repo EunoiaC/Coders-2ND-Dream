@@ -817,10 +817,18 @@ function viewMatchpoolProfile(idx) {
 
     match.onclick = async (event) => {
         // check if the currentUser already sent an outgoing request
+        const profileAlertContainer = document.getElementById("profile-alerts");
         let uid = currentProfileData.uid;
         for (let i = 0; i < currentUserData.outgoingRequests.length; i++) {
-            if (currentProfileData.outgoingRequests[i].uid === uid) {
-                return; // don't let the function continue since they already tried matching with this user
+            if (currentUserData.outgoingRequests[i].uid === uid) { // the logged in user already tried matching with this user
+                // show an error
+                profileAlertContainer.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    You have already tried pulling this user.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                `
+                return;
             }
         }
 
@@ -840,6 +848,20 @@ function viewMatchpoolProfile(idx) {
 
         if (response.ok) {
             currentUserData.outgoingRequests.push(uid);
+            // show success
+            profileAlertContainer.innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Pull request successfully sent!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            `
+        } else {
+            profileAlertContainer.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                You have already tried pulling this user.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            `
         }
 
         let result = await response.json();

@@ -297,58 +297,64 @@ Requires a value of type `Date`
         </div>
     </div>
 
-    <div class="row p-5 w-100">
-        <!-- Left column (1/4) -->
-        <div class="col-12 col-sm-3">
-            <div class="profile-left-container">
-                <div class="profile-name-image mb-2 w-100">
-                    <img class="img-fluid rounded-top" id="profile-pfp">
-                    <h1 id="profile-name" class="rounded-bottom">FIRST LAST</h1>
-                </div>
-                <hr>
-                <div class="badge m-0 p-3 w-100" id="profile-edit-bounds">
-                    <div class="w-100 m-0 mb-2 pb-2">
-                        <span class="m-1" id="profile-age"></span>
-                        <span id="profile-aura"></span>
-                    </div>
-                    <span class="badge rank-jobless w-100" id="profile-rank">Jobless</span>
-                    <div class="d-flex gap-2 flex-wrap profile-badges-container mt-1">
-                        <span class="badge" id="profile-self"></span>
-                        <span class="badge" id="profile-looking-for"></span>
-                    </div>
-                </div>
-                <hr>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary" id="profile-leave">
-                        <i class="fa-solid fa-arrow-left"></i> Match
-                    </button>
-                    <button class="btn btn-warning d-none" id="profile-match">
-                        <i class="fa-solid fa-code-pull-request"></i> Pull
-                    </button>
-                    <button class="btn btn-danger" id="profile-logout">
-                        <i class="bi bi-box-arrow-right"></i> Logout
-                    </button>
-                </div>
-            </div>
+    <div class="col">
+        <div id="profile-alerts">
+
         </div>
 
-        <!-- Middle column (2/4) -->
-        <div class="col-12 col-sm-6">
-            <div class="profile-right-container" id="profile-readme">
-                <div class="p-2 bg-black text-light d-flex align-items-center rounded-top">
-                    <i id="profile-edit-readme" class="fas fa-pencil-alt me-2 d-none text-light"></i> README.md
-                </div>
-                <div class="p-3 text-white" id="profile-readme-text">
+        <div class="row p-5 w-100">
+            <!-- Left column (1/4) -->
+            <div class="col-12 col-sm-3">
+                <div class="profile-left-container">
+                    <div class="profile-name-image mb-2 w-100">
+                        <img class="img-fluid rounded-top" id="profile-pfp">
+                        <h1 id="profile-name" class="rounded-bottom">FIRST LAST</h1>
+                    </div>
+                    <hr>
+                    <div class="badge m-0 p-3 w-100" id="profile-edit-bounds">
+                        <div class="w-100 m-0 mb-2 pb-2">
+                            <span class="m-1" id="profile-age"></span>
+                            <span id="profile-aura"></span>
+                        </div>
+                        <span class="badge rank-jobless w-100" id="profile-rank">Jobless</span>
+                        <div class="d-flex gap-2 flex-wrap profile-badges-container mt-1">
+                            <span class="badge" id="profile-self"></span>
+                            <span class="badge" id="profile-looking-for"></span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" id="profile-leave">
+                            <i class="fa-solid fa-arrow-left"></i> Match
+                        </button>
+                        <button class="btn btn-warning d-none" id="profile-match">
+                            <i class="fa-solid fa-code-pull-request"></i> Pull
+                        </button>
+                        <button class="btn btn-danger" id="profile-logout">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Right column (1/4) -->
-        <div class="col-12 col-sm-3 profile-languages">
-            <h1 id="profile-self-lang" class="text-center"></h1>
-            <hr>
-            <div id="profile-languages" class="text-center">
+            <!-- Middle column (2/4) -->
+            <div class="col-12 col-sm-6">
+                <div class="profile-right-container" id="profile-readme">
+                    <div class="p-2 bg-black text-light d-flex align-items-center rounded-top">
+                        <i id="profile-edit-readme" class="fas fa-pencil-alt me-2 d-none text-light"></i> README.md
+                    </div>
+                    <div class="p-3 text-white" id="profile-readme-text">
+                    </div>
+                </div>
+            </div>
 
+            <!-- Right column (1/4) -->
+            <div class="col-12 col-sm-3 profile-languages">
+                <h1 id="profile-self-lang" class="text-center"></h1>
+                <hr>
+                <div id="profile-languages" class="text-center">
+
+                </div>
             </div>
         </div>
     </div>
