@@ -23,11 +23,12 @@ export default async function request_match(req, res) {
         return res.status(401).json({ error: "Unauthorized" });
     }
 
-    let { matchpoolIdx } = req.body;
-    if (!matchpoolIdx) {
+    if (!req.body.hasOwnProperty("matchpoolIdx")) {
         console.error("Missing required fields");
         return res.status(401).json({ error: "Missing matchpoolId" });
     }
+
+    let { matchpoolIdx } = req.body;
 
     const idToken = authHeader.split("Bearer ")[1];
 
