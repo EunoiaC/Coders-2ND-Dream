@@ -989,6 +989,8 @@ async function showMatchPool() {
             text.innerText = msg;
         } catch(error) {}
     }
+
+    // load the mail
 }
 
 function loadProfilePage() {

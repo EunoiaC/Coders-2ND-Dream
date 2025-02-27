@@ -69,6 +69,8 @@ async function loadFree(userData, doc) {
             let data = doc.data();
             data.uid = doc.id;
             delete data.matchpool; // dont return the matchpool, sensitive info
+            delete data.lastFetch; // dont return their lastFetch either
+            delete data.matchSeed; // dont need their matchseed
             users.set(doc.id, data);
         }
 
