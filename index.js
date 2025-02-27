@@ -836,11 +836,11 @@ function viewMatchpoolProfile(idx) {
         // send a match req
         let oldInnerHtml = match.innerHTML; // show a spinner
         match.innerHTML = `
-        <div class="spinner-border" role="status">
+        <div class="spinner-border spinner-border-sm" role="status">
           <span class="sr-only">Loading...</span>
         </div>
         `;
-        
+
         const token = await getBearerToken();
 
         const response = await fetch('/api/request_match', {
