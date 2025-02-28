@@ -455,7 +455,10 @@ $terminal-error: $secondary;
     display: block; /* Makes each badge take full width */
     width: 100%;
   }
+}
 
+// when to remove br
+@media (max-width: 1460px) {
   br {
     display: none;
   }
@@ -468,11 +471,6 @@ $terminal-error: $secondary;
 
   .profile-languages {
     margin-top: 20px;
-  }
-
-
-  br {
-    display: none;
   }
 }
 
