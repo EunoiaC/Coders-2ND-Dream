@@ -455,6 +455,10 @@ $terminal-error: $secondary;
     display: block; /* Makes each badge take full width */
     width: 100%;
   }
+
+  br {
+    display: none;
+  }
 }
 
 @media (max-width: 575px) { // phones
@@ -466,6 +470,10 @@ $terminal-error: $secondary;
     margin-top: 20px;
   }
 
+
+  br {
+    display: none;
+  }
 }
 
 /* Hover Effect */

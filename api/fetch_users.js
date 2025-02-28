@@ -53,8 +53,9 @@ async function loadFree(userData, doc) {
         const lookingFor = userData.get("lookingFor");
         const { min, max } = ranges[lookingFor];
 
-        let users = new Map(); // use a map because if a second query is made, overlapping users will be accounted for
+        let users = new Map(); // list of uids, in map format to prevent duplicates
 
+        // TODO: instead of for loop, just use one query?
         // get 5 random documents by finding each one closest to the match seed
         for (let i = 0; i < requiredAmnt; i++) {
             // generate a random number between min and max

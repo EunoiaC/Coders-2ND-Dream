@@ -12264,6 +12264,9 @@ textarea.form-control-lg {
     display: block; /* Makes each badge take full width */
     width: 100%;
   }
+  br {
+    display: none;
+  }
 }
 @media (max-width: 575px) {
   #profile-readme {
@@ -12271,6 +12274,9 @@ textarea.form-control-lg {
   }
   .profile-languages {
     margin-top: 20px;
+  }
+  br {
+    display: none;
   }
 }
 /* Hover Effect */
