@@ -994,11 +994,40 @@ async function showMatchPool() {
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
     }
 
-    // load the incoming requests, with labels indicating new requests
-    const notifContainer = document.getElementById("matchpool-notifications");
-    notifContainer.innerHTML = "";
-    for (let i = currentUserData.incomingRequests.length - 1; i >= 0; i--) {
-        // create a small box for each incoming request
+    const btn = document.getElementById("matchpool-notif-btn");
+
+    btn.onclick = async (e) => {
+        // load the incoming requests, with labels indicating new requests
+        const notifContainer = document.getElementById("matchpool-notifications");
+        if (notifContainer.innerHTML === "") {
+            let limit = 5; // only load 5 most recent
+            users = currentUserData.incomingRequests.slice(-limit);
+            for (let i = users.length - 1; i >= 0; i--) {
+                // create a small box for each incoming request, only load the 5 most recent
+                let docRef = doc(db, "users", users[i]);
+                let user = (await getDoc(docRef)).data();
+                let pfpLink = user.pfpLink;
+                if (user.pfpVersion) {
+                    pfpLink += "?v=" + user.pfpVersion;
+                }
+
+                let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
+                let ageDifMs = Date.now() - bday.getTime();
+                let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
+
+                notifContainer.innerHTML += `
+                <div class="badge w-100 card bg-dark text-white p-2 mb-2">
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="d-flex align-items-center">
+                            <img src="${pfpLink}" class="img-fluid rounded me-2" style="width: 50px; height: 50px" alt="Profile">
+                            <h6 class="mb-0">${user.displayName} (${ageNum})</h6>
+                        </div>
+                        <button class="btn btn-sm btn-warning">View</button>
+                    </div>
+                </div>
+                `
+            }
+        }
     }
 }
 
