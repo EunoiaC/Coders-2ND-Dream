@@ -999,6 +999,7 @@ async function showMatchPool() {
     btn.onclick = async (e) => {
         // load the incoming requests, with labels indicating new requests
         const notifContainer = document.getElementById("matchpool-notifications");
+
         if (notifContainer.innerHTML === "") {
             let limit = 5; // only load 5 most recent
             users = currentUserData.incomingRequests.slice(-limit);
@@ -1022,10 +1023,15 @@ async function showMatchPool() {
                             <img src="${pfpLink}" class="img-fluid rounded me-2" style="width: 50px; height: 50px" alt="Profile">
                             <h6 class="mb-0">${user.displayName} (${ageNum})</h6>
                         </div>
-                        <button class="btn btn-sm btn-warning">View</button>
+                        <div class="d-flex gap-2 align-items-center">
+                            <button class="btn btn-sm btn-primary">View</button>
+                            <button class="btn btn-sm btn-secondary"><i class="bi bi-x"></i></button>
+                        </div>
                     </div>
                 </div>
                 `
+
+                // TODO: store rejected users in localstorage with key "rejected-{loggedIn.UID}"
             }
         }
     }
