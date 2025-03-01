@@ -1025,7 +1025,7 @@ async function showMatchPool() {
                         </div>
                         <div class="d-flex gap-2 align-items-center">
                             <button class="btn btn-sm btn-primary">View</button>
-                            <button class="btn btn-sm btn-secondary"><i class="bi bi-x"></i></button>
+                            <button class="btn btn-sm btn-secondary"><i class="bi bi-x text-black"></i></button>
                         </div>
                     </div>
                 </div>
