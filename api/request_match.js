@@ -111,7 +111,7 @@ export default async function request_match(req, res) {
             }
         }
 
-        return res.status(200).json(); // todo: update aura in the clientside
+        return res.status(200).json({}); // todo: update aura in the clientside
     } catch (error) {
         console.error("Error verifying token:", error);
         return res.status(401).json({ error: "Invalid token" });
