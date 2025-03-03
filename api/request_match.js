@@ -17,7 +17,7 @@ function calculateMessageLimit(membership) {
         case 1:
             return 20; // Tier 1
         default:
-            return -1; // Remaining tiers are unlimited
+            return null; // Remaining tiers are unlimited
     }
 }
 
@@ -69,7 +69,20 @@ export default async function request_match(req, res) {
         }
         await selfDocRef.update(updatedSelfStats);
 
-        // check if incoming matches already has the other user, then create a chatroom
+        // update the other user's incoming match stats
+        let desiredMatchDocRef = db.collection("users").doc(desiredMatchUID);
+        let desiredMatchData = await desiredMatchDocRef.get();
+
+        let desiredIncomingReqs = desiredMatchData.get("incomingRequests");
+        desiredIncomingReqs.push(uid);
+
+        let updatedDesiredStats = {
+            incomingRequests: desiredIncomingReqs
+        }
+
+        await desiredMatchDocRef.update(updatedDesiredStats);
+
+        // check if the current user's incoming matches already has the other user, then create a chatroom
         let incomingRequests = selfData.get("incomingRequests");
         for (let i = 0; i < incomingRequests.length; i++) {
             if (incomingRequests[i] === desiredMatchUID) {
@@ -81,10 +94,6 @@ export default async function request_match(req, res) {
                 } else {
                     chatId = desiredMatchUID + "-" + uid;
                 }
-
-                // get the other user's data to know their messaging limits
-                let desiredMatchDocRef = db.collection("users").doc(desiredMatchUID);
-                let desiredMatchData = await desiredMatchDocRef.get();
 
                 let chatDocRef = db.collection("chats").doc(chatId);
                 let data = {
@@ -102,21 +111,7 @@ export default async function request_match(req, res) {
             }
         }
 
-        // at this point in the code, it's just a regular match request
-        // get the desired user, and update their incoming requests
-        let desiredMatchDocRef = db.collection("users").doc(desiredMatchUID);
-        let desiredMatchData = await desiredMatchDocRef.get();
-
-        let desiredIncomingReqs = desiredMatchData.get("incomingRequests");
-        desiredIncomingReqs.push(uid);
-
-        let updatedDesiredStats = {
-            incomingRequests: desiredIncomingReqs
-        }
-
-        await desiredMatchDocRef.update(updatedDesiredStats);
-
-        return res.status(200).json(); // to update aura in the clientside
+        return res.status(200).json(); // todo: update aura in the clientside
     } catch (error) {
         console.error("Error verifying token:", error);
         return res.status(401).json({ error: "Invalid token" });
