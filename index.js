@@ -25,6 +25,8 @@ import {deleteField} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-fi
 //      - Answers will be how many messages the other user sent
 //      - Views will be how many time each user opened the chat
 
+// TODO: when a membership is upgraded, all chats need to have updated message limits
+
 // TODO:
 //  Add an incoming pull requests list with the UID of pending matches that can be rejected or accepted
 //  - Users will have an "incomingRequests" and "outgoingRequests" field
@@ -860,6 +862,17 @@ function viewMatchpoolProfile(idx, data) {
         // TODO: add special alert on chatroom creation
 
         if (response.ok) {
+            let result = await response.json();
+            if (result.chatroom) {
+                profileAlertContainer.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Chat repo created from mutual pull requests!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                `;
+                return;
+            }
+
             currentUserData.outgoingRequests.push(uid);
             // show success
             profileAlertContainer.innerHTML = `
@@ -867,7 +880,7 @@ function viewMatchpoolProfile(idx, data) {
                 Pull request successfully sent!
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            `
+            `;
         } else {
             profileAlertContainer.innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">

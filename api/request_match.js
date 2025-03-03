@@ -10,6 +10,17 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
+function calculateMessageLimit(membership) {
+    switch (membership) {
+        case 0:
+            return 5; // Free tier: only 5 message features per chat (message features include regular messages, programming games, icebreakers, etc)
+        case 1:
+            return 20; // Tier 1
+        default:
+            return -1; // Remaining tiers are unlimited
+    }
+}
+
 export default async function request_match(req, res) {
     if (req.method !== 'POST') {
         console.error("Method not allowed");
@@ -71,7 +82,21 @@ export default async function request_match(req, res) {
                     chatId = desiredMatchUID + "-" + uid;
                 }
 
-                // TODO: create a chat document
+                // get the other user's data to know their messaging limits
+                let desiredMatchDocRef = db.collection("users").doc(desiredMatchUID);
+                let desiredMatchData = await desiredMatchDocRef.get();
+
+                let chatDocRef = db.collection("chats").doc(chatId);
+                let data = {
+                    messages: [],
+                    users: [uid, desiredMatchUID],
+                    messageLimits: {
+                        [uid]: calculateMessageLimit(selfData.get("membership")),
+                        [desiredMatchUID]: calculateMessageLimit(desiredMatchData.get("membership"))
+                    }
+                }
+
+                await chatDocRef.set(data);
 
                 return res.status(200).json({ chatroom: chatId });
             }
