@@ -819,10 +819,11 @@ function viewMatchpoolProfile(idx, data) {
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
 
     match.onclick = async (event) => {
-        console.log("attempting to match with " + currentProfileData.uid)
+        let uid = currentUserData.matchpool[idx];
+        console.log("attempting to match with " + uid);
+        console.log("current outgoing requests: " + currentUserData.outgoingRequests);
         // check if the currentUser already sent an outgoing request
         const profileAlertContainer = document.getElementById("profile-alerts");
-        let uid = currentProfileData.matchpool[idx];
         for (let i = 0; i < currentUserData.outgoingRequests.length; i++) {
             if (currentUserData.outgoingRequests[i] === uid) { // the logged in user already tried matching with this user
                 // show an error
