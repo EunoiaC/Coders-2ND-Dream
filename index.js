@@ -863,6 +863,8 @@ function viewMatchpoolProfile(idx, data) {
         // TODO: add special alert on chatroom creation
 
         if (response.ok) {
+            currentUserData.outgoingRequests.push(uid);
+
             let result = await response.json();
             if (result.chatroom) {
                 profileAlertContainer.innerHTML = `
@@ -874,7 +876,6 @@ function viewMatchpoolProfile(idx, data) {
                 return;
             }
 
-            currentUserData.outgoingRequests.push(uid);
             // show success
             profileAlertContainer.innerHTML = `
             <div class="alert alert-success alert-dismissible fade show" role="alert">
