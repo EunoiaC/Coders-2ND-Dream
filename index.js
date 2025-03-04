@@ -1211,8 +1211,6 @@ function loadProfilePage() {
         }
     }
 
-    displayName.contentEditable = true;
-
     displayName.onblur = async (event) => {
         if (displayName.innerText !== "" && displayName.innerText !== currentUserData.displayName) {
             const docRef = doc(db, "users", auth.currentUser.uid);
