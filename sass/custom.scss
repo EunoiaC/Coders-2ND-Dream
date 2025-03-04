@@ -410,7 +410,17 @@ $terminal-error: $secondary;
   border-radius: 4px;
 }
 
-.badge {
+.notif-btn{
+  position: relative;
+}
+.notif-btn span{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: block;
+}
+
+.badge:not(#notif-badge) {
   font-size: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   background-color: $dark;
@@ -440,7 +450,7 @@ $terminal-error: $secondary;
 }
 
 @media (max-width: 1460px) {
-  .badge { // prevent overflow
+  .badge:not(#notif-badge) { // prevent overflow
     display: block; /* Makes each badge take full width */
     width: 100%;
   }
@@ -475,7 +485,7 @@ $terminal-error: $secondary;
 }
 
 /* Hover Effect */
-.badge:hover  {
+.badge:hover:not(#notif-badge)  {
   transform: translateY(-3px); /* Slightly raises the badge */
   filter: brightness(1.2); /* Slightly increases brightness */
   cursor: pointer;

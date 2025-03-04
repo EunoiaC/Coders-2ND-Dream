@@ -157,8 +157,10 @@ Requires a value of type `Date`
         <button class="btn btn-link text-white" id="matchpool-chats" aria-label="chats">
             <i class="bi bi-chat" style="font-size: 2rem;"></i>
         </button>
-        <button class="btn btn-link text-white" id="matchpool-notif-btn" aria-label="notifications" data-bs-toggle="offcanvas" data-bs-target="#notificationContainer" aria-controls="notificationContainer">
+        <button class="btn btn-link notif-btn text-white" id="matchpool-notif-btn" aria-label="notifications" data-bs-toggle="offcanvas" data-bs-target="#notificationContainer" aria-controls="notificationContainer">
             <i class="bi bi-envelope" style="font-size: 2rem;"></i>
+            <span id="notif-badge" class="position-absolute badge top-0 rounded-pill bg-danger d-none">
+            </span>
         </button>
     </nav>
     <div class="row mt-3" id="matchpool-container">

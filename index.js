@@ -869,20 +869,19 @@ function viewMatchpoolProfile(idx, data) {
             if (result.chatroom) {
                 profileAlertContainer.innerHTML = `
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    Chat repo created from mutual pull requests!
+                    Chat thread created from mutual pull requests!
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 `;
-                return;
+            } else {
+                // show success
+                profileAlertContainer.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Pull request successfully sent!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                `;
             }
-
-            // show success
-            profileAlertContainer.innerHTML = `
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                Pull request successfully sent!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            `;
         } else {
             profileAlertContainer.innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -1010,6 +1009,13 @@ async function showMatchPool() {
     }
 
     const btn = document.getElementById("matchpool-notif-btn");
+
+    // TODO: subtract already viewed users from the notification count
+    if (currentUserData.incomingRequests.length) {
+        const notifBadge = document.getElementById("notif-badge");
+        notifBadge.classList.remove("d-none");
+        notifBadge.innerText = currentUserData.incomingRequests.length;
+    }
 
     btn.onclick = async (e) => {
         // load the incoming requests, with labels indicating new requests
