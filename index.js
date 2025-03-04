@@ -1191,6 +1191,7 @@ function loadProfilePage() {
                         const docRef = doc(db, "users", auth.currentUser.uid);
                         await updateDoc(docRef, {
                             pfpLink: responseData.url,
+                            pfpVersion: currentUserData.pfpVersion
                         }).then(() => {
                             console.log('Document was updated successfully.');
                         });
