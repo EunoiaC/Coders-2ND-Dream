@@ -868,7 +868,7 @@ function viewMatchpoolProfile(idx, data) {
             let result = await response.json();
             if (result.chatroom) {
                 profileAlertContainer.innerHTML = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert alert-success alert-dismissible fade show" id="match-alert" role="alert">
                     Chat thread created from mutual pull requests!
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -876,7 +876,7 @@ function viewMatchpoolProfile(idx, data) {
             } else {
                 // show success
                 profileAlertContainer.innerHTML = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert alert-success alert-dismissible fade show" id="match-alert" role="alert">
                     Pull request successfully sent!
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -884,7 +884,7 @@ function viewMatchpoolProfile(idx, data) {
             }
         } else {
             profileAlertContainer.innerHTML = `
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" id="match-alert" role="alert">
                 Error with server.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -895,6 +895,11 @@ function viewMatchpoolProfile(idx, data) {
     }
 
     leave.onclick = (event) => {
+        // hide the match alert
+        let alert = document.getElementById("match-alert");
+        if (alert) { // only if it was created
+            alert.remove();
+        }
         leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
         match.classList.add("d-none");
         logout.classList.remove("d-none");
