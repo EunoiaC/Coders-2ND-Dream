@@ -31,15 +31,15 @@ export default async function request_match(req, res) {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         console.error('Unauthorized');
-        return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    if (!req.body.hasOwnProperty("matchpoolIdx")) {
-        console.error("Missing required fields");
-        return res.status(401).json({ error: "Missing matchpoolId" });
+        return res.status(401).json({error: "Unauthorized"});
     }
 
     let { desiredMatchUID } = req.body;
+
+    if (!desiredMatchUID) {
+        console.error("Missing required fields");
+        return res.status(401).json({ error: "Missing desiredMatchUID" });
+    }
 
     const idToken = authHeader.split("Bearer ")[1];
 
