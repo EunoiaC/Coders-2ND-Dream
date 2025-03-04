@@ -268,7 +268,7 @@ function begin() {
 function loadMatchpool() {
     const backBtn = document.getElementById("matchpool-back");
     backBtn.onclick = (event) => {
-        showPage(profilePage, currentProfileData);
+        showPage(profilePage, currentUserData);
     }
 }
 
@@ -773,15 +773,15 @@ async function loadUsers() {
         return await res.json();
     }
 
-    let lastFetch = currentProfileData.lastFetch;
+    let lastFetch = currentUserData.lastFetch;
     if (!lastFetch) { // user has never fetched; make an api call
         // for the current app session, just set last fetch to right now
-        currentProfileData.lastFetch = Timestamp.now();
+        currentUserData.lastFetch = Timestamp.now();
         return await apiFetch();
     }
 
     let limit = 0;
-    switch (currentProfileData.membership) {
+    switch (currentUserData.membership) {
         case 0:
             limit = 604800; // 1 week in seconds
             break;
@@ -801,7 +801,7 @@ async function loadUsers() {
 
     // return previous data
     return {
-        users: currentProfileData.matchpool,
+        users: currentUserData.matchpool,
         // 86400 seconds in a day
         message: `You have ${Math.floor((limit - seconds)/86400)} days left until you receive a new match pool.`
     }
@@ -977,8 +977,8 @@ async function showMatchPool() {
     }
 
     let res = await loadUsers();
-    // set currentProfileData's matchpool to users, since we are either updating or creating a matchpool
-    currentProfileData.matchpool = res.users;
+    // set currentUserData's matchpool to users, since we are either updating or creating a matchpool
+    currentUserData.matchpool = res.users;
 
     console.log(res);
 
@@ -1178,18 +1178,20 @@ function loadProfilePage() {
 
                         let responseData = await response.json();
 
-                        if (!currentProfileData.pfpVersion) {
-                            currentProfileData.pfpVersion = 1;
+                        if (!currentUserData.pfpVersion) {
+                            currentUserData.pfpVersion = 1;
                         } else {
-                            currentProfileData.pfpVersion++;
+                            currentUserData.pfpVersion++;
                         }
 
-                        currentProfileData.pfpLink = responseData.url + "?v=" + currentProfileData.pfpVersion;
-                        pfp.src = currentProfileData.pfpLink;
+                        currentUserData.pfpLink = responseData.url + "?v=" + currentUserData.pfpVersion;
+                        pfp.src = currentUserData.pfpLink;
 
                         // update the current user's pfp in firebase
                         const docRef = doc(db, "users", auth.currentUser.uid);
-                        await updateDoc(docRef, currentProfileData).then(() => {
+                        await updateDoc(docRef, {
+                            pfpLink: currentUserData.pfpLink,
+                        }).then(() => {
                             console.log('Document was updated successfully.');
                         });
 
@@ -1211,10 +1213,12 @@ function loadProfilePage() {
     displayName.contentEditable = true;
 
     displayName.onblur = async (event) => {
-        if (displayName.innerText !== "" && displayName.innerText !== currentProfileData.displayName) {
+        if (displayName.innerText !== "" && displayName.innerText !== currentUserData.displayName) {
             const docRef = doc(db, "users", auth.currentUser.uid);
-            currentProfileData.displayName = displayName.innerText;
-            await updateDoc(docRef, currentProfileData).then(() => {
+            currentUserData.displayName = displayName.innerText;
+            await updateDoc(docRef, {
+                displayName: currentUserData.displayName
+            }).then(() => {
                 console.log('Document was updated successfully.');
             });
         }
@@ -1236,10 +1240,14 @@ function loadProfilePage() {
             let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
             let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
-            currentProfileData.selfCapabilities = stack.indexOf(selfCapabilities.innerText);
-            currentProfileData.lookingFor = stack.indexOf(seeking.innerText);
-            currentProfileData.matchSeed = random;
-            await updateDoc(docRef, currentProfileData).then(() => {
+            currentUserData.selfCapabilities = stack.indexOf(selfCapabilities.innerText);
+            currentUserData.lookingFor = stack.indexOf(seeking.innerText);
+            currentUserData.matchSeed = random;
+            await updateDoc(docRef, {
+                selfCapabilities: currentUserData.selfCapabilities,
+                lookingFor: currentUserData.lookingFor,
+                matchSeed: currentUserData.matchSeed
+            }).then(() => {
                 console.log('Document was updated successfully.');
             });
         }
@@ -1250,20 +1258,20 @@ function loadProfilePage() {
             // begin edit
             profileEditReadme.classList.remove("fa-pencil-alt");
             profileEditReadme.classList.add("fa-check");
-            profileReadmeText.innerText = currentProfileData.readme;
+            profileReadmeText.innerText = currentUserData.readme;
             profileReadmeText.contentEditable = true;
         } else {
             // end edit
             profileEditReadme.classList.add("fa-pencil-alt");
             profileEditReadme.classList.remove("fa-check");
 
-            currentProfileData.readme = profileReadmeText.innerText;
+            currentUserData.readme = profileReadmeText.innerText;
 
             const docRef = doc(db, "users", auth.currentUser.uid);
-            await updateDoc(docRef, {readme: currentProfileData.readme})
+            await updateDoc(docRef, {readme: currentUserData.readme})
                 .then(() => {
                     console.log('Document written with ID: ', docRef.id);
-                    profileReadmeText.innerHTML = marked(currentProfileData.readme, {gfm: true});
+                    profileReadmeText.innerHTML = marked(currentUserData.readme, {gfm: true});
                     profileReadmeText.contentEditable = false;
                 })
                 .catch((error) => {
