@@ -39,7 +39,7 @@ export default async function request_match(req, res) {
         return res.status(401).json({ error: "Missing matchpoolId" });
     }
 
-    let { matchpoolIdx } = req.body;
+    let { desiredMatchUID } = req.body;
 
     const idToken = authHeader.split("Bearer ")[1];
 
@@ -51,7 +51,16 @@ export default async function request_match(req, res) {
         const selfDocRef = db.collection("users").doc(uid);
         let selfData = await selfDocRef.get();
 
-        let desiredMatchUID = selfData.get("matchpool")[matchpoolIdx];
+        // first validate that desiredMatchUID is in the matchpool OR incoming requests
+        let matchpool = selfData.get("matchpool");
+        let incomingReqs = selfData.get("incomingRequests");
+        let membership = selfData.get("membership");
+        // the uid must be in either the matchpool or incoming requests (unless membership is 3), otherwise return an error
+        if (membership !== 3) {
+            if (!matchpool.includes(desiredMatchUID) && !incomingReqs.includes(desiredMatchUID)) {
+                return res.status(500).json({ error: "Not in matchpool" });
+            }
+        }
 
         // give an error if the user already requested a match for this user
         let outgoingRequests = selfData.get("outgoingRequests");

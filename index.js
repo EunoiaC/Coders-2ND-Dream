@@ -854,7 +854,7 @@ function viewMatchpoolProfile(idx, data) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                matchpoolIdx: idx,
+                desiredMatchUID: uid,
             })
         });
 
