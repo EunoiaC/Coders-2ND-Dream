@@ -57,7 +57,7 @@ export default async function request_match(req, res) {
         let membership = selfData.get("membership");
         // the uid must be in either the matchpool or incoming requests (unless membership is 3), otherwise return an error
         if (membership !== 3) {
-            if (!matchpool.includes(desiredMatchUID) && !incomingReqs.includes(desiredMatchUID)) {
+            if (!(matchpool.includes(desiredMatchUID) || incomingReqs.includes(desiredMatchUID))) {
                 return res.status(500).json({ error: "Not in matchpool" });
             }
         }
