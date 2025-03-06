@@ -59,8 +59,9 @@ const loginPage = document.getElementById("login");
 const registerPage = document.getElementById("register");
 const profilePage = document.getElementById("profile");
 const matchpoolPage = document.getElementById("matchpool");
+const chatsPage = document.getElementById("chats");
 
-let pages = [loginPage, registerPage, profilePage, matchpoolPage];
+let pages = [loginPage, registerPage, profilePage, matchpoolPage, chatsPage];
 let viewingSelf = false;
 let currentProfileData = null;
 let currentUserData = null;
@@ -262,13 +263,25 @@ function begin() {
     loadProfilePage();
     initSubscribe();
     loadMatchpool();
+    loadChatPage();
     onAuthStateChanged(auth, authListener);
+}
+
+function loadChatPage() {
+    const backBtn = document.getElementById("chats-back");
+    backBtn.onclick = (event) => {
+        showPage(matchpoolPage);
+    }
 }
 
 function loadMatchpool() {
     const backBtn = document.getElementById("matchpool-back");
     backBtn.onclick = (event) => {
         showPage(profilePage, currentUserData);
+    }
+    const showChats = document.getElementById("matchpool-chats");
+    showChats.onclick = (event) => {
+        showPage(chatsPage, currentUserData);
     }
 }
 

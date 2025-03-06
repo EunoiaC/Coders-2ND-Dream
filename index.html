@@ -134,7 +134,7 @@ Requires a value of type `Date`
     </div>
 </div>
 
-<div id="matchpool" class="d-none container">
+<div id="matchpool" class="d-none">
     <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationContainer" aria-labelledby="notificationContainerLabel">
         <div class="offcanvas-header bg-primary">
             <h5 id="notificationContainerLabel">Incoming Requests</h5>
@@ -149,7 +149,7 @@ Requires a value of type `Date`
         </button>
     </div>
     <!-- Navbar with back arrow and title and notif center -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-2">
         <button class="btn btn-link text-white" id="matchpool-back" aria-label="Back">
             <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
         </button>
@@ -163,8 +163,33 @@ Requires a value of type `Date`
             </span>
         </button>
     </nav>
-    <div class="row mt-3" id="matchpool-container">
+    <div class="container">
+        <div class="row mt-3" id="matchpool-container">
 
+        </div>
+    </div>
+</div>
+
+<div id="chats" class="d-none">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-2">
+        <button class="btn btn-link text-white" id="chats-back" aria-label="Back">
+            <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+        </button>
+        <h1 class="navbar-brand mx-auto" style="font-size: 2rem;">
+            <img src="chatoverflow.png" width="40" height="40" class="d-inline-block align-top" alt="">
+            ChatOverflow
+        </h1>
+    </nav>
+    <div class="container">
+        <div class="row p-4">
+            <div class="col-12 col-sm-2">
+            </div>
+            <div class="col-12 col-sm-7 bg-dark border-start border-end h-100" id="chat-container">
+                sad
+            </div>
+            <div class="col-12 col-sm-3">
+            </div>
+        </div>
     </div>
 </div>
 

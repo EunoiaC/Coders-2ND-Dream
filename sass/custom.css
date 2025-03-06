@@ -12333,7 +12333,11 @@ textarea.form-control-lg {
   font-family: "Quicksand", sans-serif;
 }
 
-#matchpool h1, #matchpool .h1 {
+#chat-container {
+  border-color: white;
+}
+
+#matchpool, #chats {
   font-family: "Quicksand", serif;
 }
 
