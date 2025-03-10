@@ -1026,6 +1026,17 @@ async function showMatchPool() {
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
     }
 
+    // add the cards animation
+    const cardContainer = document.getElementById("matchpool-container");
+    const cards = cardContainer.querySelectorAll(".profile");
+
+    // Trigger the animation
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add("animate");
+        }, index * 100); // Delay each card by 100ms
+    });
+
     const btn = document.getElementById("matchpool-notif-btn");
 
     // TODO: subtract already viewed users from the notification count
