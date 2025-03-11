@@ -88,7 +88,7 @@ async function loadFree(userData, doc) {
     }
 }
 
-async function loadAPCSAGod(userData, doc, page, filter, lastDoc) {
+async function loadAPCSAGod(userData, doc, filter, lastDoc) {
     // just fetch most recent 20 active users (by last fetch) in pagination 20 -> 20 * (page + 1)
     const query = db.collection("yourCollection")
         .orderBy("lastFetch", "desc")
@@ -124,8 +124,6 @@ export default async function fetch_users(req, res) {
 
     const idToken = authHeader.split("Bearer ")[1];
 
-
-
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
         const uid = decodedToken.uid;
@@ -152,12 +150,8 @@ export default async function fetch_users(req, res) {
             case 2:
                 break;
             case 3:
-                const { page, filter, lastDoc } = req.body;
-                if (!page || !filter) {
-                    console.error("Expected a page argument");
-                    return res.status(400).json({ error: "Missing required fields" });
-                }
-                const result = await loadAPCSAGod(userData, docRef, page, filter, lastDoc); // Await properly
+                const { filter, lastDoc } = req.body;
+                const result = await loadAPCSAGod(userData, docRef, filter, lastDoc); // Await properly
                 return res.status(200).json(result);
             default:
                 return res.status(400).json({error: "Invalid membership type"});

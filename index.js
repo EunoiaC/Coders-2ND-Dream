@@ -831,7 +831,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
     });
 }
 
-async function loadUsers() {
+async function loadUsers(filter, lastDoc) {
     const token = await getBearerToken();
 
     async function apiFetch() {
@@ -840,7 +840,11 @@ async function loadUsers() {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            body: JSON.stringify({
+                filter: filter,
+                lastDoc: lastDoc,
+            })
         });
         return await res.json();
     }
@@ -1058,7 +1062,13 @@ async function showMatchPool() {
         `;
     }
 
-    let res = await loadUsers();
+    let res = null;
+    if (currentUserData.membership === 3) {
+        res = await loadUsers(null, null);
+    }
+    else {
+        res = await loadUsers(null, null);
+    }
     // set currentUserData's matchpool to users, since we are either updating or creating a matchpool
     if (res.users) {
         currentUserData.matchpool = res.users;
