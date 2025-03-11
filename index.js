@@ -1064,6 +1064,9 @@ async function showMatchPool() {
 
     let res = null;
     if (currentUserData.membership === 3) {
+        if (loadedMatches) {
+            return; // don't refresh the animation
+        }
         res = await loadUsers(null, null);
     }
     else {
