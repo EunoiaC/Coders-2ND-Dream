@@ -90,7 +90,7 @@ async function loadFree(userData, doc) {
 
 async function loadAPCSAGod(userData, doc, filter, lastDoc) {
     // just fetch most recent 20 active users (by last fetch) in pagination 20 -> 20 * (page + 1)
-    const query = db.collection("yourCollection")
+    const query = db.collection("users")
         .orderBy("lastFetch", "desc")
         .limit(20);
     if (lastDoc) {

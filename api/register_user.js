@@ -55,7 +55,7 @@ export default async function register_user(req, res) {
             outgoingRequests: [],
             incomingRequests: [],
             matchpool: [],
-            lastFetch: null
+            lastFetch: admin.firestore.Timestamp.fromMillis(0),
         }
 
         const docRef = db.collection("users").doc(uid);
