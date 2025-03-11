@@ -1090,10 +1090,18 @@ async function showMatchPool() {
         }
     }
 
+    let len = 0;
+    // in case a plan doesn't return users:
+    if (res.loadedData) {
+        len = res.loadedData.length;
+    } else {
+        len = users.length;
+    }
+
     loadedMatches = true;
     matchpoolContainer.innerHTML = ""; // empty so we can append
     let stack = ["Front End", "Back End", "Full Stack"];
-    for (let i = 0; i < users.length; i++) {
+    for (let i = 0; i < len; i++) {
         let user = null;
         if (res.loadedData) {
             user = res.loadedData[i];
