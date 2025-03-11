@@ -47,6 +47,7 @@ export default async function register_user(req, res) {
             pfpLink: pfpLink,
             readme: "# Edit your README!",
             pfpVersion: 0,
+            customButton: null,
             // selfRequestedMatches: 0,
             // otherRequestedMatches: 0,
             // successfulMatches: 0,

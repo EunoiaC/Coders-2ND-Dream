@@ -815,8 +815,8 @@ async function loadUsers() {
     // return previous data
     return {
         users: currentUserData.matchpool,
-        // 86400 seconds in a day
-        message: `You have ${Math.floor((limit - seconds)/86400)} days left until you receive a new match pool.`
+        // 3600 seconds in an hour
+        message: `You have ${Math.floor((limit - seconds)/3600)} hours left until you receive a new match pool.`
     }
 }
 
@@ -966,6 +966,11 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
     let viewProfile = document.getElementById(`view-matchpool-${idx}`);
     viewProfile.onclick = (e) => {
         viewMatchpoolProfile(idx, data);
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth' // Adds a smooth scrolling animation
+        });
     }
 }
 
