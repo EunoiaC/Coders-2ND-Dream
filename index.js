@@ -991,7 +991,6 @@ function viewMatchpoolProfile(idx, data, scrollX, scrollY) {
         window.scrollTo({
             top: scrollY,
             left: scrollX,
-            behavior: 'smooth' // Adds a smooth scrolling animation
         });
 
         // set the leave onclick listener
