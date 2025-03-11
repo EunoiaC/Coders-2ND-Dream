@@ -148,13 +148,72 @@ async function showPage(page, data = null) {
         const profileReadmeText = document.getElementById("profile-readme-text");
 
         const selfCapabilities = document.getElementById("profile-self");
-        const langTitle = document.getElementById("profile-self-lang");
+        const customButton = document.getElementById("profile-custom-button");
         const lookingFor = document.getElementById("profile-looking-for");
+
+        customButton.innerHTML = "";
+        customButton.onclick = () => {}
+        // reset custom button class list
+        for (let i of customButton.classList) {
+            if (!["btn", "w-100", "text-white"].includes(i)) {
+                customButton.classList.remove(i);
+            }
+        }
+        if (!data.customButton) {
+            customButton.innerHTML = "No Custom Button";
+            customButton.classList.add("btn-gray");
+        } else {
+            // split the custom button at the "\" character
+            let split = data.customButton.split("\\");
+            let type = split[0];
+            let link = split[1];
+            if (type === "github") {
+                customButton.innerHTML = `
+                <span class="me-auto">
+                    <i class="bi bi-github"></i>
+                </span>
+                Github
+                `;
+                customButton.classList.add("btn-black");
+            } else if (type === "twitter") {
+                customButton.innerHTML = `
+                <span class="me-auto">
+                    <i class="bi bi-twitter-x"></i>
+                </span>
+                Twitter
+                `;
+                customButton.classList.add("btn-black");
+            } else if (type === "linkedin") {
+                customButton.innerHTML = `
+                <span class="me-auto">
+                    <i class="bi bi-linkedin"></i>
+                </span>
+                LinkedIn
+                `;
+                customButton.classList.add("btn-linkedin");
+            } else if (type === "reddit") {
+                customButton.innerHTML = `
+                <span class="me-auto">
+                    <i class="bi bi-reddit"></i>
+                </span>
+                Reddit
+                `;
+                customButton.classList.add("btn-reddit");
+            }
+
+            customButton.onclick = () => {
+                if (!viewingSelf) {
+                    window.open(link, "_blank");
+                } else {
+                    // edit the custom button
+
+                }
+            }
+        }
 
         let stack = ["Front End", "Back End", "Full Stack"]
 
         selfCapabilities.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
-        langTitle.innerHTML = "<i class=\"fa-solid fa-code\"></i> " + stack[data.selfCapabilities];
         lookingFor.innerHTML = "<i class=\"fa-solid fa-magnifying-glass\"></i> " + stack[data.lookingFor];
 
         profileReadmeText.innerHTML = marked(data.readme, {gfm: true});
@@ -1018,8 +1077,14 @@ async function showMatchPool() {
     matchpoolContainer.innerHTML = ""; // empty so we can append
     let stack = ["Front End", "Back End", "Full Stack"];
     for (let i = 0; i < users.length; i++) {
-        let docRef = doc(db, "users", users[i]);
-        let user = (await getDoc(docRef)).data();
+        let user = null;
+        if (res.loadedData) {
+            user = res.loadedData[i];
+        } else {
+            let docRef = doc(db, "users", users[i]);
+            user = (await getDoc(docRef)).data();
+        }
+
         let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
         let ageDifMs = Date.now() - bday.getTime();
         let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
@@ -1028,6 +1093,7 @@ async function showMatchPool() {
         let auraNum = calculateAura(user.outgoingRequests.length, user.incomingRequests.length, successfulMatches.length, user.selfCapabilities);
 
         // TODO: update rank
+        // TODO: if subscription allows, generate insights for each users and add an additional "insight" field for each user
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
     }
 

@@ -26,7 +26,7 @@
 <body class="bg-dark">
 
 <!-- login page -->
-<div id="login" class="d-none">
+<div id="login" class="d-none page">
     <div class="d-flex align-items-center justify-content-center">
         <pre style="font-size: 1.5vw">
  _____           _           _          _____           _     ______
@@ -54,8 +54,7 @@
     </div>
 </div>
 
-
-<div id="register" class="d-none">
+<div id="register" class="d-none page">
     <div class="row">
         <div class="editor">
             <div class="line-number-container">
@@ -134,7 +133,7 @@ Requires a value of type `Date`
     </div>
 </div>
 
-<div id="matchpool" class="d-none">
+<div id="matchpool" class="d-none page">
     <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationContainer" aria-labelledby="notificationContainerLabel">
         <div class="offcanvas-header bg-primary">
             <h5 id="notificationContainerLabel">Incoming Requests</h5>
@@ -170,7 +169,7 @@ Requires a value of type `Date`
     </div>
 </div>
 
-<div id="chats" class="d-none">
+<div id="chats" class="d-none page">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-2">
         <button class="btn btn-link text-white" id="chats-back" aria-label="Back">
             <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
@@ -193,7 +192,7 @@ Requires a value of type `Date`
     </div>
 </div>
 
-<div id="profile" class="d-none">
+<div id="profile" class="d-none page">
     <!--pfp modal -->
     <div class="modal fade" id="pfpModal" tabindex="-1" aria-labelledby="pfpModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -385,8 +384,9 @@ Requires a value of type `Date`
 
             <!-- Right column (1/4) -->
             <div class="col-12 col-sm-3 profile-languages">
-                <!-- TODO: make this a customizable button (yt link, gh link, linkedin link, paypal link, personal web, etc)-->
-                <h1 id="profile-self-lang" class="text-center"></h1>
+                <button id="profile-custom-button" class="btn w-100 text-white">
+                    Profile
+                </button>
                 <hr>
                 <div id="profile-languages" class="text-center">
 

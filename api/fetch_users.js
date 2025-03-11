@@ -67,26 +67,41 @@ async function loadFree(userData, doc) {
                 .limit(1)
                 .get();
             let doc = matchesQuery.docs[0];
-            // let data = doc.data();
-            // data.uid = doc.id;
-            // delete data.matchpool; // dont return the matchpool, sensitive info
-            // delete data.lastFetch; // dont return their lastFetch either
-            // delete data.matchSeed; // dont need their matchseed
-            users.set(doc.id, doc.id);
+            let data = doc.data();
+            data.uid = doc.id;
+            delete data.matchpool; // dont return the matchpool, sensitive info
+            delete data.lastFetch; // dont return their lastFetch either
+            delete data.matchSeed; // dont need their matchseed
+            users.set(doc.id, data);
         }
 
         // update the timestamp in the doc and currently matching users
         await doc.update({
             lastFetch: admin.firestore.FieldValue.serverTimestamp(),
-            matchpool: Array.from(users.values()),
+            matchpool: Array.from(users.keys()),
         });
 
-        return {users: Array.from(users.values())};
+        return {users: Array.from(users.keys()), loadedData: Array.from(users.values())};
     } else {
         // return a message that it's been too close since the last attempt, and return cached match pool
         let secondsLeft = 604800 - seconds;
         return {users: userData.get("matchpool"), message: `You have ${Math.floor(secondsLeft/3600)} hours left until you receive a new match pool.`};
     }
+}
+
+async function loadAPCSAGod(userData, doc, page, filter, lastDoc) {
+    // just fetch most recent 20 active users (by last fetch) in pagination 20 -> 20 * (page + 1)
+    const query = db.collection("yourCollection")
+        .orderBy("lastFetch", "desc")
+        .limit(20);
+    if (lastDoc) {
+        query.startAfter(lastDoc);
+    }
+    const snapshot = await query.get();
+    const users = snapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data()
+    }));
 }
 
 // Main API handler
@@ -102,6 +117,8 @@ export default async function fetch_users(req, res) {
     }
 
     const idToken = authHeader.split("Bearer ")[1];
+
+
 
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
@@ -126,6 +143,16 @@ export default async function fetch_users(req, res) {
         switch (userData.get("membership")) {
             case 1:
                 break;
+            case 2:
+                break;
+            case 3:
+                const { page, filter, lastDoc } = req.body;
+                if (!page || !filter) {
+                    console.error("Expected a page argument");
+                    return res.status(400).json({ error: "Missing required fields" });
+                }
+                const result = await loadAPCSAGod(userData, docRef, page, filter, lastDoc); // Await properly
+                return res.status(200).json(result);
             default:
                 return res.status(400).json({error: "Invalid membership type"});
         }
