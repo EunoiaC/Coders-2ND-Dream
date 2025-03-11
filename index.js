@@ -891,7 +891,12 @@ function viewMatchpoolProfile(idx, data) {
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
 
     match.onclick = async (event) => {
-        let uid = currentUserData.matchpool[idx];
+        let uid = null;
+        if (currentUserData.membership === 3) {
+            uid = data.uid;
+        } else {
+            uid = currentUserData.matchpool[idx];
+        }
         console.log("attempting to match with " + uid);
         console.log("current outgoing requests: " + currentUserData.outgoingRequests);
         // check if the currentUser already sent an outgoing request
@@ -1055,7 +1060,9 @@ async function showMatchPool() {
 
     let res = await loadUsers();
     // set currentUserData's matchpool to users, since we are either updating or creating a matchpool
-    currentUserData.matchpool = res.users;
+    if (res.users) {
+        currentUserData.matchpool = res.users;
+    }
 
     console.log(res);
 

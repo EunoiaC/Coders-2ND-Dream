@@ -68,7 +68,6 @@ async function loadFree(userData, doc) {
                 .get();
             let doc = matchesQuery.docs[0];
             let data = doc.data();
-            data.uid = doc.id;
             delete data.matchpool; // dont return the matchpool, sensitive info
             delete data.lastFetch; // dont return their lastFetch either
             delete data.matchSeed; // dont need their matchseed
@@ -99,9 +98,16 @@ async function loadAPCSAGod(userData, doc, page, filter, lastDoc) {
     }
     const snapshot = await query.get();
     const users = snapshot.docs.map(doc => ({
-        uid: doc.id,
+        uid: doc.id, // uids are not stored in the matchpool, so we must always retrieve them
         ...doc.data()
     }));
+
+    const lastDocument = snapshot.docs[snapshot.docs.length - 1];
+
+    return {
+        loadedData: users,
+        lastDoc: lastDocument ? lastDocument.data() : null,
+    }
 }
 
 // Main API handler
