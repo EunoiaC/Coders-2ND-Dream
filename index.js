@@ -883,7 +883,7 @@ async function loadUsers(filter, lastDoc) {
     }
 }
 
-function viewMatchpoolProfile(idx, data) {
+function viewMatchpoolProfile(idx, data, scrollX, scrollY) {
     currentProfileData = data;
     viewingSelf = false;
     showPage(profilePage, currentProfileData);
@@ -987,6 +987,12 @@ function viewMatchpoolProfile(idx, data) {
         currentProfileData = currentUserData;
         viewingSelf = true;
         showPage(matchpoolPage);
+        // scroll to the previous position
+        window.scrollTo({
+            top: scrollY,
+            left: scrollX,
+            behavior: 'smooth' // Adds a smooth scrolling animation
+        });
 
         // set the leave onclick listener
         leave.onclick = (event) => {
@@ -1033,7 +1039,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
 
     let viewProfile = document.getElementById(`view-matchpool-${idx}`);
     viewProfile.onclick = (e) => {
-        viewMatchpoolProfile(idx, data);
+        viewMatchpoolProfile(idx, data, window.scrollX, window.scrollY);
         window.scrollTo({
             top: 0,
             left: 0,
