@@ -38,7 +38,6 @@ async function uploadToGemini(path, mimeType) {
 
 const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
-
     systemInstruction: "The input will be profile pictures from a dating app. Write insights about the user inferred from the profile picture, which can be people or things the user enjoys. It should be a list of insights formatted as \"insight name: additional comments\". Output as much as you can. The top-level insights array has an object with field \"insights\" for each inputted picture. Do not use a subject for your comments, don't refer to a user as \"the user,\" just say \"likes photos\" instead of \"the user likes photos\". The comment should be a sentence or two long. Do not describe the photo, but describe what it may mean about the user.",
 });
 
@@ -72,7 +71,7 @@ const generationConfig = {
 async function fileToGenerativePart(url) {
     const response = await fetch(url);
     // Get MIME type from response headers
-    const mimeType = response.headers.get('content-type') || 'image/jpeg';
+    const mimeType = 'image/webp'; // pfps are image/webp
     const imageResp = await response.arrayBuffer();
 
     return {
@@ -115,7 +114,8 @@ export default async function fetch_insight(req, res) {
         }
 
         // You may need to update the file paths
-        const images = await Promise.all(imageUrls.map(fileToGenerativePart));
+        let images = await Promise.all(imageUrls.map(fileToGenerativePart));
+        images = images.slice(0, 5); // Limit to 5 images
 
         const chatSession = model.startChat({
             generationConfig,
