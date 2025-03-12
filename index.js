@@ -1239,13 +1239,14 @@ async function showMatchPool() {
             for (let i = 0; i < insights.length; i++) {
                 let insightList = insights[i].insights;
                 const insightContainer = document.getElementById("pfp-insight-" + i);
-                insightContainer.innerHTML = "";
+                insightContainer.innerHTML = '<div class="col">';
                 for (let j = 0; j < insightList.length; j++) {
                     let insight = insightList[j];
                     insightContainer.innerHTML += `
                     <p>${insight}</p>
                     `
                 }
+                insightContainer.innerHTML += `</div>`;
             }
         }
     }
