@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import {doc, getDoc, getFirestore, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import {deleteField} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import {d} from "@vercel/blob/dist/create-folder-CqdraABG.js";
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
@@ -1010,10 +1011,30 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
         imgSrc += "?v=" + version;
     }
 
+    let pfpOverlay = `
+    <p class="pfp-hover-text">You must have a subscription of <span class="text-success">Salesforce Worker</span> or <span class="text-warning">AP CSA GOD</span> to view profile insights.</p>
+    `;
+    if (currentUserData.membership > 1) {
+        // pfp overlay is a loader with the text Loading Insights...
+        pfpOverlay = `
+        <div class="col">
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading insights...</span>
+            </div>
+            <span>Loading insights...</span>
+        </div>
+        `;
+    }
+
     profileDiv.innerHTML = `
         <div class="profile-left-container">
             <div class="profile-name-image mb-2 w-100">
-                <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}" alt="Profile Picture">
+                <div class="pfp-hover-container ">
+                    <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}" alt="Profile Picture">
+                    <div class="pfp-overlay" id="pfp-insight-${idx}">
+                        ${pfpOverlay}
+                    </div>
+                </div>
                 <h1 class="rounded-bottom text-center profile-name">${name}</h1>
             </div>
             <hr>
@@ -1135,27 +1156,6 @@ async function showMatchPool() {
         imageUrls.push(user.pfpLink);
     }
 
-    if (currentUserData.membership > 1) {
-        // TODO: fetch insights and add them to a profile element named "profile-insight-idx"
-        const token = await getBearerToken();
-
-        const response = await fetch('/api/fetch_insight', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                imageUrls: imageUrls,
-            })
-        });
-
-        if (response.ok) {
-            let result = await response.json();
-            console.log(result.insights);
-        }
-    }
-
     // add the cards animation
     const cardContainer = document.getElementById("matchpool-container");
     const cards = cardContainer.querySelectorAll(".profile");
@@ -1212,6 +1212,42 @@ async function showMatchPool() {
                 `
 
                 // TODO: store rejected users in localstorage with key "rejected-{loggedIn.UID}"
+            }
+        }
+    }
+
+    // load insights in the background
+    if (currentUserData.membership > 1) {
+        // TODO: fetch insights and add them to a profile element named "pfp-insight-idx"
+        const token = await getBearerToken();
+
+        const response = await fetch('/api/fetch_insight', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                imageUrls: imageUrls,
+            })
+        });
+
+        if (response.ok) {
+            let result = await response.json();
+            let insights = result.insights;
+            // insights is a json but as a string, convert it to a json
+            insights = JSON.parse(insights);
+            insights = insights.insights;
+            for (let i = 0; i < insights.length; i++) {
+                let insightList = insights[i].insights;
+                const insightContainer = document.getElementById("pfp-insight-" + i);
+                insightContainer.innerHTML = "";
+                for (let j = 0; j < insightList.length; j++) {
+                    let insight = insightList[j];
+                    insightContainer.innerHTML += `
+                    <p>${insight}</p>
+                    `
+                }
             }
         }
     }
