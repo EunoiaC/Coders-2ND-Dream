@@ -1152,7 +1152,7 @@ async function showMatchPool() {
 
         if (response.ok) {
             let result = await response.json();
-            console.log(result);
+            console.log(result.insights);
         }
     }
 

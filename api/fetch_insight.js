@@ -122,7 +122,9 @@ export default async function fetch_insight(req, res) {
         });
 
         const result = await chatSession.sendMessage(images);
-        return res.status(200).json(result);
+        return res.status(200).json({
+            insights: result.response.text()
+        });
     } catch (error) {
         console.log("Error verifying token:", error);
         return res.status(401).json({error: "Invalid token"});
