@@ -1241,8 +1241,10 @@ async function showMatchPool() {
                 const insightContainer = document.getElementById("pfp-insight-" + i);
                 let innerHTML = '<p class="pfp-hover-text text-start">';
                 for (let j = 0; j < insightList.length; j++) {
+                    // split the insight at the ':'
                     let insight = insightList[j];
-                    innerHTML += insight + "<br>";
+                    insight = insight.split(":");
+                    innerHTML += '<span class="fw-bold">' + insight[0] + ":</span> " + insight[1] + "<br>";
                 }
                 innerHTML += `</p>`;
                 insightContainer.innerHTML = innerHTML;
