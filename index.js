@@ -9,8 +9,6 @@ import {
     updateProfile
 } from "firebase/auth";
 import {doc, getDoc, getFirestore, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
-import {deleteField} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-import {d} from "@vercel/blob/dist/create-folder-CqdraABG.js";
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
@@ -1236,7 +1234,7 @@ async function showMatchPool() {
             let result = await response.json();
             let insights = result.insights;
             // insights is a json but as a string, convert it to a json
-            // insights = JSON.parse(insights);
+            insights = JSON.parse(insights);
             insights = insights.insights;
             for (let i = 0; i < insights.length; i++) {
                 let insightList = insights[i].insights;
