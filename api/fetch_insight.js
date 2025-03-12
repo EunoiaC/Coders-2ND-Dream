@@ -115,7 +115,6 @@ export default async function fetch_insight(req, res) {
 
         // You may need to update the file paths
         let images = await Promise.all(imageUrls.map(fileToGenerativePart));
-        images = images.slice(0, 5); // Limit to 5 images
 
         const chatSession = model.startChat({
             generationConfig,
