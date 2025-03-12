@@ -5,6 +5,8 @@ $light: #ABB2BF; // Muted light gray, similar to default text in dark-mode edito
 $dark: #282C34; // Dark gray, matching common dark-mode backgrounds like VS Code or terminals
 $warning: #D19A66; // Amber-orange, inspired by warnings or deprecation highlights
 
+$apcsagod: #ff9e00;
+
 $terminal-bg: #1E1E1E;
 $terminal-text: #00ff00;
 $terminal-header: #323232;
@@ -48,9 +50,17 @@ $terminal-error: $secondary;
         height: 12px;
         border-radius: 50%;
 
-        &.close { background: #FF5F56; }
-        &.minimize { background: #FFBD2E; }
-        &.maximize { background: #27C93F; }
+        &.close {
+          background: #FF5F56;
+        }
+
+        &.minimize {
+          background: #FFBD2E;
+        }
+
+        &.maximize {
+          background: #27C93F;
+        }
       }
     }
 
@@ -142,8 +152,12 @@ $terminal-error: $secondary;
 
 /* Cursor Animation */
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* General Editor Styling */
@@ -178,12 +192,14 @@ $terminal-error: $secondary;
 .run-bar {
   width: 100%;
   background-color: #474747;
+
   h4 {
     color: greenyellow;
     background-color: #474747;
     padding: 5px;
     width: 40px;
   }
+
   h4:hover {
     background-color: #646464;
   }
@@ -410,10 +426,11 @@ $terminal-error: $secondary;
   border-radius: 4px;
 }
 
-.notif-btn{
+.notif-btn {
   position: relative;
 }
-.notif-btn span{
+
+.notif-btn span {
   position: absolute;
   top: 0px;
   right: 0px;
@@ -485,7 +502,7 @@ $terminal-error: $secondary;
 }
 
 /* Hover Effect */
-.badge:hover:not(#notif-badge)  {
+.badge:hover:not(#notif-badge) {
   transform: translateY(-3px); /* Slightly raises the badge */
   filter: brightness(1.2); /* Slightly increases brightness */
   cursor: pointer;
@@ -518,6 +535,21 @@ $terminal-error: $secondary;
 .rank-jobless {
   color: red; // color changes based on rank
   border: red solid 1px;
+}
+
+.rank-intern {
+  color: $primary;
+  border: $primary solid 1px;
+}
+
+.rank-salesforceworker {
+  color: $success;
+  border: $success solid 1px;
+}
+
+.rank-apcsagod {
+  color: $apcsagod;
+  border: $apcsagod solid 1px;
 }
 
 .profile-lang-img {
@@ -555,20 +587,20 @@ $terminal-error: $secondary;
 }
 
 .btn-gray {
-    --bs-btn-color: gray;
-    --bs-btn-border-color: gray;
-    --bs-btn-hover-color: #000;
-    --bs-btn-hover-bg: gray;
-    --bs-btn-hover-border-color: gray;
-    --bs-btn-focus-shadow-rgb: 86, 182, 194;
-    --bs-btn-active-color: #000;
-    --bs-btn-active-bg: gray;
-    --bs-btn-active-border-color: gray;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: gray;
-    --bs-btn-disabled-bg: transparent;
-    --bs-btn-disabled-border-color: gray;
-    --bs-gradient: none;
+  --bs-btn-color: gray;
+  --bs-btn-border-color: gray;
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: gray;
+  --bs-btn-hover-border-color: gray;
+  --bs-btn-focus-shadow-rgb: 86, 182, 194;
+  --bs-btn-active-color: #000;
+  --bs-btn-active-bg: gray;
+  --bs-btn-active-border-color: gray;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: gray;
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: gray;
+  --bs-gradient: none;
 }
 
 .btn-black {

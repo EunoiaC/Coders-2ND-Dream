@@ -12324,6 +12324,21 @@ textarea.form-control-lg {
   border: red solid 1px;
 }
 
+.rank-intern {
+  color: #56B6C2;
+  border: #56B6C2 solid 1px;
+}
+
+.rank-salesforceworker {
+  color: #198754;
+  border: #198754 solid 1px;
+}
+
+.rank-apcsagod {
+  color: #ff9e00;
+  border: #ff9e00 solid 1px;
+}
+
 .profile-lang-img {
   max-width: 150px;
   width: 100%;

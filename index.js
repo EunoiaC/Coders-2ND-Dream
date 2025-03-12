@@ -66,24 +66,34 @@ let currentProfileData = null;
 let currentUserData = null;
 
 // calculate aura
-function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities) {
+function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities, plan) {
     if (selfRequestedMatches < 0 || otherRequestedMatches < 0 || successfulMatches < 0) {
         throw new Error("Match values cannot be negative");
     }
 
-    const requestRatio = otherRequestedMatches / (selfRequestedMatches + 1); // Avoid division by zero
-    const matchFactor = successfulMatches / (selfRequestedMatches + otherRequestedMatches + 1);
+    // Ensure plan is within range (0 to 3)
+    plan = Math.max(0, Math.min(3, plan));
 
-    let aura = Math.round(((requestRatio * 2 + matchFactor * 3) * 50) / 50) * 50; // Weighted scaling and rounding to nearest 50
+    // Exponential base aura scaling by plan
+    let baseAura = 500 * Math.pow(1.8, plan); // Higher plans start with much higher aura
 
-    if (selfCapabilities === 2) {
-        aura += 100;
-    } else {
-        aura += 50;
-    }
+    // Balanced request ratio (penalization only at high imbalance)
+    let requestRatio = (otherRequestedMatches + 1) / (selfRequestedMatches + 1); // Avoid division by zero
+    let requestBalance = 200 / (1 + Math.exp(-0.5 * (requestRatio - 3))); // No penalty for moderate imbalance
 
-    return Math.max(aura, 0); // Ensure non-negative aura values
+    // Match success influence
+    let matchFactor = successfulMatches / (selfRequestedMatches + otherRequestedMatches + 1);
+    let matchScore = matchFactor * 300;
+
+    // Capability Bonus (scaled instead of static)
+    let capabilityBonus = (selfCapabilities + 1) * 75;
+
+    // Final aura calculation
+    let aura = (baseAura + requestBalance + matchScore) + capabilityBonus;
+
+    return Math.max(Math.round(aura), 0); // Ensure aura is never negative
 }
+
 
 function formatNumberWithUnits(number) {
     if (number >= 1000) {
@@ -149,6 +159,16 @@ async function showPage(page, data = null) {
         const selfCapabilities = document.getElementById("profile-self");
         const customButton = document.getElementById("profile-custom-button");
         const lookingFor = document.getElementById("profile-looking-for");
+        const profileRank = document.getElementById("profile-rank");
+        profileRank.classList.remove("rank-jobless");
+        profileRank.classList.remove("rank-intern");
+        profileRank.classList.remove("rank-salesforceworker");
+        profileRank.classList.remove("rank-apcsagod");
+
+        const ranks = ["Jobless", "Intern", "Salesforce Worker", "AP CSA God"];
+        const rankClasses = ["rank-jobless", "rank-intern", "rank-salesforceworker", "rank-apcsagod"];
+        profileRank.innerText = ranks[data.membership];
+        profileRank.classList.add(rankClasses[data.membership]);
 
         customButton.innerHTML = "";
         customButton.onclick = () => {}
@@ -234,7 +254,7 @@ async function showPage(page, data = null) {
         let successfulMatches = calculateSuccessfulMatches(data.incomingRequests, data.outgoingRequests);
 
         // TODO: add subscription level to aura
-        let auraNum = calculateAura(data.outgoingRequests.length, data.incomingRequests.length, successfulMatches.length, data.selfCapabilities);
+        let auraNum = calculateAura(data.outgoingRequests.length, data.incomingRequests.length, successfulMatches.length, data.selfCapabilities, data.membership);
         aura.innerText = "Aura: " + formatNumberWithUnits(auraNum) + "🔥";
 
         let knownLangs = data.knownLangs;
@@ -1009,8 +1029,13 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
         imgSrc += "?v=" + version;
     }
 
+    const ranks = ["Jobless", "Intern", "Salesforce Worker", "AP CSA God"];
+    const rankClasses = ["rank-jobless", "rank-intern", "rank-salesforceworker", "rank-apcsagod"];
+    let rankText = ranks[rank];
+    let rankClass = rankClasses[rank];
+
     let pfpOverlay = `
-    <p class="pfp-hover-text">You must have a subscription of <span class="text-success">Salesforce Worker</span> or <span class="text-warning">AP CSA GOD</span> to view profile insights.</p>
+    <p class="pfp-hover-text">You must have a subscription of <span class="text-primary">Salesforce Worker</span> or <span class="text-warning">AP CSA God</span> to view profile insights.</p>
     `;
     if (currentUserData.membership > 1) {
         // pfp overlay is a loader with the text Loading Insights...
@@ -1041,7 +1066,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
                     <span class="m-1 profile-age">Age: ${age}</span>
                     <span class="profile-aura">Aura: ${formatNumberWithUnits(aura)}🔥</span>
                 </div>
-                <span class="badge rank-jobless w-100">${rank}</span>
+                <span class="badge ${rankClass} w-100">${rankText}</span>
                 <br>
                 <span class="badge mt-1 profile-self"><i class="fa-solid fa-code"></i> ${self}</span>
                 <span class="badge mt-1 profile-looking-for"><i class="fa-solid fa-magnifying-glass"></i> ${lookingFor}</span>
@@ -1145,11 +1170,11 @@ async function showMatchPool() {
         let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
 
         let successfulMatches = calculateSuccessfulMatches(user.incomingRequests, user.outgoingRequests);
-        let auraNum = calculateAura(user.outgoingRequests.length, user.incomingRequests.length, successfulMatches.length, user.selfCapabilities);
+        let auraNum = calculateAura(user.outgoingRequests.length, user.incomingRequests.length, successfulMatches.length, user.selfCapabilities, user.membership);
 
         // TODO: update rank
         // TODO: if subscription allows, generate insights for each users and add an additional "insight" field for each user
-        createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
+        createMatchpoolProfile(user.displayName, ageNum, auraNum, user.membership, stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
 
         imageUrls.push(user.pfpLink);
     }
