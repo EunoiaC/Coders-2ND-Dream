@@ -1029,7 +1029,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
             <div class="profile-name-image mb-2 w-100">
                 <div class="pfp-hover-container ">
                     <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}" alt="Profile Picture">
-                    <div class="pfp-overlay d-flex flex-column" id="pfp-insight-${idx}">
+                    <div class="pfp-overlay" id="pfp-insight-${idx}">
                         ${pfpOverlay}
                     </div>
                 </div>
@@ -1239,7 +1239,7 @@ async function showMatchPool() {
             for (let i = 0; i < insights.length; i++) {
                 let insightList = insights[i].insights;
                 const insightContainer = document.getElementById("pfp-insight-" + i);
-                insightContainer.innerHTML = '<div class="col">';
+                insightContainer.innerHTML = '<div class="d-flex flex-column">';
                 for (let j = 0; j < insightList.length; j++) {
                     let insight = insightList[j];
                     insightContainer.innerHTML += `
