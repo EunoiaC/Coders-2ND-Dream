@@ -1067,7 +1067,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
                     <span class="profile-aura">Aura: ${formatNumberWithUnits(aura)}🔥</span>
                 </div>
                 <span class="badge ${rankClass} w-100">${rankText}</span>
-                <br>
+                <br class="removable">
                 <span class="badge mt-1 profile-self"><i class="fa-solid fa-code"></i> ${self}</span>
                 <span class="badge mt-1 profile-looking-for"><i class="fa-solid fa-magnifying-glass"></i> ${lookingFor}</span>
             </div>

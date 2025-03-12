@@ -12277,7 +12277,7 @@ textarea.form-control-lg {
   }
 }
 @media (max-width: 1460px) {
-  br {
+  br.removable {
     display: none;
   }
 }

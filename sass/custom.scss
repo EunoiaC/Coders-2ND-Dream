@@ -486,7 +486,7 @@ $terminal-error: $secondary;
 
 // when to remove br
 @media (max-width: 1460px) {
-  br {
+  br.removable {
     display: none;
   }
 }
