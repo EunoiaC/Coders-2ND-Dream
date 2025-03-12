@@ -1107,6 +1107,8 @@ async function showMatchPool() {
         len = users.length;
     }
 
+    let imageUrls = [];
+
     loadedMatches = true;
     matchpoolContainer.innerHTML = ""; // empty so we can append
     let stack = ["Front End", "Back End", "Full Stack"];
@@ -1129,6 +1131,29 @@ async function showMatchPool() {
         // TODO: update rank
         // TODO: if subscription allows, generate insights for each users and add an additional "insight" field for each user
         createMatchpoolProfile(user.displayName, ageNum, auraNum, "Jobless", stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
+
+        imageUrls.push(user.pfpLink);
+    }
+
+    if (currentUserData.membership > 1) {
+        // TODO: fetch insights and add them to a profile element named "profile-insight-idx"
+        const token = await getBearerToken();
+
+        const response = await fetch('/api/fetch_insight', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                imageUrls: imageUrls,
+            })
+        });
+
+        if (response.ok) {
+            let result = await response.json();
+            console.log(result);
+        }
     }
 
     // add the cards animation

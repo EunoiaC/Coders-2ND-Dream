@@ -94,6 +94,11 @@ export default async function fetch_insight(req, res) {
         return res.status(401).json({error: "Unauthorized"});
     }
 
+    const { imageUrls } = req.body;
+    if (!imageUrls || imageUrls.length === 0) {
+        return res.status(400).json({ error: "No image URLs provided" });
+    }
+
     const idToken = authHeader.split("Bearer ")[1];
 
     try {
@@ -105,14 +110,11 @@ export default async function fetch_insight(req, res) {
 
         const membership = userData.get("membership");
 
-        if (membership === 0) {
+        if (membership < 1) {
             return res.status(401).json({error: "Invalid membership"});
         }
 
         // You may need to update the file paths
-        const imageUrls = [
-
-        ];
         const images = await Promise.all(imageUrls.map(fileToGenerativePart));
 
         const chatSession = model.startChat({
