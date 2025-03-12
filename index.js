@@ -1236,7 +1236,7 @@ async function showMatchPool() {
             let result = await response.json();
             let insights = result.insights;
             // insights is a json but as a string, convert it to a json
-            insights = JSON.parse(insights);
+            // insights = JSON.parse(insights);
             insights = insights.insights;
             for (let i = 0; i < insights.length; i++) {
                 let insightList = insights[i].insights;
