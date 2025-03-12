@@ -1243,7 +1243,7 @@ async function showMatchPool() {
                 for (let j = 0; j < insightList.length; j++) {
                     let insight = insightList[j];
                     insightContainer.innerHTML += `
-                    <p class="d-block w-100 m-2">${insight}</p>
+                    <p class="d-block w-100 m-2 text-start">${insight}</p>
                     `
                 }
                 insightContainer.innerHTML += `</div>`;
