@@ -1029,7 +1029,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
             <div class="profile-name-image mb-2 w-100">
                 <div class="pfp-hover-container ">
                     <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}" alt="Profile Picture">
-                    <div class="pfp-overlay" id="pfp-insight-${idx}">
+                    <div class="pfp-overlay d-flex flex-column" id="pfp-insight-${idx}">
                         ${pfpOverlay}
                     </div>
                 </div>
