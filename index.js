@@ -1239,7 +1239,7 @@ async function showMatchPool() {
             for (let i = 0; i < insights.length; i++) {
                 let insightList = insights[i].insights;
                 const insightContainer = document.getElementById("pfp-insight-" + i);
-                let innerHTML = '<p class="pfp-hover-text">';
+                let innerHTML = '<p class="pfp-hover-text text-start">';
                 for (let j = 0; j < insightList.length; j++) {
                     let insight = insightList[j];
                     innerHTML += insight + "<br>";
