@@ -1145,7 +1145,7 @@ async function renderNotifs(items) {
             let ageDifMs = Date.now() - bday.getTime();
             let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
 
-            notifContainer.innerHTML = `
+            notifContainer.innerHTML += `
                 <div class="badge w-100 card bg-dark text-white p-2 mb-2">
                     <div class="d-flex justify-content-between mt-1">
                         <div class="d-flex align-items-center">
@@ -1158,7 +1158,7 @@ async function renderNotifs(items) {
                         </div>
                     </div>
                 </div>
-                ` + notifContainer.innerHTML; // so the show more button is at the bottom
+                `;
         }
     }
 }
@@ -1302,15 +1302,17 @@ async function showMatchPool() {
 
     showMoreBtn.onclick = () => {
         // show more notifications
-        if (currentNotifIdx > currentUserData.incomingRequests.length) {
+        if (currentNotifIdx === currentUserData.incomingRequests.length) {
+            return;
+        }
+        let oldIdx = currentNotifIdx;
+        if (currentNotifIdx + 5 > currentUserData.incomingRequests.length) {
             currentNotifIdx = currentUserData.incomingRequests.length;
+        } else {
+            currentNotifIdx += 5;
         }
         // slice from -currentNotifIdx to -currentNotifIdx - 5
-        users = currentUserData.incomingRequests.slice(-currentNotifIdx, -currentNotifIdx - 5);
-        currentNotifIdx += 5;
-        if (currentNotifIdx > currentUserData.incomingRequests.length) {
-            currentNotifIdx = currentUserData.incomingRequests.length;
-        }
+        users = currentUserData.incomingRequests.slice(-oldIdx, -currentNotifIdx);
         // add these seen users to local storage
         let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
         // add the users to alreadySeen
