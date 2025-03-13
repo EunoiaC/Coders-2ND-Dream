@@ -1254,16 +1254,14 @@ async function showMatchPool() {
 
     const btn = document.getElementById("matchpool-notif-btn");
 
-    // TODO: subtract already viewed users from the notification count
-    if (currentUserData.incomingRequests.length) {
-        let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
-        const notifBadge = document.getElementById("notif-badge");
+    // subtract already viewed users from the notification count
+    let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
+    const notifBadge = document.getElementById("notif-badge");
+    // remove similar items from incoming requests and alreadySeen
+    let newUsers = currentUserData.incomingRequests.filter(x => !alreadySeen.includes(x));
+    if (newUsers.length > 0) {
         notifBadge.classList.remove("d-none");
-        // remove similar items from incoming requests and alreadySeen
-        let newUsers = currentUserData.incomingRequests.filter(x => !alreadySeen.includes(x));
-        if (newUsers.length > 0) {
-            notifBadge.innerText = newUsers.length;
-        }
+        notifBadge.innerText = newUsers.length;
     }
 
     btn.onclick = async (e) => {
