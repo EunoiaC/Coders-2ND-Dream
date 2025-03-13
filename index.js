@@ -1312,7 +1312,7 @@ async function showMatchPool() {
             currentNotifIdx += 5;
         }
         // slice from -currentNotifIdx to -currentNotifIdx - 5
-        users = currentUserData.incomingRequests.slice(-oldIdx, -currentNotifIdx);
+        users = currentUserData.incomingRequests.slice(-currentNotifIdx, -oldIdx);
         // add these seen users to local storage
         let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
         // add the users to alreadySeen
