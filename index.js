@@ -75,12 +75,14 @@ function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMa
     // Ensure plan is within range (0 to 3)
     plan = Math.max(0, Math.min(3, plan));
 
-    // Exponential base aura scaling by plan
-    let baseAura = 500 * Math.pow(1.8, plan); // Higher plans start with much higher aura
+    // Base aura values for each plan
+    const baseAuraValues = [100, 1000, 10000, 100000];
+    let baseAura = baseAuraValues[plan];
 
-    // Balanced request ratio (penalization only at high imbalance)
+    // Balanced request ratio (penalization less severe for higher plans)
     let requestRatio = (otherRequestedMatches + 1) / (selfRequestedMatches + 1); // Avoid division by zero
-    let requestBalance = 200 / (1 + Math.exp(-0.5 * (requestRatio - 3))); // No penalty for moderate imbalance
+    let imbalanceFactor = 0.3 - (plan * 0.05); // Higher plans have reduced penalty
+    let requestBalance = 200 / (1 + Math.exp(-imbalanceFactor * (requestRatio - 3))); // No penalty for moderate imbalance
 
     // Match success influence
     let matchFactor = successfulMatches / (selfRequestedMatches + otherRequestedMatches + 1);
@@ -94,6 +96,7 @@ function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMa
 
     return Math.max(Math.round(aura), 0); // Ensure aura is never negative
 }
+
 
 
 function formatNumberWithUnits(number) {
@@ -1257,6 +1260,7 @@ async function showMatchPool() {
     });
 
     const btn = document.getElementById("matchpool-notif-btn");
+    const showMoreBtn = document.getElementById("matchpool-notifications-show-more");
 
     // subtract already viewed users from the notification count
     let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
@@ -1294,6 +1298,33 @@ async function showMatchPool() {
             localStorage.setItem("seen-users-" + auth.currentUser.uid, JSON.stringify(alreadySeen));
             await renderNotifs(users);
         }
+    }
+
+    showMoreBtn.onclick = () => {
+        // show more notifications
+        if (currentNotifIdx > currentUserData.incomingRequests.length) {
+            currentNotifIdx = currentUserData.incomingRequests.length;
+        }
+        // slice from -currentNotifIdx to -currentNotifIdx - 5
+        users = currentUserData.incomingRequests.slice(-currentNotifIdx, -currentNotifIdx - 5);
+        currentNotifIdx += 5;
+        if (currentNotifIdx > currentUserData.incomingRequests.length) {
+            currentNotifIdx = currentUserData.incomingRequests.length;
+        }
+        // add these seen users to local storage
+        let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
+        // add the users to alreadySeen
+        if (!alreadySeen) {
+            alreadySeen = [];
+        }
+        for (let i = 0; i < users.length; i++) {
+            if (!alreadySeen.includes(users[i])) {
+                alreadySeen.push(users[i]);
+            }
+        }
+        localStorage.setItem("seen-users-" + auth.currentUser.uid, JSON.stringify(alreadySeen));
+        // render the new users
+        renderNotifs(users);
     }
 
     // load insights in the background
