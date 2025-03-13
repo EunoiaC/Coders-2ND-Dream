@@ -106,6 +106,10 @@ async function loadAPCSAGod(userData, doc, filter, lastDoc) {
 
     const lastDocument = snapshot.docs[snapshot.docs.length - 1];
 
+    await doc.update({
+        lastFetch: admin.firestore.FieldValue.serverTimestamp(),
+    }); // update to keep user active
+
     return {
         loadedData: users,
         lastDoc: lastDocument ? lastDocument.data() : null,
