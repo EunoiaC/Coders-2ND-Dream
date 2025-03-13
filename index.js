@@ -1256,9 +1256,14 @@ async function showMatchPool() {
 
     // TODO: subtract already viewed users from the notification count
     if (currentUserData.incomingRequests.length) {
+        let alreadySeen = JSON.parse(localStorage.getItem("seen-users"));
         const notifBadge = document.getElementById("notif-badge");
         notifBadge.classList.remove("d-none");
-        notifBadge.innerText = currentUserData.incomingRequests.length;
+        // remove similar items from incoming requests and alreadySeen
+        let newUsers = currentUserData.incomingRequests.filter(x => !alreadySeen.includes(x));
+        if (newUsers.length > 0) {
+            notifBadge.innerText = newUsers.length;
+        }
     }
 
     btn.onclick = async (e) => {
