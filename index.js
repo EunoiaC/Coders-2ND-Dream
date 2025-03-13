@@ -172,7 +172,6 @@ async function showPage(page, data = null) {
 
         function renderCustomButton(type) {
             customButton.innerHTML = "";
-            customButton.onclick = () => {}
             // reset custom button class list
             for (let i of customButton.classList) {
                 if (!["btn", "w-100", "text-white"].includes(i)) {
@@ -227,6 +226,7 @@ async function showPage(page, data = null) {
         let customLink = "";
         if (!data.customButton || data.customButton === "") {
             customButton.innerHTML = "No Custom Button";
+            customButton.onclick = () => {}
             customButton.classList.add("btn-gray");
         } else {
             // split the custom button at the "\" character
