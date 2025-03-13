@@ -57,22 +57,23 @@ async function loadFree(userData, doc) {
 
         // TODO: instead of for loop, just use one query?
         // get 5 random documents by finding each one closest to the match seed
-        for (let i = 0; i < requiredAmnt; i++) {
-            // generate a random number between min and max
-            let random = Math.floor(Math.random() * (max - min + 1) + min);
+        // generate a random number between min and max
+        let random = Math.floor(Math.random() * (max - min + 1) + min);
 
-            const matchesQuery = await db.collection("users")
-                .where("matchSeed", ">=", random)
-                .orderBy("matchSeed")
-                .limit(1)
-                .get();
-            let doc = matchesQuery.docs[0];
+        const matchesQuery = await db.collection("users")
+            .where("matchSeed", ">=", random)
+            .orderBy("matchSeed")
+            .limit(5)
+            .get();
+        for (let i = 0; i < matchesQuery.docs.length; i++) {
+            let doc = matchesQuery.docs[i];
             let data = doc.data();
             delete data.matchpool; // dont return the matchpool, sensitive info
             delete data.lastFetch; // dont return their lastFetch either
             delete data.matchSeed; // dont need their matchseed
             users.set(doc.id, data);
         }
+
 
         // update the timestamp in the doc and currently matching users
         await doc.update({
@@ -88,10 +89,11 @@ async function loadFree(userData, doc) {
     }
 }
 
-async function loadAPCSAGod(userData, doc, filter, lastDoc) {
+async function loadAPCSAGod(uid, userData, doc, filter, lastDoc) {
     // just fetch most recent 20 active users (by last fetch) in pagination 20 -> 20 * (page + 1)
     const query = db.collection("users")
         .orderBy("lastFetch", "desc")
+        .where(admin.firestore.FieldPath.documentId(), '!=', uid)
         .limit(20);
     if (lastDoc) {
         query.startAfter(lastDoc);
@@ -157,7 +159,7 @@ export default async function fetch_users(req, res) {
                 break;
             case 3:
                 const { filter, lastDoc } = req.body;
-                const result = await loadAPCSAGod(userData, docRef, filter, lastDoc); // Await properly
+                const result = await loadAPCSAGod(uid, userData, docRef, filter, lastDoc); // Await properly
                 return res.status(200).json(result);
             default:
                 return res.status(400).json({error: "Invalid membership type"});
