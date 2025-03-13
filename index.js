@@ -178,15 +178,9 @@ async function showPage(page, data = null) {
                 customButton.classList.remove(i);
             }
         }
-        if (!data.customButton) {
-            customButton.innerHTML = "No Custom Button";
-            customButton.classList.add("btn-gray");
-        } else {
-            // split the custom button at the "\" character
-            let split = data.customButton.split("\\");
-            let type = split[0];
-            let link = split[1];
-            if (type === "github") {
+
+        function renderCustomButton(type) {
+            if (type === "Github") {
                 customButton.innerHTML = `
                 <span class="me-auto">
                     <i class="bi bi-github"></i>
@@ -194,7 +188,7 @@ async function showPage(page, data = null) {
                 Github
                 `;
                 customButton.classList.add("btn-black");
-            } else if (type === "twitter") {
+            } else if (type === "Twitter") {
                 customButton.innerHTML = `
                 <span class="me-auto">
                     <i class="bi bi-twitter-x"></i>
@@ -202,7 +196,7 @@ async function showPage(page, data = null) {
                 Twitter
                 `;
                 customButton.classList.add("btn-black");
-            } else if (type === "linkedin") {
+            } else if (type === "LinkedIn") {
                 customButton.innerHTML = `
                 <span class="me-auto">
                     <i class="bi bi-linkedin"></i>
@@ -210,7 +204,7 @@ async function showPage(page, data = null) {
                 LinkedIn
                 `;
                 customButton.classList.add("btn-linkedin");
-            } else if (type === "reddit") {
+            } else if (type === "Reddit") {
                 customButton.innerHTML = `
                 <span class="me-auto">
                     <i class="bi bi-reddit"></i>
@@ -221,13 +215,47 @@ async function showPage(page, data = null) {
             }
 
             customButton.onclick = () => {
-                if (!viewingSelf) {
-                    window.open(link, "_blank");
+                if (!viewingSelf && customLink !== "") {
+                    window.open(customLink, "_blank");
                 } else {
                     // edit the custom button
-
+                    customButtonModal.show();
                 }
             }
+        }
+
+        let customLink = "";
+        if (!data.customButton || data.customButton === "") {
+            customButton.innerHTML = "No Custom Button";
+            customButton.classList.add("btn-gray");
+        } else {
+            // split the custom button at the "\" character
+            let split = data.customButton.split("\\");
+            let type = split[0];
+            customLink = split[1];
+            renderCustomButton(type, customLink);
+        }
+
+        const customButtonModal = new bootstrap.Modal(document.getElementById("customButtonModal"));
+
+        const customButtonForm = document.getElementById("socialLinkForm");
+        customButtonForm.onsubmit = (event) => {
+            event.preventDefault();
+             // get form data
+            console.log("customButtonForm submitted!");
+            const type = document.getElementById("platformSelect");
+            const link = document.getElementById("linkInput");
+
+            const docRef = doc(db, "users", auth.currentUser.uid);
+            // update the custom button in firestore
+            updateDoc(docRef, {
+                customButton: type.options[type.selectedIndex].text + "\\" + link.value
+            }).then(() => {
+                renderCustomButton(type.options[type.selectedIndex].text, link.value);
+                customButtonModal.hide();
+            }).catch((error) => {
+                console.error("Error updating custom button: ", error);
+            });
         }
 
         let stack = ["Front End", "Back End", "Full Stack"]

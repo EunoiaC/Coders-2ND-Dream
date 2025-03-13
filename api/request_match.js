@@ -14,8 +14,6 @@ function calculateMessageLimit(membership) {
     switch (membership) {
         case 0:
             return 5; // Free tier: only 5 message features per chat (message features include regular messages, programming games, icebreakers, etc)
-        case 1:
-            return 20; // Tier 1
         default:
             return null; // Remaining tiers are unlimited
     }
@@ -109,6 +107,7 @@ export default async function request_match(req, res) {
                     messages: [],
                     users: [uid, desiredMatchUID],
                     views: 0,
+                    mode: "business",
                     messageLimits: {
                         [uid]: calculateMessageLimit(selfData.get("membership")),
                         [desiredMatchUID]: calculateMessageLimit(desiredMatchData.get("membership"))
