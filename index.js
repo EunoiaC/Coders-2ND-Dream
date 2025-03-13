@@ -1153,9 +1153,8 @@ async function renderNotifs(items) {
                             <h6 class="mb-0">${user.displayName} (${ageNum})</h6>
                         </div>
                     </div>
-                    <div class="d-flex gap-2 align-items-center">
-                        <button class="btn btn-sm btn-primary">View</button>
-                        <button class="btn btn-sm btn-secondary"><i class="bi bi-x text-black"></i></button>
+                    <div class="d-flex gap-2 align-items-center mt-1">
+                        <button class="btn btn-sm btn-primary w-100">View</button>
                     </div>
                 </div>
                 `;
@@ -1302,10 +1301,6 @@ async function showMatchPool() {
 
     showMoreBtn.onclick = () => {
         // show more notifications
-        if (currentNotifIdx === currentUserData.incomingRequests.length) {
-            showMoreBtn.classList.add("d-none");
-            return;
-        }
         let oldIdx = currentNotifIdx;
         if (currentNotifIdx + 5 > currentUserData.incomingRequests.length) {
             currentNotifIdx = currentUserData.incomingRequests.length;
@@ -1327,6 +1322,9 @@ async function showMatchPool() {
         localStorage.setItem("seen-users-" + auth.currentUser.uid, JSON.stringify(alreadySeen));
         // render the new users
         renderNotifs(users);
+        if (currentNotifIdx === currentUserData.incomingRequests.length) {
+            showMoreBtn.classList.add("d-none");
+        }
     }
 
     // load insights in the background
