@@ -1122,6 +1122,40 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
 
 let loadedMatches = false;
 
+async function renderNotifs(users) {
+    const notifContainer = document.getElementById("matchpool-notifications");
+
+    for (let i = users.length - 1; i >= 0; i--) {
+        let docRef = doc(db, "users", users[i]);
+        let user = (await getDoc(docRef)).data();
+        let pfpLink = user.pfpLink;
+        if (user.pfpVersion) {
+            pfpLink += "?v=" + user.pfpVersion;
+        }
+
+        let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
+        let ageDifMs = Date.now() - bday.getTime();
+        let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
+
+        notifContainer.innerHTML += `
+                <div class="badge w-100 card bg-dark text-white p-2 mb-2">
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="d-flex align-items-center">
+                            <img src="${pfpLink}" class="img-fluid rounded me-2" style="width: 50px; height: 50px" alt="Profile">
+                            <h6 class="mb-0">${user.displayName} (${ageNum})</h6>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <button class="btn btn-sm btn-primary">View</button>
+                            <button class="btn btn-sm btn-secondary"><i class="bi bi-x text-black"></i></button>
+                        </div>
+                    </div>
+                </div>
+                `
+
+        // TODO: store rejected users in localstorage with key "rejected-{loggedIn.UID}"
+    }
+}
+
 async function showMatchPool() {
     // hide alert
     const repeatAlert = document.getElementById("alert-repeat-match");
@@ -1230,40 +1264,22 @@ async function showMatchPool() {
     btn.onclick = async (e) => {
         // load the incoming requests, with labels indicating new requests
         const notifContainer = document.getElementById("matchpool-notifications");
-
         if (notifContainer.innerHTML === "") {
             let limit = 5; // only load 5 most recent
             users = currentUserData.incomingRequests.slice(-limit);
-            for (let i = users.length - 1; i >= 0; i--) {
-                // create a small box for each incoming request, only load the 5 most recent
-                let docRef = doc(db, "users", users[i]);
-                let user = (await getDoc(docRef)).data();
-                let pfpLink = user.pfpLink;
-                if (user.pfpVersion) {
-                    pfpLink += "?v=" + user.pfpVersion;
-                }
-
-                let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
-                let ageDifMs = Date.now() - bday.getTime();
-                let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
-
-                notifContainer.innerHTML += `
-                <div class="badge w-100 card bg-dark text-white p-2 mb-2">
-                    <div class="d-flex justify-content-between mt-1">
-                        <div class="d-flex align-items-center">
-                            <img src="${pfpLink}" class="img-fluid rounded me-2" style="width: 50px; height: 50px" alt="Profile">
-                            <h6 class="mb-0">${user.displayName} (${ageNum})</h6>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
-                            <button class="btn btn-sm btn-primary">View</button>
-                            <button class="btn btn-sm btn-secondary"><i class="bi bi-x text-black"></i></button>
-                        </div>
-                    </div>
-                </div>
-                `
-
-                // TODO: store rejected users in localstorage with key "rejected-{loggedIn.UID}"
+            // add these seen users to local storage
+            let alreadySeen = JSON.parse(localStorage.getItem("seen-users"));
+            // add the users to alreadySeen
+            if (!alreadySeen) {
+                alreadySeen = [];
             }
+            for (let i = 0; i < users.length; i++) {
+                if (!alreadySeen.includes(users[i])) {
+                    alreadySeen.push(users[i]);
+                }
+            }
+            localStorage.setItem("seen-users", JSON.stringify(alreadySeen));
+            await renderNotifs(users);
         }
     }
 
