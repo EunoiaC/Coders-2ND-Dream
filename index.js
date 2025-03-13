@@ -170,16 +170,16 @@ async function showPage(page, data = null) {
         profileRank.innerText = ranks[data.membership];
         profileRank.classList.add(rankClasses[data.membership]);
 
-        customButton.innerHTML = "";
-        customButton.onclick = () => {}
-        // reset custom button class list
-        for (let i of customButton.classList) {
-            if (!["btn", "w-100", "text-white"].includes(i)) {
-                customButton.classList.remove(i);
-            }
-        }
-
         function renderCustomButton(type) {
+            customButton.innerHTML = "";
+            customButton.onclick = () => {}
+            // reset custom button class list
+            for (let i of customButton.classList) {
+                if (!["btn", "w-100", "text-white"].includes(i)) {
+                    customButton.classList.remove(i);
+                }
+            }
+
             if (type === "Github") {
                 customButton.innerHTML = `
                 <span class="me-auto">
