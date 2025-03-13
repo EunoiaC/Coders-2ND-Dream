@@ -1256,7 +1256,7 @@ async function showMatchPool() {
 
     // TODO: subtract already viewed users from the notification count
     if (currentUserData.incomingRequests.length) {
-        let alreadySeen = JSON.parse(localStorage.getItem("seen-users"));
+        let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
         const notifBadge = document.getElementById("notif-badge");
         notifBadge.classList.remove("d-none");
         // remove similar items from incoming requests and alreadySeen
@@ -1273,7 +1273,7 @@ async function showMatchPool() {
             let limit = 5; // only load 5 most recent
             users = currentUserData.incomingRequests.slice(-limit);
             // add these seen users to local storage
-            let alreadySeen = JSON.parse(localStorage.getItem("seen-users"));
+            let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
             // add the users to alreadySeen
             if (!alreadySeen) {
                 alreadySeen = [];
@@ -1283,7 +1283,7 @@ async function showMatchPool() {
                     alreadySeen.push(users[i]);
                 }
             }
-            localStorage.setItem("seen-users", JSON.stringify(alreadySeen));
+            localStorage.setItem("seen-users-" + auth.currentUser.uid, JSON.stringify(alreadySeen));
             await renderNotifs(users);
         }
     }
