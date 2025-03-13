@@ -64,6 +64,7 @@ let pages = [loginPage, registerPage, profilePage, matchpoolPage, chatsPage];
 let viewingSelf = false;
 let currentProfileData = null;
 let currentUserData = null;
+let currentNotifIdx = 0;
 
 // calculate aura
 function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities, plan) {
@@ -1122,22 +1123,26 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
 
 let loadedMatches = false;
 
-async function renderNotifs(users) {
+async function renderNotifs(items) {
     const notifContainer = document.getElementById("matchpool-notifications");
+    // TODO: store rejected users in localstorage with key "rejected-{loggedIn.UID}"
 
-    for (let i = users.length - 1; i >= 0; i--) {
-        let docRef = doc(db, "users", users[i]);
-        let user = (await getDoc(docRef)).data();
-        let pfpLink = user.pfpLink;
-        if (user.pfpVersion) {
-            pfpLink += "?v=" + user.pfpVersion;
-        }
+    for (let i = items.length - 1; i >= 0; i--) {
+        // check if the item has a dash
+        if (items[i].includes("-")) {
+        } else {
+            let docRef = doc(db, "users", items[i]);
+            let user = (await getDoc(docRef)).data();
+            let pfpLink = user.pfpLink;
+            if (user.pfpVersion) {
+                pfpLink += "?v=" + user.pfpVersion;
+            }
 
-        let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
-        let ageDifMs = Date.now() - bday.getTime();
-        let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
+            let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
+            let ageDifMs = Date.now() - bday.getTime();
+            let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
 
-        notifContainer.innerHTML += `
+            notifContainer.innerHTML = `
                 <div class="badge w-100 card bg-dark text-white p-2 mb-2">
                     <div class="d-flex justify-content-between mt-1">
                         <div class="d-flex align-items-center">
@@ -1150,9 +1155,8 @@ async function renderNotifs(users) {
                         </div>
                     </div>
                 </div>
-                `
-
-        // TODO: store rejected users in localstorage with key "rejected-{loggedIn.UID}"
+                ` + notifContainer.innerHTML; // so the show more button is at the bottom
+        }
     }
 }
 
@@ -1256,6 +1260,9 @@ async function showMatchPool() {
 
     // subtract already viewed users from the notification count
     let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
+    if (!alreadySeen) {
+        alreadySeen = [];
+    }
     const notifBadge = document.getElementById("notif-badge");
     // remove similar items from incoming requests and alreadySeen
     let newUsers = currentUserData.incomingRequests.filter(x => !alreadySeen.includes(x));
@@ -1266,10 +1273,13 @@ async function showMatchPool() {
 
     btn.onclick = async (e) => {
         // load the incoming requests, with labels indicating new requests
-        const notifContainer = document.getElementById("matchpool-notifications");
-        if (notifContainer.innerHTML === "") {
-            let limit = 5; // only load 5 most recent
-            users = currentUserData.incomingRequests.slice(-limit);
+        if (currentNotifIdx === 0) {
+            // set the limit to 5, or whatever the length of the incoming requests is if less than 5
+            currentNotifIdx = 5;
+            if (currentUserData.incomingRequests.length < 5) {
+                currentNotifIdx = currentUserData.incomingRequests.length;
+            }
+            users = currentUserData.incomingRequests.slice(-currentNotifIdx);
             // add these seen users to local storage
             let alreadySeen = JSON.parse(localStorage.getItem("seen-users-" + auth.currentUser.uid));
             // add the users to alreadySeen
