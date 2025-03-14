@@ -1154,7 +1154,7 @@ async function renderNotifs(items) {
                 `;
 
             const viewProfile = document.getElementById(`notif-${items[i]}`);
-            viewProfile.onclick = (e) => {
+            viewProfile.onclick = async (e) => {
                 let docRef = doc(db, "users", users[i]);
                 user = (await getDoc(docRef)).data();
                 viewMatchpoolProfile(user, users[i], 0, 0);
