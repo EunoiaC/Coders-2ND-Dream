@@ -426,19 +426,25 @@ async function loadChatPage() {
         let views = chatData.views;
         let sentMessages = chatData[auth.currentUser.uid + "-data"].numSent;
         let receivedMessages = chatData[otherUser + "-data"].numSent;
+        let lastMessage = "Be the first to send a message!";
+        if (chatData.messages.length > 0) {
+            let lastMsg = chatData.messages[chatData.messages.length - 1];
+            lastMessage = lastMsg.sender + ": " + lastMsg.message;
+        }
+
 
         const chatroomDiv = document.createElement("div");
-        chatroomDiv.classList.add("chatroom", "w-100", "p-2", "d-flex", "align-items-center", "border", "rounded");
+        chatroomDiv.classList.add("chatroom", "w-100", "p-3", "d-flex", "align-items-center", "border");
 
         chatroomDiv.innerHTML = `
-            <div class="d-flex flex-column text-center me-3">
-                <div class="fw-bold">${views} views</div>
+            <div class="d-flex flex-column text-end me-3 ms-4">
                 <div>${sentMessages} sent</div>
                 <div>${receivedMessages} received</div>
+                <div>${views} views</div>
             </div>
             <div class="flex-grow-1">
-                <h5 class="mb-1">Chat with ${otherName}</h5>
-                <p class="text-muted small mb-0">}Last Message</p>
+                <h5 class="mb-1 text-primary chat-title">Chat with ${otherName}</h5>
+                <p class="text-white">${lastMessage}</p>
             </div>
         `;
         chatContainer.appendChild(chatroomDiv);
@@ -1003,9 +1009,22 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY) {
     let match = document.getElementById("profile-match");
     let leave = document.getElementById("profile-leave");
     let logout = document.getElementById("profile-logout");
+    let chat = document.getElementById("profile-chat");
     logout.classList.add("d-none");
-    match.classList.remove("d-none");
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
+
+    let successfulMatches = calculateSuccessfulMatches(currentUserData.incomingRequests, currentUserData.outgoingRequests)
+
+    // check if uid in successful matches to show chat button
+    if (successfulMatches.includes(uid)) {
+        chat.classList.remove("d-none");
+    } else if (currentUserData.incomingRequests.includes(uid)) {
+        match.classList.remove("d-none");
+        match.innerHTML = "<i class=\"fa-solid fa-code-pull-request\"></i> Accept";
+    } else {
+        match.classList.remove("d-none");
+        match.innerHTML = "<i class=\"fa-solid fa-code-pull-request\"></i> Pull";
+    }
 
     match.onclick = async (event) => {
         console.log("attempting to match with " + uid);
@@ -1090,6 +1109,7 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY) {
         }
         leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
         match.classList.add("d-none");
+        chat.classList.add("d-none");
         logout.classList.remove("d-none");
         currentProfileData = currentUserData;
         viewingSelf = true;

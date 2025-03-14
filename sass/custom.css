@@ -12489,6 +12489,12 @@ textarea.form-control-lg {
   color: white;
 }
 
+.chat-title:hover {
+  cursor: pointer;
+  color: #61afef;
+  text-decoration: underline;
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;

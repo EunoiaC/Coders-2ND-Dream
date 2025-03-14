@@ -702,6 +702,13 @@ $terminal-error: $secondary;
   color: white;
 }
 
+.chat-title:hover {
+  cursor: pointer;
+  // make the color a bit darker
+  color: #61afef;
+  text-decoration: underline;
+}
+
 footer {
   background-color: $dark;
   color: $light;
