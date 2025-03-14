@@ -107,10 +107,15 @@ export default async function request_match(req, res) {
                     messages: [],
                     users: [uid, desiredMatchUID],
                     views: 0,
-                    mode: "business",
-                    messageLimits: {
-                        [uid]: calculateMessageLimit(selfData.get("membership")),
-                        [desiredMatchUID]: calculateMessageLimit(desiredMatchData.get("membership"))
+                    [uid + "-data"]: {
+                        mode: "business",
+                        numSent: 0,
+                        messageLimit: calculateMessageLimit(selfData.get("membership"))
+                    },
+                    [desiredMatchUID + "-data"]: {
+                        mode: "business",
+                        numSent: 0,
+                        messageLimit: calculateMessageLimit(desiredMatchData.get("membership"))
                     }
                 }
 

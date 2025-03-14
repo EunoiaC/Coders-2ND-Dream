@@ -134,6 +134,8 @@ async function showPage(page, data = null) {
         console.innerText = ""
     } else if (page === matchpoolPage) {
         await showMatchPool();
+    } else if (page === chatsPage) {
+        await loadChatPage();
     } else if (page === profilePage) {
         const pfp = document.getElementById("profile-pfp");
         const name = document.getElementById("profile-name");
@@ -381,14 +383,66 @@ function begin() {
     loadProfilePage();
     initSubscribe();
     loadMatchpool();
-    loadChatPage();
     onAuthStateChanged(auth, authListener);
 }
 
-function loadChatPage() {
+let loadedChats = false;
+async function loadChatPage() {
+    if (loadedChats) {
+        return;
+    }
+    loadedChats = true;
     const backBtn = document.getElementById("chats-back");
     backBtn.onclick = (event) => {
         showPage(matchpoolPage);
+    }
+
+    // get chatrooms by successful matches
+    let successfulMatches = calculateSuccessfulMatches(currentUserData.incomingRequests, currentUserData.outgoingRequests);
+    let chatrooms = [];
+    for (let i = 0; i < successfulMatches.length; i++) {
+        let uid = successfulMatches[i];
+        if (auth.currentUser.uid < uid) {
+            chatrooms.push(auth.currentUser.uid + "-" + uid);
+        } else {
+            chatrooms.push(uid + "-" + auth.currentUser.uid);
+        }
+    }
+    const chatContainer = document.getElementById("chat-container");
+    for (let i = 0; i < chatrooms.length; i++) {
+        let chatroom = chatrooms[i];
+        let otherUser = successfulMatches[i];
+        // get their profile data
+        const docRef = doc(db, "users", otherUser);
+        const docSnap = await getDoc(docRef);
+        const data = docSnap.data();
+
+        let otherName = data.displayName;
+
+        const chatDocRef = doc(db, "chats", chatroom);
+        const chatDocSnap = await getDoc(chatDocRef);
+        let chatData = chatDocSnap.data();
+
+        let views = chatData.views;
+        let sentMessages = chatData[auth.currentUser.uid + "-data"].numSent;
+        let receivedMessages = chatData[otherUser + "-data"].numSent;
+
+        const chatroomDiv = document.createElement("div");
+        chatroomDiv.classList.add("chatroom", "w-100", "p-2", "d-flex", "align-items-center", "border", "rounded");
+
+        chatroomDiv.innerHTML = `
+            <div class="d-flex flex-column text-center me-3">
+                <div class="fw-bold">${views} views</div>
+                <div>${sentMessages} sent</div>
+                <div>${receivedMessages} received</div>
+            </div>
+            <div class="flex-grow-1">
+                <h5 class="mb-1">Chat with ${otherName}</h5>
+                <p class="text-muted small mb-0">}Last Message</p>
+            </div>
+        `;
+        chatContainer.appendChild(chatroomDiv);
+
     }
 }
 
