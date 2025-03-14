@@ -934,7 +934,7 @@ async function loadUsers(filter, lastDoc) {
     }
 }
 
-function viewMatchpoolProfile(idx, data, scrollX, scrollY) {
+function viewMatchpoolProfile(data, uid, scrollX, scrollY) {
     currentProfileData = data;
     viewingSelf = false;
     showPage(profilePage, currentProfileData);
@@ -946,12 +946,6 @@ function viewMatchpoolProfile(idx, data, scrollX, scrollY) {
     leave.innerHTML = "<i class=\"fa-solid fa-arrow-left\"></i> Exit";
 
     match.onclick = async (event) => {
-        let uid = null;
-        if (currentUserData.membership === 3) {
-            uid = data.uid;
-        } else {
-            uid = currentUserData.matchpool[idx];
-        }
         console.log("attempting to match with " + uid);
         console.log("current outgoing requests: " + currentUserData.outgoingRequests);
         // check if the currentUser already sent an outgoing request
@@ -1052,7 +1046,7 @@ function viewMatchpoolProfile(idx, data, scrollX, scrollY) {
     }
 }
 
-function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc, version, idx, data) {
+function createMatchpoolProfile(uid, name, age, aura, rank, self, lookingFor, imgSrc, version, idx, data) {
     // Create a div with the same structure as the provided profile template
     const profileDiv = document.createElement("div");
     profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
@@ -1115,7 +1109,7 @@ function createMatchpoolProfile(name, age, aura, rank, self, lookingFor, imgSrc,
 
     let viewProfile = document.getElementById(`view-matchpool-${idx}`);
     viewProfile.onclick = (e) => {
-        viewMatchpoolProfile(idx, data, window.scrollX, window.scrollY);
+        viewMatchpoolProfile(data, uid, window.scrollX, window.scrollY);
         window.scrollTo({
             top: 0,
             left: 0,
@@ -1154,10 +1148,17 @@ async function renderNotifs(items) {
                         </div>
                     </div>
                     <div class="d-flex gap-2 align-items-center mt-1">
-                        <button class="btn btn-sm btn-primary w-100">View</button>
+                        <button class="btn btn-sm btn-primary w-100" id="notif-${items[i]}">View</button>
                     </div>
                 </div>
                 `;
+
+            const viewProfile = document.getElementById(`notif-${items[i]}`);
+            viewProfile.onclick = (e) => {
+                let docRef = doc(db, "users", users[i]);
+                user = (await getDoc(docRef)).data();
+                viewMatchpoolProfile(user, users[i], 0, 0);
+            }
         }
     }
 }
@@ -1226,11 +1227,14 @@ async function showMatchPool() {
     let stack = ["Front End", "Back End", "Full Stack"];
     for (let i = 0; i < len; i++) {
         let user = null;
+        let uid = null;
         if (res.loadedData) {
             user = res.loadedData[i];
+            uid = user.uid;
         } else {
             let docRef = doc(db, "users", users[i]);
             user = (await getDoc(docRef)).data();
+            uid = users[i];
         }
 
         let bday = new Date(user.bday[2], user.bday[0] - 1, user.bday[1]); // Month is 0-based
@@ -1242,7 +1246,7 @@ async function showMatchPool() {
 
         // TODO: update rank
         // TODO: if subscription allows, generate insights for each users and add an additional "insight" field for each user
-        createMatchpoolProfile(user.displayName, ageNum, auraNum, user.membership, stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
+        createMatchpoolProfile(uid, user.displayName, ageNum, auraNum, user.membership, stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
 
         imageUrls.push(user.pfpLink);
     }
