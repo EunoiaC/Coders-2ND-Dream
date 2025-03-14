@@ -174,7 +174,17 @@ async function showPage(page, data = null) {
         profileRank.innerText = ranks[data.membership];
         profileRank.classList.add(rankClasses[data.membership]);
 
-        function renderCustomButton(type) {
+        function renderCustomButton(type, customLink) {
+            if (type === null) {
+                customButton.innerHTML = "No Custom Button";
+                customButton.classList.add("btn-gray");
+                customButton.onclick = () => {
+                    if (viewingSelf) { // edit custom button
+                        customButtonModal.show();
+                    }
+                }
+                return;
+            }
             customButton.innerHTML = "";
             // reset custom button class list
             for (let i of customButton.classList) {
@@ -229,9 +239,7 @@ async function showPage(page, data = null) {
 
         let customLink = "";
         if (!data.customButton || data.customButton === "") {
-            customButton.innerHTML = "No Custom Button";
-            customButton.onclick = () => {}
-            customButton.classList.add("btn-gray");
+            renderCustomButton(null, null);
         } else {
             // split the custom button at the "\" character
             let split = data.customButton.split("\\");
