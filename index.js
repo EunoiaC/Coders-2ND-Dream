@@ -389,6 +389,7 @@ function begin() {
 
 function renderChats() {
     const chatContainer = document.getElementById("chat-container");
+    chatContainer.innerHTML = "";
     for (let i = 0; i < chats.length; i++) {
         let chatData = chats[i];
         let views = chatData.views;
