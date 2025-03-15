@@ -8,7 +8,7 @@ import {
     signInWithPopup,
     updateProfile
 } from "firebase/auth";
-import {doc, getDoc, getFirestore, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import {doc, getDoc, getFirestore, onSnapshot, updateDoc, Timestamp } from 'firebase/firestore';
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
@@ -463,7 +463,7 @@ async function loadChatPage() {
             otherUser: otherUser,
             otherName: otherName
         }
-        chatObject.listener = chatDocRef.onSnapshot((doc) => {
+        chatObject.listener = onSnapshot(chatDocRef, (doc) => {
             let data = doc.data();
             // update the chat object with the new data
             Object.assign(chatObject, data);
