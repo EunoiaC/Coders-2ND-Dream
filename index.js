@@ -461,9 +461,15 @@ async function loadChatPage() {
             ...chatData,
             chatroom: chatroom,
             otherUser: otherUser,
-            otherName: otherName,
-            listener: null // TODO: firebase listener
+            otherName: otherName
         }
+        chatObject.listener = chatDocRef.onSnapshot((doc) => {
+            let data = doc.data();
+            // update the chat object with the new data
+            Object.assign(chatObject, data);
+            // re-render
+            renderChats();
+        });
 
         chats.push(chatObject);
     }
