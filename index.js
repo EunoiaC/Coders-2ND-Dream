@@ -65,6 +65,7 @@ let viewingSelf = false;
 let currentProfileData = null;
 let currentUserData = null;
 let currentNotifIdx = 0;
+let chats = [];
 
 // calculate aura
 function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities, plan) {
@@ -386,9 +387,42 @@ function begin() {
     onAuthStateChanged(auth, authListener);
 }
 
+function renderChats() {
+    const chatContainer = document.getElementById("chat-container");
+    for (let i = 0; i < chats.length; i++) {
+        let chatData = chats[i];
+        let views = chatData.views;
+        let sentMessages = chatData[auth.currentUser.uid + "-data"].numSent;
+        let receivedMessages = chatData[chatData.otherUser + "-data"].numSent;
+        let lastMessage = "Be the first to send a message!";
+        if (chatData.messages.length > 0) {
+            let lastMsg = chatData.messages[chatData.messages.length - 1];
+            lastMessage = lastMsg.sender + ": " + lastMsg.message;
+        }
+
+
+        const chatroomDiv = document.createElement("div");
+        chatroomDiv.classList.add("chatroom", "w-100", "p-3", "d-flex", "align-items-center", "border");
+
+        chatroomDiv.innerHTML = `
+            <div class="d-flex flex-column text-end me-3 ms-4">
+                <div>${sentMessages} sent</div>
+                <div>${receivedMessages} received</div>
+                <div>${views} views</div>
+            </div>
+            <div class="flex-grow-1">
+                <h5 class="mb-1 text-primary chat-title">Chat with ${chatData.otherName}</h5>
+                <p class="text-white">${lastMessage}</p>
+            </div>
+        `;
+        chatContainer.appendChild(chatroomDiv);
+    }
+}
+
 let loadedChats = false;
 async function loadChatPage() {
     if (loadedChats) {
+        renderChats();
         return;
     }
     loadedChats = true;
@@ -408,7 +442,6 @@ async function loadChatPage() {
             chatrooms.push(uid + "-" + auth.currentUser.uid);
         }
     }
-    const chatContainer = document.getElementById("chat-container");
     for (let i = 0; i < chatrooms.length; i++) {
         let chatroom = chatrooms[i];
         let otherUser = successfulMatches[i];
@@ -423,33 +456,18 @@ async function loadChatPage() {
         const chatDocSnap = await getDoc(chatDocRef);
         let chatData = chatDocSnap.data();
 
-        let views = chatData.views;
-        let sentMessages = chatData[auth.currentUser.uid + "-data"].numSent;
-        let receivedMessages = chatData[otherUser + "-data"].numSent;
-        let lastMessage = "Be the first to send a message!";
-        if (chatData.messages.length > 0) {
-            let lastMsg = chatData.messages[chatData.messages.length - 1];
-            lastMessage = lastMsg.sender + ": " + lastMsg.message;
+        let chatObject = {
+            ...chatData,
+            chatroom: chatroom,
+            otherUser: otherUser,
+            otherName: otherName,
+            listener: null // TODO: firebase listener
         }
 
-
-        const chatroomDiv = document.createElement("div");
-        chatroomDiv.classList.add("chatroom", "w-100", "p-3", "d-flex", "align-items-center", "border");
-
-        chatroomDiv.innerHTML = `
-            <div class="d-flex flex-column text-end me-3 ms-4">
-                <div>${sentMessages} sent</div>
-                <div>${receivedMessages} received</div>
-                <div>${views} views</div>
-            </div>
-            <div class="flex-grow-1">
-                <h5 class="mb-1 text-primary chat-title">Chat with ${otherName}</h5>
-                <p class="text-white">${lastMessage}</p>
-            </div>
-        `;
-        chatContainer.appendChild(chatroomDiv);
-
+        chats.push(chatObject);
     }
+
+    renderChats();
 }
 
 function loadMatchpool() {
