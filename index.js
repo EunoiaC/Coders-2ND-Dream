@@ -1214,16 +1214,6 @@ function createMatchpoolProfile(uid, name, age, aura, rank, self, lookingFor, im
         </div>
     `;
 
-    let viewProfile = document.getElementById(`view-matchpool-${idx}`);
-    viewProfile.onclick = (e) => {
-        viewMatchpoolProfile(data, uid, window.scrollX, window.scrollY);
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'smooth' // Adds a smooth scrolling animation
-        });
-    }
-
     return profileDiv;
 }
 
@@ -1357,7 +1347,15 @@ async function showMatchPool() {
         // TODO: if subscription allows, generate insights for each users and add an additional "insight" field for each user
         // Append to the container
         document.getElementById("matchpool-container").appendChild(createMatchpoolProfile(uid, user.displayName, ageNum, auraNum, user.membership, stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user));
-
+        let viewProfile = document.getElementById(`view-matchpool-${idx}`);
+        viewProfile.onclick = (e) => {
+            viewMatchpoolProfile(data, uid, window.scrollX, window.scrollY);
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth' // Adds a smooth scrolling animation
+            });
+        }
         imageUrls.push(user.pfpLink);
     }
 
