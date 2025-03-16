@@ -459,7 +459,6 @@ async function loadChatPage() {
         }
     }
     const chatsUsers = document.getElementById("chats-users-container");
-    for (let asdasd = 0; asdasd < 10; asdasd++)
     for (let i = 0; i < chatrooms.length; i++) {
         let chatroom = chatrooms[i];
         let otherUser = successfulMatches[i];
