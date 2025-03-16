@@ -189,15 +189,17 @@ Requires a value of type `Date`
         <div class="row p-4">
             <div class="col-12 col-sm-2 text-white vstack">
                 <button class="text-start chatoverflow-btn focused" id="chats-chats-btn"><i class="bi bi-chat-left-fill"></i> Chats</button>
-                <button class="text-start chatoverflow-btn"><i class="bi bi-person-circle"></i> Users</button>
+                <button class="text-start chatoverflow-btn" id="chats-users-btn"><i class="bi bi-person-circle"></i> Users</button>
             </div>
-            <div class="col-12 col-sm-7 bg-dark border-start border-end h-100 p-0" id="chat-container">
+            <div class="col-12 col-sm-10 bg-dark h-100 p-0">
+                <div class="w-100" id="chat-container">
 
-            </div>
-            <div class="d-none" id="chats-users-container">
+                </div>
+                <div class="container">
+                    <div class="d-none w-100 row mt-3" id="chats-users-container">
 
-            </div>
-            <div class="col-12 col-sm-3">
+                    </div>
+                </div>
             </div>
         </div>
     </div>

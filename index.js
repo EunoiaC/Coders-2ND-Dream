@@ -433,6 +433,19 @@ async function loadChatPage() {
     }
 
     const chatsButton = document.getElementById("chats-chats-btn");
+    const usersButton = document.getElementById("chats-users-btn");
+
+    usersButton.onclick = (event) => {
+        // hide the chats-container
+        let chatsContainer = document.getElementById("chat-container");
+        chatsContainer.classList.add("d-none");
+        // show the users-container
+        let usersContainer = document.getElementById("chats-users-container");
+        usersContainer.classList.remove("d-none");
+
+        usersButton.classList.add("focused");
+        chatsButton.classList.remove("focused");
+    }
 
     // get chatrooms by successful matches
     let successfulMatches = calculateSuccessfulMatches(currentUserData.incomingRequests, currentUserData.outgoingRequests);
@@ -446,6 +459,7 @@ async function loadChatPage() {
         }
     }
     const chatsUsers = document.getElementById("chats-users-container");
+    for (let asdasd = 0; asdasd < 10; asdasd++)
     for (let i = 0; i < chatrooms.length; i++) {
         let chatroom = chatrooms[i];
         let otherUser = successfulMatches[i];
@@ -475,6 +489,26 @@ async function loadChatPage() {
         });
 
         chats.push(chatObject);
+
+        // calculate age and aura from data
+        let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
+        let ageDifMs = Date.now() - bday.getTime();
+        let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
+        let otherSuccessfulMatches = calculateSuccessfulMatches(data.incomingRequests, data.outgoingRequests);
+        let auraNum = calculateAura(data.outgoingRequests.length, data.incomingRequests.length, otherSuccessfulMatches.length, data.selfCapabilities, data.membership);
+
+        let stack = ["Front End", "Back End", "Full Stack"]
+        // add to users as well
+        chatsUsers.appendChild(createMatchpoolProfile(otherUser, data.displayName, ageNum, auraNum, data.membership, stack[data.selfCapabilities], stack[data.lookingFor], data.pfpLink, data.pfpVersion, i + 1000, data));
+        let viewProfile = document.getElementById(`view-matchpool-${i+1000}`);
+        viewProfile.onclick = (e) => {
+            viewMatchpoolProfile(data, otherUser, window.scrollX, window.scrollY, true);
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth' // Adds a smooth scrolling animation
+            });
+        }
     }
 
     renderChats();
@@ -1030,7 +1064,7 @@ async function loadUsers(filter, lastDoc) {
     }
 }
 
-function viewMatchpoolProfile(data, uid, scrollX, scrollY) {
+function viewMatchpoolProfile(data, uid, scrollX, scrollY, fromChat) {
     currentProfileData = data;
     viewingSelf = false;
     showPage(profilePage, currentProfileData);
@@ -1141,7 +1175,11 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY) {
         logout.classList.remove("d-none");
         currentProfileData = currentUserData;
         viewingSelf = true;
-        showPage(matchpoolPage);
+        if (fromChat) {
+            showPage(chatsPage);
+        } else {
+            showPage(matchpoolPage);
+        }
         // scroll to the previous position
         window.scrollTo({
             top: scrollY,
@@ -1160,6 +1198,10 @@ function createMatchpoolProfile(uid, name, age, aura, rank, self, lookingFor, im
     // Create a div with the same structure as the provided profile template
     const profileDiv = document.createElement("div");
     profileDiv.className = "col-12 col-sm-3 profile"; // Ensures 4 per row
+    // check if we are on the chats page
+    if (!chatsPage.classList.contains("d-none")) {
+        profileDiv.className = "col-12 col-sm-4 profile"
+    }
 
     if (version) {
         imgSrc += "?v=" + version;
@@ -1185,14 +1227,22 @@ function createMatchpoolProfile(uid, name, age, aura, rank, self, lookingFor, im
         `;
     }
 
+    pfpOverlay = `
+    <div class="pfp-overlay" id="pfp-insight-${idx}">
+        ${pfpOverlay}
+    </div>
+    `;
+    // if viewing from chats, no overlay
+    if (!chatsPage.classList.contains("d-none")) {
+        pfpOverlay = "";
+    }
+
     profileDiv.innerHTML = `
         <div class="profile-left-container">
             <div class="profile-name-image mb-2 w-100">
                 <div class="pfp-hover-container ">
                     <img class="img-fluid rounded-top profile-pfp" src="${imgSrc}" alt="Profile Picture">
-                    <div class="pfp-overlay" id="pfp-insight-${idx}">
-                        ${pfpOverlay}
-                    </div>
+                    ${pfpOverlay}
                 </div>
                 <h1 class="rounded-bottom text-center profile-name">${name}</h1>
             </div>
@@ -1256,7 +1306,7 @@ async function renderNotifs(items) {
             viewProfile.onclick = async (e) => {
                 let docRef = doc(db, "users", items[i]);
                 user = (await getDoc(docRef)).data();
-                viewMatchpoolProfile(user, items[i], 0, 0);
+                viewMatchpoolProfile(user, items[i], 0, 0, false);
             }
         }
     }
@@ -1349,7 +1399,7 @@ async function showMatchPool() {
         document.getElementById("matchpool-container").appendChild(createMatchpoolProfile(uid, user.displayName, ageNum, auraNum, user.membership, stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user));
         let viewProfile = document.getElementById(`view-matchpool-${i}`);
         viewProfile.onclick = (e) => {
-            viewMatchpoolProfile(user, uid, window.scrollX, window.scrollY);
+            viewMatchpoolProfile(user, uid, window.scrollX, window.scrollY, false);
             window.scrollTo({
                 top: 0,
                 left: 0,
