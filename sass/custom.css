@@ -12495,6 +12495,23 @@ textarea.form-control-lg {
   text-decoration: underline;
 }
 
+.chatoverflow-btn {
+  background: #282C34;
+  color: white;
+  border: none;
+  padding: 5px;
+}
+.chatoverflow-btn:hover {
+  background: #20232a;
+  border-radius: 5px 0 0 5px;
+}
+
+.chatoverflow-btn.focused {
+  font-weight: bold;
+  background: #14171a;
+  border-radius: 5px 0 0 5px;
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;

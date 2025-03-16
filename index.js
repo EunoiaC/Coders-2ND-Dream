@@ -432,6 +432,8 @@ async function loadChatPage() {
         showPage(matchpoolPage);
     }
 
+    const chatsButton = document.getElementById("chats-chats-btn");
+
     // get chatrooms by successful matches
     let successfulMatches = calculateSuccessfulMatches(currentUserData.incomingRequests, currentUserData.outgoingRequests);
     let chatrooms = [];
@@ -443,6 +445,7 @@ async function loadChatPage() {
             chatrooms.push(uid + "-" + auth.currentUser.uid);
         }
     }
+    const chatsUsers = document.getElementById("chats-users-container");
     for (let i = 0; i < chatrooms.length; i++) {
         let chatroom = chatrooms[i];
         let otherUser = successfulMatches[i];
@@ -1211,9 +1214,6 @@ function createMatchpoolProfile(uid, name, age, aura, rank, self, lookingFor, im
         </div>
     `;
 
-    // Append to the container
-    document.getElementById("matchpool-container").appendChild(profileDiv);
-
     let viewProfile = document.getElementById(`view-matchpool-${idx}`);
     viewProfile.onclick = (e) => {
         viewMatchpoolProfile(data, uid, window.scrollX, window.scrollY);
@@ -1223,6 +1223,8 @@ function createMatchpoolProfile(uid, name, age, aura, rank, self, lookingFor, im
             behavior: 'smooth' // Adds a smooth scrolling animation
         });
     }
+
+    return profileDiv;
 }
 
 let loadedMatches = false;
@@ -1353,7 +1355,8 @@ async function showMatchPool() {
 
         // TODO: update rank
         // TODO: if subscription allows, generate insights for each users and add an additional "insight" field for each user
-        createMatchpoolProfile(uid, user.displayName, ageNum, auraNum, user.membership, stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user);
+        // Append to the container
+        document.getElementById("matchpool-container").appendChild(createMatchpoolProfile(uid, user.displayName, ageNum, auraNum, user.membership, stack[user.selfCapabilities], stack[user.lookingFor], user.pfpLink, user.pfpVersion, i, user));
 
         imageUrls.push(user.pfpLink);
     }

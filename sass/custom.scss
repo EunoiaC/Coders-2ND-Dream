@@ -709,6 +709,27 @@ $terminal-error: $secondary;
   text-decoration: underline;
 }
 
+.chatoverflow-btn {
+  // no background
+  background: $dark;
+  color: white;
+  border: none;
+  padding: 5px;
+  // hover anim to get slightly darker
+  &:hover {
+    background: #20232a;
+    // border radius only on the left corners
+    border-radius: 5px 0 0 5px;
+  }
+}
+
+.chatoverflow-btn.focused {
+  font-weight: bold;
+  background: #14171a;
+  // border radius only on the left corners
+  border-radius: 5px 0 0 5px;
+}
+
 footer {
   background-color: $dark;
   color: $light;
