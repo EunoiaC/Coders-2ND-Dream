@@ -447,6 +447,18 @@ async function loadChatPage() {
         chatsButton.classList.remove("focused");
     }
 
+    chatsButton.onclick = (event) => {
+        // show the chats-container
+        let chatsContainer = document.getElementById("chat-container");
+        chatsContainer.classList.remove("d-none");
+        // hide the users-container
+        let usersContainer = document.getElementById("chats-users-container");
+        usersContainer.classList.add("d-none");
+
+        usersButton.classList.remove("focused");
+        chatsButton.classList.add("focused");
+    }
+
     // get chatrooms by successful matches
     let successfulMatches = calculateSuccessfulMatches(currentUserData.incomingRequests, currentUserData.outgoingRequests);
     let chatrooms = [];
