@@ -1481,8 +1481,10 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY, fromChat) {
                 </div>
                 `;
 
+                if (loadedChats) {
+                    chats.push(result.chatroom); // already loaded chats, gotta append by hand
+                }
                 await loadChatPage();
-                chats.push(result.chatroom);
 
                 // show the chat button
                 chat.classList.remove("d-none");
