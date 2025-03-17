@@ -408,7 +408,6 @@ function renderChats() {
         if (chatData.messages.length > 0) {
             let lastMsg = chatData.messages[chatData.messages.length - 1];
             lastMessage = lastMsg.sender + ": " + lastMsg.message;
-        } else {
             for (let i = 0; i < chatData.messages.length; i++) {
                 let message = chatData.messages[i];
                 if (message.sender === currentUserData.displayName) {
