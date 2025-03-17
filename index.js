@@ -391,9 +391,6 @@ function begin() {
 }
 
 function renderChats() {
-    const chatContent = document.getElementById("chat-contents");
-    chatContent.classList.add("d-none");
-
     const chatContainer = document.getElementById("chat-container");
     chatContainer.innerHTML = "";
     for (let i = 0; i < chats.length; i++) {
@@ -443,6 +440,7 @@ function renderChats() {
             // hide the chat container
             chatContainer.classList.add("d-none");
             // show the chat contents
+            const chatContent = document.getElementById("chat-contents");
             chatContent.classList.remove("d-none");
 
             const chatsButton = document.getElementById("chats-chats-btn");
@@ -512,6 +510,8 @@ function renderChatContent(chatObj) {
 
 let loadedChats = false;
 async function loadChatPage() {
+    // const chatContent = document.getElementById("chat-contents");
+    // chatContent.classList.add("d-none");
     if (loadedChats) {
         renderChats();
         return;
