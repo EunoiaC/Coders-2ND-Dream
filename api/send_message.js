@@ -63,6 +63,20 @@ export default async function send_message(req, res) {
             let updatedSelfChatroomData = {
                 [uid + "-data"]: selfChatroomData,
             }
+            // check if the other user also has dating mode
+            if (chatType === "dating") {
+                let otherChatroomData = chatroomData.get(otherUID + "-data");
+                if (otherChatroomData.mode === "dating") {
+                    // update the messages with a system message
+                    let messages = chatroomData.get("messages");
+                    let systemMessage = {
+                        sender: "System",
+                        message: "Chat type changed to dating",
+                    }
+                    messages.push(systemMessage);
+                    updatedSelfChatroomData.messages = messages;
+                }
+            }
             await chatroomDocRef.update(updatedSelfChatroomData);
             return res.status(200).json({message: "Chat type updated"});
         }

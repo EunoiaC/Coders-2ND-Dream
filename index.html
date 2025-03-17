@@ -203,8 +203,11 @@ Requires a value of type `Date`
                     <div id="chat-messages" class="m-0">
 
                     </div>
+                    <div id="pickup-lines" class="d-none d-flex flex-wrap gap-2 p-3 overflow-scroll">
+                        <!-- Pills will be inserted here -->
+                    </div>
                     <div class="input-group">
-                        <input type="text" id="chat-input" class="form-control" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
+                        <textarea type="text" id="chat-input" class="form-control" placeholder="Type a message..." aria-label="Type a message..." rows="1"></textarea>
                         <button class="btn btn-outline-secondary" type="button" id="chat-send">Send</button>
                     </div>
                 </div>

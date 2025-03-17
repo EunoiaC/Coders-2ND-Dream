@@ -421,7 +421,7 @@ function renderChats() {
         const chatroomDiv = document.createElement("div");
         chatroomDiv.classList.add("chatroom", "w-100", "p-3", "d-flex", "align-items-center", "border");
 
-// Create the stats container
+        // Create the stats container
         const statsDiv = document.createElement("div");
         statsDiv.classList.add("d-flex", "flex-column", "text-end", "me-3", "ms-4");
 
@@ -431,7 +431,7 @@ function renderChats() {
             Object.assign(document.createElement("div"), {textContent: mode})
         );
 
-// Create the chat content container
+         // Create the chat content container
         const chatContentDiv = document.createElement("div");
         chatContentDiv.classList.add("flex-grow-1");
 
@@ -475,18 +475,99 @@ function renderChatContent(chatObj) {
     let messages = chatObj.messages;
     for (let i = 0; i < messages.length; i++) {
         let msg = messages[i];
+        if (msg.message.startsWith("[SET_CHAT_TYPE]")) {
+            // skip the message
+            continue;
+        }
+
+        let msgContent = marked(msg.message, { gfm: true });
+
         let messageDiv = document.createElement("div");
-        messageDiv.classList.add("text-white", "w-100", "p-2", "mb-1");
-        messageDiv.innerHTML = `
-            <strong>${msg.sender}</strong>: ${msg.message}
-        `;
+        messageDiv.classList.add("text-white", "w-100", "p-2", "mb-1", "d-flex");
+
+        let nameSpan = document.createElement("strong");
+        nameSpan.classList.add("me-2", "text-nowrap"); // Add spacing and prevent wrapping
+        nameSpan.textContent = msg.sender + ": ";
+
+        // give the namespan text color based on the subscription level
+        if (msg.sender === currentUserData.displayName) {
+            switch (currentUserData.membership) {
+                case 0:
+                    nameSpan.classList.add("text-danger");
+                    break;
+                case 1:
+                    nameSpan.classList.add("text-primary");
+                    break;
+                case 2:
+                    nameSpan.classList.add("text-success");
+                    break;
+                case 3:
+                    nameSpan.classList.add("text-warning");
+                    break;
+            }
+        } else if (msg.sender === currentUserData.displayName) {
+            switch (chatObj[chatObj.otherUser + "-data"].membership) {
+                case 0:
+                    nameSpan.classList.add("text-danger");
+                    break;
+                case 1:
+                    nameSpan.classList.add("text-primary");
+                    break;
+                case 2:
+                    nameSpan.classList.add("text-success");
+                    break;
+                case 3:
+                    nameSpan.classList.add("text-warning");
+                    break;
+            }
+        }
+
+        let contentDiv = document.createElement("div");
+        contentDiv.classList.add("flex-grow-1");
+        contentDiv.innerHTML = msgContent;
+
+        messageDiv.appendChild(nameSpan);
+        messageDiv.appendChild(contentDiv);
         chatContent.appendChild(messageDiv);
+    }
+
+    const changeMode = document.getElementById("chat-change-mode");
+    // check if both users modes are dating
+    if (chatObj[auth.currentUser.uid + "-data"].mode === "dating" && chatObj[chatObj.otherUser + "-data"].mode === "dating") {
+        changeMode.classList.add("active");
+    }
+
+    changeMode.onclick = async function () {
+        // show a popup saying you must be 18+ to request dating mode
+        if (chatObj[auth.currentUser.uid + "-data"].mode === "dating") {
+            alert("You have already requested dating mode!");
+            return;
+        }
+
+        if (confirm("You must be 18+ to activate the dating feature. Do you want to continue?")) {
+            // Proceed with activation
+            const token = await getBearerToken();
+
+            const response = await fetch('/api/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    otherUID: chatObj.otherUser,
+                    message: "[SET_CHAT_TYPE]dating"
+                })
+            });
+        } else {
+            // Do nothing or redirect user
+        }
     }
 
     const messageInput = document.getElementById("chat-input");
     const sendButton = document.getElementById("chat-send");
 
-    sendButton.onclick = async (event) => {
+    async function sendMessage() {
         let message = messageInput.value;
         if (message.trim() === "") {
             return;
@@ -516,6 +597,71 @@ function renderChatContent(chatObj) {
             })
         });
     }
+
+    messageInput.addEventListener("keydown", async function (event) {
+        if (event.key === "Enter") {
+            if (event.shiftKey) {
+                // Allow new line
+                return;
+            }
+            // Prevent default enter behavior (new line in textarea)
+            event.preventDefault();
+            await sendMessage();
+        }
+    });
+
+    sendButton.onclick = async (event) => {
+        await sendMessage();
+    }
+
+    const coderBusinessStarters = [
+        "What’s your go-to debugging strategy?",
+        "How do you stay updated with new frameworks?",
+        "What’s the worst tech debt you've had to deal with?",
+        "If you could refactor one thing in life, what would it be?",
+        "What’s your favorite keyboard shortcut?",
+        "Microservices or Monoliths – where do you stand?",
+        "Have you ever regretted pushing directly to main?",
+        "What’s your take on AI replacing programmers?",
+        "Tabs or spaces – let’s settle this once and for all.",
+        "What’s your best ‘it worked on my machine’ story?"
+    ];
+
+    const coderDatingStarters = [
+        "Are you an API? Because I want to call you all night.",
+        "Are you a recursive function? Because you keep calling me back.",
+        "You must be a memory leak, because I can’t forget you.",
+        "Are you CSS? Because you’ve got style.",
+        "You auto-complete me.",
+        "Is your name Git? Because I’d commit to you.",
+        "Are you a breakpoint? Because you make my heart pause.",
+        "I wish I was your IDE, so I could autocomplete your dreams.",
+        "You must be an open-source project, because I’d contribute to you any day.",
+        "Are we in a sprint? Because I feel like we’re moving fast."
+    ];
+
+    function renderPills() {
+        const container = document.getElementById("pickup-lines");
+        container.innerHTML = ""; // Clear existing pills
+
+        let currentCategory = "business";
+        // change to dating if both users are in dating mode
+        if (chatObj[auth.currentUser.uid + "-data"].mode === "dating" && chatObj[chatObj.otherUser + "-data"].mode === "dating") {
+            currentCategory = "dating";
+        }
+
+        const items = currentCategory === "business" ? coderBusinessStarters : coderDatingStarters;
+
+        items.forEach(text => {
+            const pill = document.createElement("div");
+            pill.className = "chatpill px-3 py-2";
+            pill.textContent = text;
+            pill.onclick = () => document.getElementById("chat-input").value = text;
+            container.appendChild(pill);
+        });
+    }
+
+    renderPills();
 }
 
 let loadedChats = false;
