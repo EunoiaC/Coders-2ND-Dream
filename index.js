@@ -462,6 +462,7 @@ function renderChats() {
             currChat = chatData.otherUser;
 
             // render the chat content
+            chatData.scrollToBottom = true;
             renderChatContent(chatData);
             const chatTitle = document.getElementById("chat-title");
             chatTitle.innerText = "Chat with " + chatData.otherName;
@@ -521,6 +522,15 @@ function renderChatContent(chatObj) {
         messageDiv.appendChild(nameSpan);
         messageDiv.appendChild(contentDiv);
         chatContent.appendChild(messageDiv);
+    }
+
+    if (chatObj.scrollToBottom) {
+        chatContent.scrollTop = chatContent.scrollHeight;
+    }
+
+    // change scrollToBottom on scroll
+    chatContent.onscroll = function () {
+        chatObj.scrollToBottom = false;
     }
 
     const changeMode = document.getElementById("chat-change-mode");
@@ -737,7 +747,8 @@ async function loadChatPage() {
             ...chatData,
             chatroom: chatroom,
             otherUser: otherUser,
-            otherName: otherName
+            otherName: otherName,
+            scrollToBottom: true,
         }
         chatObject.listener = onSnapshot(chatDocRef, (doc) => {
             let data = doc.data();
