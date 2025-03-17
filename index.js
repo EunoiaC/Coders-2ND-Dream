@@ -390,6 +390,7 @@ function begin() {
     onAuthStateChanged(auth, authListener);
 }
 
+let currChat = null;
 function renderChats() {
     const chatContainer = document.getElementById("chat-container");
     chatContainer.innerHTML = "";
@@ -446,6 +447,8 @@ function renderChats() {
             const chatsButton = document.getElementById("chats-chats-btn");
             chatsButton.classList.remove("focused");
 
+            currChat = chatData.otherUser;
+
             // render the chat content
             renderChatContent(chatData);
             const chatTitle = document.getElementById("chat-title");
@@ -461,7 +464,7 @@ function renderChatContent(chatObj) {
     for (let i = 0; i < messages.length; i++) {
         let msg = messages[i];
         let messageDiv = document.createElement("div");
-        messageDiv.classList.add("message", "w-100", "p-2", "border", "rounded", "mb-2");
+        messageDiv.classList.add("text-white", "w-100", "p-2","mb-1");
         messageDiv.innerHTML = `
             <strong>${msg.sender}</strong>: ${msg.message}
         `;
@@ -500,10 +503,6 @@ function renderChatContent(chatObj) {
             })
         });
 
-        if (response.ok) {
-            // re-render the chat
-            renderChatContent(chatObj);
-        }
         messageInput.value = "";
     }
 }
@@ -596,6 +595,9 @@ async function loadChatPage() {
             Object.assign(chatObject, data);
             // re-render
             renderChats();
+            if (currChat === otherUser) {
+                renderChatContent(chatObject);
+            }
         });
 
         chats.push(chatObject);
