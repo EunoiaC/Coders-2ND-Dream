@@ -505,7 +505,7 @@ function renderChatContent(chatObj) {
                     nameSpan.classList.add("text-warning");
                     break;
             }
-        } else if (msg.sender === currentUserData.displayName) {
+        } else if (msg.sender === chatObj.otherName) {
             switch (chatObj[chatObj.otherUser + "-data"].membership) {
                 case 0:
                     nameSpan.classList.add("text-danger");
