@@ -137,6 +137,9 @@ async function showPage(page, data = null) {
         await showMatchPool();
     } else if (page === chatsPage) {
         await loadChatPage();
+        const chatsButton = document.getElementById("chats-chats-btn");
+        // click it
+        chatsButton.click();
     } else if (page === profilePage) {
         const pfp = document.getElementById("profile-pfp");
         const name = document.getElementById("profile-name");
@@ -388,19 +391,35 @@ function begin() {
 }
 
 function renderChats() {
+    const chatContent = document.getElementById("chat-contents");
+    chatContent.classList.add("d-none");
+
     const chatContainer = document.getElementById("chat-container");
     chatContainer.innerHTML = "";
     for (let i = 0; i < chats.length; i++) {
         let chatData = chats[i];
-        let views = chatData.views;
-        let sentMessages = chatData[auth.currentUser.uid + "-data"].numSent;
-        let receivedMessages = chatData[chatData.otherUser + "-data"].numSent;
+        let mode = "business";
+        if (chatData[auth.currentUser.uid + "-data"].mode === "dating" && chatData[chatData.otherUser + "-data"].mode === "dating") {
+            mode = "dating";
+        }
+        // let sentMessages = chatData[auth.currentUser.uid + "-data"].numSent;
+        // let receivedMessages = chatData[chatData.otherUser + "-data"].numSent;
+        let sentMessages = 0;
+        let receivedMessages = 0;
         let lastMessage = "Be the first to send a message!";
         if (chatData.messages.length > 0) {
             let lastMsg = chatData.messages[chatData.messages.length - 1];
             lastMessage = lastMsg.sender + ": " + lastMsg.message;
+        } else {
+            for (let i = 0; i < chatData.messages.length; i++) {
+                let message = chatData.messages[i];
+                if (message.sender === currentUserData.displayName) {
+                    sentMessages++;
+                } else {
+                    receivedMessages++;
+                }
+            }
         }
-
 
         const chatroomDiv = document.createElement("div");
         chatroomDiv.classList.add("chatroom", "w-100", "p-3", "d-flex", "align-items-center", "border");
@@ -409,14 +428,85 @@ function renderChats() {
             <div class="d-flex flex-column text-end me-3 ms-4">
                 <div>${sentMessages} sent</div>
                 <div>${receivedMessages} received</div>
-                <div>${views} views</div>
+                <div>${mode}</div>
             </div>
             <div class="flex-grow-1">
-                <h5 class="mb-1 text-primary chat-title">Chat with ${chatData.otherName}</h5>
+                <h5 class="mb-1 text-primary chat-title" id="chat-with-${chatData.otherName}">Chat with ${chatData.otherName}</h5>
                 <p class="text-white">${lastMessage}</p>
             </div>
         `;
         chatContainer.appendChild(chatroomDiv);
+
+        // get the chat with button
+        const chatWithBtn = document.getElementById(`chat-with-${chatData.otherName}`);
+        chatWithBtn.onclick = function (event) {
+            // hide the chat container
+            chatContainer.classList.add("d-none");
+            // show the chat contents
+            chatContent.classList.remove("d-none");
+
+            const chatsButton = document.getElementById("chats-chats-btn");
+            chatsButton.classList.remove("focused");
+
+            // render the chat content
+            renderChatContent(chatData);
+            const chatTitle = document.getElementById("chat-title");
+            chatTitle.innerText = "Chat with " + chatData.otherName;
+        }
+    }
+}
+
+function renderChatContent(chatObj) {
+    const chatContent = document.getElementById("chat-messages");
+    chatContent.innerHTML = "";
+    let messages = chatObj.messages;
+    for (let i = 0; i < messages.length; i++) {
+        let msg = messages[i];
+        let messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", "w-100", "p-2", "border", "rounded", "mb-2");
+        messageDiv.innerHTML = `
+            <strong>${msg.sender}</strong>: ${msg.message}
+        `;
+        chatContent.appendChild(messageDiv);
+    }
+
+    const messageInput = document.getElementById("chat-input");
+    const sendButton = document.getElementById("chat-send");
+
+    sendButton.onclick = async (event) => {
+        let message = messageInput.value;
+        if (message.trim() === "") {
+            return;
+        }
+        if (currentUserData.membership === 0 && chatObj[auth.currentUser.uid + "-data"].messageLimit === 0) {
+            // alert
+            alert("You have reached your message limit. Upgrade your plan to send more messages.");
+            return;
+        }
+        // send the message to the chatroom
+        // call the send message API
+        const otherUser = chatObj.otherUser;
+        // pass the other user and the message
+        // get tok
+        const token = await getBearerToken();
+
+        const response = await fetch('/api/send_message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                otherUID: otherUser,
+                message: message
+            })
+        });
+
+        if (response.ok) {
+            // re-render the chat
+            renderChatContent(chatObj);
+        }
+        messageInput.value = "";
     }
 }
 
@@ -432,6 +522,9 @@ async function loadChatPage() {
         showPage(matchpoolPage);
     }
 
+    const chatContent = document.getElementById("chat-contents");
+    chatContent.classList.add("d-none");
+
     const chatsButton = document.getElementById("chats-chats-btn");
     const usersButton = document.getElementById("chats-users-btn");
 
@@ -445,6 +538,9 @@ async function loadChatPage() {
 
         usersButton.classList.add("focused");
         chatsButton.classList.remove("focused");
+
+        const chatContent = document.getElementById("chat-contents");
+        chatContent.classList.add("d-none");
     }
 
     chatsButton.onclick = (event) => {
@@ -457,6 +553,9 @@ async function loadChatPage() {
 
         usersButton.classList.remove("focused");
         chatsButton.classList.add("focused");
+
+        const chatContent = document.getElementById("chat-contents");
+        chatContent.classList.add("d-none");
     }
 
     // get chatrooms by successful matches
@@ -1091,6 +1190,35 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY, fromChat) {
     // check if uid in successful matches to show chat button
     if (successfulMatches.includes(uid)) {
         chat.classList.remove("d-none");
+
+        chat.onclick = async (e) => {
+            let alert = document.getElementById("match-alert");
+            if (alert) { // only if it was created
+                alert.remove();
+            }
+            leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
+            match.classList.add("d-none");
+            chat.classList.add("d-none");
+            logout.classList.remove("d-none");
+            // scroll to the previous position
+            window.scrollTo({
+                top: scrollY,
+                left: scrollX,
+                behavior: 'smooth' // Adds a smooth scrolling animation
+            });
+
+            // set the leave onclick listener
+            leave.onclick = (event) => {
+                showPage(matchpoolPage);
+            }
+
+            await showPage(chatsPage);
+            const chatWithBtn = document.getElementById(`chat-with-${currentProfileData.displayName}`);
+            chatWithBtn.click();
+
+            currentProfileData = currentUserData;
+            viewingSelf = true;
+        }
     } else if (currentUserData.incomingRequests.includes(uid)) {
         match.classList.remove("d-none");
         match.innerHTML = "<i class=\"fa-solid fa-code-pull-request\"></i> Accept";

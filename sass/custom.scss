@@ -730,6 +730,17 @@ $terminal-error: $secondary;
   border-radius: 5px 0 0 5px;
 }
 
+#chat-messages {
+  height:60vh;
+  background-color: $terminal-bg;
+}
+
+#chat-title {
+    background-color: $terminal-header;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+}
+
 footer {
   background-color: $dark;
   color: $light;

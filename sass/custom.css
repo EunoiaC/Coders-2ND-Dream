@@ -12512,6 +12512,17 @@ textarea.form-control-lg {
   border-radius: 5px 0 0 5px;
 }
 
+#chat-messages {
+  height: 60vh;
+  background-color: #1E1E1E;
+}
+
+#chat-title {
+  background-color: #323232;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;
