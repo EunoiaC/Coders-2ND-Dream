@@ -411,10 +411,7 @@ function renderChats() {
             // truncate last message to 50 characters, or a newline if earlier
             if (lastMessage.length > 50) {
                 lastMessage = lastMessage.substring(0, 50) + "...";
-            } else if (lastMessage.includes("\n")) {
-                lastMessage = lastMessage.substring(0, lastMessage.indexOf("\n")) + "[more lines]";
             }
-
             for (let i = 0; i < chatData.messages.length; i++) {
                 let message = chatData.messages[i];
                 if (message.sender === currentUserData.displayName) {
@@ -480,6 +477,14 @@ function renderChats() {
             // scroll chat-messages to bottom
             const chatMessages = document.getElementById("chat-messages");
             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            let overallContainer = document.getElementById("chats-container-container");
+            overallContainer.classList.remove("col-sm-8");
+            overallContainer.classList.add("col-sm-10");
+
+            // hide stats
+            let chatsStats = document.getElementById("chats-stats");
+            chatsStats.classList.add("d-none");
         }
     }
 }
@@ -722,6 +727,13 @@ async function loadChatPage() {
 
         const chatContent = document.getElementById("chat-contents");
         chatContent.classList.add("d-none");
+
+        let overallContainer = document.getElementById("chats-container-container");
+        overallContainer.classList.remove("col-sm-8");
+        overallContainer.classList.add("col-sm-10");
+
+        let chatsStats = document.getElementById("chats-stats");
+        chatsStats.classList.add("d-none");
     }
 
     chatsButton.onclick = (event) => {
@@ -737,6 +749,13 @@ async function loadChatPage() {
 
         const chatContent = document.getElementById("chat-contents");
         chatContent.classList.add("d-none");
+
+        let overallContainer = document.getElementById("chats-container-container");
+        overallContainer.classList.add("col-sm-8");
+        overallContainer.classList.remove("col-sm-10");
+
+        let chatsStats = document.getElementById("chats-stats");
+        chatsStats.classList.remove("d-none");
     }
 
     // get chatrooms by successful matches
