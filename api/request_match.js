@@ -120,7 +120,11 @@ export default async function request_match(req, res) {
 
                 await chatDocRef.set(data);
 
-                return res.status(200).json({ chatroom: chatId });
+                data.otherUser = desiredMatchUID;
+                data.otherName = desiredMatchData.get("displayName");
+                data.chatroom = chatId;
+
+                return res.status(200).json({ chatroom: data });
             }
         }
 

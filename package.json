@@ -18,8 +18,11 @@
     "bootstrap": "^5.3.3",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
+    "highlight.js": "^11.11.1",
     "huggingface": "^1.4.0",
+    "markdown-it": "^14.1.0",
     "marked": "^15.0.6",
+    "marked-highlight": "^2.2.1",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {

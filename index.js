@@ -1480,6 +1480,8 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY, fromChat) {
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 `;
+                // add the chat
+                chats.push(result.chatroom);
             } else {
                 // show success
                 profileAlertContainer.innerHTML = `
