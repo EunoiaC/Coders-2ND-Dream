@@ -502,11 +502,6 @@ function renderChatContent(chatObj) {
 
         // check for newlines in message
         let msgContent = msg.message;
-        if (msgContent.includes("\n")) {
-            // replace newlines with <br>
-            msgContent = msgContent.replace(/\n/g, "<br>");
-        }
-
         msgContent = marked(msgContent, { gfm: true });
 
         let messageDiv = document.createElement("div");
@@ -538,7 +533,7 @@ function renderChatContent(chatObj) {
         }
 
         let contentDiv = document.createElement("div");
-        contentDiv.classList.add("flex-grow-1");
+        contentDiv.classList.add("flex-grow-1", "text-wrap");
         contentDiv.innerHTML = msgContent;
 
         messageDiv.appendChild(nameSpan);
