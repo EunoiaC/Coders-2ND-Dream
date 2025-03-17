@@ -428,8 +428,11 @@ function renderChats() {
         statsDiv.append(
             Object.assign(document.createElement("div"), {textContent: `${sentMessages} sent`}),
             Object.assign(document.createElement("div"), {textContent: `${receivedMessages} received`}),
-            Object.assign(document.createElement("div"), {textContent: mode})
         );
+        let type = document.createElement("div");
+        type.textContent = mode;
+        type.classList.add("fw-bold");
+        statsDiv.append(type)
 
          // Create the chat content container
         const chatContentDiv = document.createElement("div");
@@ -483,6 +486,12 @@ function renderChatContent(chatObj) {
         if (msg.message.startsWith("[SET_CHAT_TYPE]")) {
             // skip the message
             continue;
+        }
+
+        // check for newlines in message
+        if (msg.message.includes("\n")) {
+            // replace newlines with <br>
+            msg.message = msg.message.replace(/\n/g, "<br>");
         }
 
         let msgContent = marked(msg.message, { gfm: true });

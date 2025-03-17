@@ -767,22 +767,9 @@ $terminal-error: $secondary;
 .chatpill:hover {
   background-color: #e2e6ea;
 }
-.scrollable-container {
-  overflow-x: auto;
-  white-space: nowrap;
-  display: flex;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  scroll-snap-type: x mandatory;
-}
-.scrollable-container::-webkit-scrollbar {
-  height: 6px;
-}
-.scrollable-container::-webkit-scrollbar-thumb {
-  background: #bbb;
-  border-radius: 3px;
+
+#pickup-lines {
+  background-color: $terminal-header;
 }
 
 footer {
