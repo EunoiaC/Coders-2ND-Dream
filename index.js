@@ -1427,19 +1427,49 @@ async function renderNotifs(items) {
             let ageDifMs = Date.now() - bday.getTime();
             let ageNum = Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365.25)); // More accurate age calculation
 
-            notifContainer.innerHTML += `
-                <div class="badge w-100 card bg-dark text-white p-2 mb-2">
-                    <div class="d-flex justify-content-between mt-1">
-                        <div class="d-flex align-items-center">
-                            <img src="${pfpLink}" class="img-fluid rounded me-2" style="width: 50px; height: 50px" alt="Profile">
-                            <h6 class="mb-0">${user.displayName} (${ageNum})</h6>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 align-items-center mt-1">
-                        <button class="btn btn-sm btn-primary w-100" id="notif-${items[i]}">View</button>
-                    </div>
-                </div>
-                `;
+            // Create notification card elements
+            const notifCard = document.createElement("div");
+            notifCard.className = "badge w-100 card bg-dark text-white p-2 mb-2";
+
+            // Create top row with profile picture and name
+            const topRow = document.createElement("div");
+            topRow.className = "d-flex justify-content-between mt-1";
+
+            const profileInfo = document.createElement("div");
+            profileInfo.className = "d-flex align-items-center";
+
+            const profileImg = document.createElement("img");
+            profileImg.src = pfpLink;
+            profileImg.className = "img-fluid rounded me-2";
+            profileImg.style.width = "50px";
+            profileImg.style.height = "50px";
+            profileImg.alt = "Profile";
+
+            const nameElement = document.createElement("h6");
+            nameElement.className = "mb-0";
+            nameElement.textContent = `${user.displayName} (${ageNum})`;
+
+            // Create bottom row with view button
+            const buttonRow = document.createElement("div");
+            buttonRow.className = "d-flex gap-2 align-items-center mt-1";
+
+            const viewButton = document.createElement("button");
+            viewButton.className = "btn btn-sm btn-primary w-100";
+            viewButton.id = `notif-${items[i]}`;
+            viewButton.textContent = "View";
+
+            // Assemble the component hierarchy
+            profileInfo.appendChild(profileImg);
+            profileInfo.appendChild(nameElement);
+            topRow.appendChild(profileInfo);
+
+            buttonRow.appendChild(viewButton);
+
+            notifCard.appendChild(topRow);
+            notifCard.appendChild(buttonRow);
+
+            // Add to the container
+            notifContainer.appendChild(notifCard);
 
             console.log("notif rendered: " + items[i]);
 
