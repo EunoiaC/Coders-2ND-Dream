@@ -491,6 +491,7 @@ function renderChatContent(chatObj) {
         // get tok
         const token = await getBearerToken();
 
+        messageInput.value = ""; // clear before send bc listener will be triggered otherwise
         const response = await fetch('/api/send_message', {
             method: 'POST',
             headers: {
@@ -502,8 +503,6 @@ function renderChatContent(chatObj) {
                 message: message
             })
         });
-
-        messageInput.value = "";
     }
 }
 
