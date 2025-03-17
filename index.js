@@ -1389,41 +1389,41 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY, fromChat) {
     // check if uid in successful matches to show chat button
     if (successfulMatches.includes(uid)) {
         chat.classList.remove("d-none");
-
-        chat.onclick = async (e) => {
-            let alert = document.getElementById("match-alert");
-            if (alert) { // only if it was created
-                alert.remove();
-            }
-            leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
-            match.classList.add("d-none");
-            chat.classList.add("d-none");
-            logout.classList.remove("d-none");
-            // scroll to the previous position
-            window.scrollTo({
-                top: scrollY,
-                left: scrollX,
-                behavior: 'smooth' // Adds a smooth scrolling animation
-            });
-
-            // set the leave onclick listener
-            leave.onclick = (event) => {
-                showPage(matchpoolPage);
-            }
-
-            await showPage(chatsPage);
-            const chatWithBtn = document.getElementById(`chat-with-${currentProfileData.displayName}`);
-            chatWithBtn.click();
-
-            currentProfileData = currentUserData;
-            viewingSelf = true;
-        }
     } else if (currentUserData.incomingRequests.includes(uid)) {
         match.classList.remove("d-none");
         match.innerHTML = "<i class=\"fa-solid fa-code-pull-request\"></i> Accept";
     } else {
         match.classList.remove("d-none");
         match.innerHTML = "<i class=\"fa-solid fa-code-pull-request\"></i> Pull";
+    }
+
+    chat.onclick = async (e) => {
+        let alert = document.getElementById("match-alert");
+        if (alert) { // only if it was created
+            alert.remove();
+        }
+        leave.innerHTML = `<i class="fa-solid fa-arrow-left"></i> Match`;
+        match.classList.add("d-none");
+        chat.classList.add("d-none");
+        logout.classList.remove("d-none");
+        // scroll to the previous position
+        window.scrollTo({
+            top: scrollY,
+            left: scrollX,
+            behavior: 'smooth' // Adds a smooth scrolling animation
+        });
+
+        // set the leave onclick listener
+        leave.onclick = (event) => {
+            showPage(matchpoolPage);
+        }
+
+        await showPage(chatsPage);
+        const chatWithBtn = document.getElementById(`chat-with-${currentProfileData.displayName}`);
+        chatWithBtn.click();
+
+        currentProfileData = currentUserData;
+        viewingSelf = true;
     }
 
     match.onclick = async (event) => {
