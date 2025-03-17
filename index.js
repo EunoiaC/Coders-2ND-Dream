@@ -1480,10 +1480,8 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY, fromChat) {
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 `;
-                // add the chat if we have done an API fetch
-                if (!loadedChats) {
-                    await loadChatPage();
-                }
+
+                await loadChatPage();
                 chats.push(result.chatroom);
 
                 // show the chat button
