@@ -8,7 +8,7 @@ import {
     signInWithPopup,
     updateProfile
 } from "firebase/auth";
-import {doc, getDoc, getFirestore, onSnapshot, updateDoc, Timestamp } from 'firebase/firestore';
+import {doc, getDoc, getFirestore, onSnapshot, updateDoc, Timestamp} from 'firebase/firestore';
 
 // TODO: If users are experiencing bad performance or UI issues, check if it's due to adding listeners over and over
 // TODO: free tier AI chat: https://chatgpt.com/share/679aa90e-f540-8007-8bf9-d87b7e36b6cc
@@ -97,7 +97,6 @@ function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMa
 
     return Math.max(Math.round(aura), 0); // Ensure aura is never negative
 }
-
 
 
 function formatNumberWithUnits(number) {
@@ -259,7 +258,7 @@ async function showPage(page, data = null) {
         const customButtonForm = document.getElementById("socialLinkForm");
         customButtonForm.onsubmit = (event) => {
             event.preventDefault();
-             // get form data
+            // get form data
             console.log("customButtonForm submitted!");
             const type = document.getElementById("platformSelect");
             const link = document.getElementById("linkInput");
@@ -391,6 +390,7 @@ function begin() {
 }
 
 let currChat = null;
+
 function renderChats() {
     const chatContainer = document.getElementById("chat-container");
     chatContainer.innerHTML = "";
@@ -421,22 +421,35 @@ function renderChats() {
         const chatroomDiv = document.createElement("div");
         chatroomDiv.classList.add("chatroom", "w-100", "p-3", "d-flex", "align-items-center", "border");
 
-        chatroomDiv.innerHTML = `
-            <div class="d-flex flex-column text-end me-3 ms-4">
-                <div>${sentMessages} sent</div>
-                <div>${receivedMessages} received</div>
-                <div>${mode}</div>
-            </div>
-            <div class="flex-grow-1">
-                <h5 class="mb-1 text-primary chat-title" id="chat-with-${chatData.otherName}">Chat with ${chatData.otherName}</h5>
-                <p class="text-white">${lastMessage}</p>
-            </div>
-        `;
-        chatContainer.appendChild(chatroomDiv);
+// Create the stats container
+        const statsDiv = document.createElement("div");
+        statsDiv.classList.add("d-flex", "flex-column", "text-end", "me-3", "ms-4");
 
-        // get the chat with button
-        const chatWithBtn = document.getElementById(`chat-with-${chatData.otherName}`);
-        chatWithBtn.onclick = function (event) {
+        statsDiv.append(
+            Object.assign(document.createElement("div"), {textContent: `${sentMessages} sent`}),
+            Object.assign(document.createElement("div"), {textContent: `${receivedMessages} received`}),
+            Object.assign(document.createElement("div"), {textContent: mode})
+        );
+
+// Create the chat content container
+        const chatContentDiv = document.createElement("div");
+        chatContentDiv.classList.add("flex-grow-1");
+
+        const chatTitle = document.createElement("h5");
+        chatTitle.classList.add("mb-1", "text-primary", "chat-title");
+        chatTitle.textContent = `Chat with ${chatData.otherName}`;
+        chatTitle.setAttribute("id", `chat-with-${chatData.otherName}`);
+
+        const lastMessageP = document.createElement("p");
+        lastMessageP.classList.add("text-white");
+        lastMessageP.textContent = lastMessage;
+
+        chatContentDiv.append(chatTitle, lastMessageP);
+
+        chatroomDiv.append(statsDiv, chatContentDiv);
+
+        chatContainer.appendChild(chatroomDiv);
+        chatTitle.onclick = function (event) {
             // hide the chat container
             chatContainer.classList.add("d-none");
             // show the chat contents
@@ -463,7 +476,7 @@ function renderChatContent(chatObj) {
     for (let i = 0; i < messages.length; i++) {
         let msg = messages[i];
         let messageDiv = document.createElement("div");
-        messageDiv.classList.add("text-white", "w-100", "p-2","mb-1");
+        messageDiv.classList.add("text-white", "w-100", "p-2", "mb-1");
         messageDiv.innerHTML = `
             <strong>${msg.sender}</strong>: ${msg.message}
         `;
@@ -506,6 +519,7 @@ function renderChatContent(chatObj) {
 }
 
 let loadedChats = false;
+
 async function loadChatPage() {
     // const chatContent = document.getElementById("chat-contents");
     // chatContent.classList.add("d-none");
@@ -610,7 +624,7 @@ async function loadChatPage() {
         let stack = ["Front End", "Back End", "Full Stack"]
         // add to users as well
         chatsUsers.appendChild(createMatchpoolProfile(otherUser, data.displayName, ageNum, auraNum, data.membership, stack[data.selfCapabilities], stack[data.lookingFor], data.pfpLink, data.pfpVersion, i + 1000, data));
-        let viewProfile = document.getElementById(`view-matchpool-${i+1000}`);
+        let viewProfile = document.getElementById(`view-matchpool-${i + 1000}`);
         viewProfile.onclick = (e) => {
             viewMatchpoolProfile(data, otherUser, window.scrollX, window.scrollY, true);
             window.scrollTo({
@@ -1017,7 +1031,7 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
             }
 
             // parse the birthday as a date, (-1 from date cuz date indexing starts at zero)
-            let bday  = new Date(result[2], result[0]-1, result[1]);
+            let bday = new Date(result[2], result[0] - 1, result[1]);
             let diff = Date.now() - bday;
             const millisecondsInYear = 365.25 * 24 * 60 * 60 * 1000; // Account for leap years
             diff = diff / millisecondsInYear;
@@ -1083,8 +1097,8 @@ Fill out your data in the \`config.json\` file on the left and run the build scr
 
         // create a random value for selfCapabilities
         let maxSeed = Number.MAX_VALUE;
-        let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
-        let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
+        let min = stack.indexOf(selfCapabilities.innerText) / 3 * maxSeed;
+        let max = (stack.indexOf(selfCapabilities.innerText) + 1) / 3 * maxSeed;
         let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
         let data = {
@@ -1170,7 +1184,7 @@ async function loadUsers(filter, lastDoc) {
     return {
         users: currentUserData.matchpool,
         // 3600 seconds in an hour
-        message: `You have ${Math.floor((limit - seconds)/3600)} hours left until you receive a new match pool.`
+        message: `You have ${Math.floor((limit - seconds) / 3600)} hours left until you receive a new match pool.`
     }
 }
 
@@ -1485,9 +1499,10 @@ async function renderNotifs(items) {
 async function showMatchPool() {
     // hide alert
     const repeatAlert = document.getElementById("alert-repeat-match");
-    try{
+    try {
         repeatAlert.classList.add("d-none");
-    } catch(error) {}
+    } catch (error) {
+    }
     let matchpoolContainer = document.getElementById("matchpool-container");
     // show a loading spinner only if the container is unpopulated
     if (!loadedMatches) {
@@ -1506,8 +1521,7 @@ async function showMatchPool() {
             return; // don't refresh the animation
         }
         res = await loadUsers(null, null);
-    }
-    else {
+    } else {
         res = await loadUsers(null, null);
     }
     // set currentUserData's matchpool to users, since we are either updating or creating a matchpool
@@ -1521,11 +1535,12 @@ async function showMatchPool() {
     let msg = res.message;
     // TODO: stylised alert using `msg` variable
     if (msg) {
-        try{
+        try {
             repeatAlert.classList.remove("d-none");
             const text = document.getElementById("matchpool-reset-text");
             text.innerText = msg;
-        } catch(error) {}
+        } catch (error) {
+        }
         if (loadedMatches) { // if we have loaded the users already AND there is a message (means no update), we can return
             return;
         }
@@ -1859,7 +1874,6 @@ function loadProfilePage() {
     }
 
 
-
     // only trigger an edit once the mouse leaves the edit box
     // TODO: live update aura
     const bounds = document.getElementById("profile-edit-bounds");
@@ -1870,8 +1884,8 @@ function loadProfilePage() {
 
             // create a random value for selfCapabilities
             let maxSeed = Number.MAX_VALUE;
-            let min = stack.indexOf(selfCapabilities.innerText)/3 * maxSeed;
-            let max = (stack.indexOf(selfCapabilities.innerText) + 1)/3 * maxSeed;
+            let min = stack.indexOf(selfCapabilities.innerText) / 3 * maxSeed;
+            let max = (stack.indexOf(selfCapabilities.innerText) + 1) / 3 * maxSeed;
             let random = Math.floor(Math.random() * (max - min + 1)) + min;
 
             currentUserData.selfCapabilities = stack.indexOf(selfCapabilities.innerText);
