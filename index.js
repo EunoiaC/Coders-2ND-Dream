@@ -408,6 +408,13 @@ function renderChats() {
         if (chatData.messages.length > 0) {
             let lastMsg = chatData.messages[chatData.messages.length - 1];
             lastMessage = lastMsg.sender + ": " + lastMsg.message;
+            // truncate last message to 50 characters, or a newline if earlier
+            if (lastMessage.length > 50) {
+                lastMessage = lastMessage.substring(0, 50) + "...";
+            } else if (lastMessage.includes("\n")) {
+                lastMessage = lastMessage.substring(0, lastMessage.indexOf("\n")) + "[more lines]";
+            }
+
             for (let i = 0; i < chatData.messages.length; i++) {
                 let message = chatData.messages[i];
                 if (message.sender === currentUserData.displayName) {
@@ -443,7 +450,7 @@ function renderChats() {
         chatTitle.textContent = `Chat with ${chatData.otherName}`;
         chatTitle.setAttribute("id", `chat-with-${chatData.otherName}`);
 
-        const lastMessageP = document.createElement("p");
+        const lastMessageP = document.createElement("div");
         lastMessageP.classList.add("text-white");
         lastMessageP.textContent = lastMessage;
 
@@ -489,12 +496,13 @@ function renderChatContent(chatObj) {
         }
 
         // check for newlines in message
-        if (msg.message.includes("\n")) {
+        let msgContent = msg.message;
+        if (msgContent.includes("\n")) {
             // replace newlines with <br>
-            msg.message = msg.message.replace(/\n/g, "<br>");
+            msgContent = msgContent.replace(/\n/g, "<br>");
         }
 
-        let msgContent = marked(msg.message, { gfm: true });
+        msgContent = marked(msgContent, { gfm: true });
 
         let messageDiv = document.createElement("div");
         messageDiv.classList.add("text-white", "w-100", "p-2", "mb-1", "d-flex");
