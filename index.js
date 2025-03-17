@@ -465,6 +465,10 @@ function renderChats() {
             renderChatContent(chatData);
             const chatTitle = document.getElementById("chat-title");
             chatTitle.innerText = "Chat with " + chatData.otherName;
+
+            // scroll chat-messages to bottom
+            const chatMessages = document.getElementById("chat-messages");
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
     }
 }
