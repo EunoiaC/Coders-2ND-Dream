@@ -82,7 +82,7 @@ export default async function send_message(req, res) {
         let msgObj = {
             sender: selfData.get("displayName"),
             message: message,
-            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            // timestamp: admin.firestore.FieldValue.serverTimestamp(),
         }
 
         // update the chatroom messages field with the new message
