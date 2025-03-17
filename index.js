@@ -510,20 +510,8 @@ function renderChatContent(chatObj) {
                     break;
             }
         } else if (msg.sender !== "System") { // must be the other user
-            switch (chatObj[chatObj.otherUser + "-data"].membership) {
-                case 0:
-                    nameSpan.classList.add("text-danger");
-                    break;
-                case 1:
-                    nameSpan.classList.add("text-primary");
-                    break;
-                case 2:
-                    nameSpan.classList.add("text-success");
-                    break;
-                case 3:
-                    nameSpan.classList.add("text-warning");
-                    break;
-            }
+            // just set their color to primary
+            nameSpan.classList.add("text-primary");
         }
 
         let contentDiv = document.createElement("div");
