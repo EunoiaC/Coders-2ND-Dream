@@ -530,7 +530,12 @@ function renderChatContent(chatObj) {
 
     // change scrollToBottom on scroll
     chatContent.onscroll = function () {
-        chatObj.scrollToBottom = false;
+        // check if scrolled to bottom
+        if (chatContent.scrollTop + chatContent.clientHeight >= chatContent.scrollHeight) {
+            chatObj.scrollToBottom = true;
+        } else {
+            chatObj.scrollToBottom = false;
+        }
     }
 
     const changeMode = document.getElementById("chat-change-mode");
