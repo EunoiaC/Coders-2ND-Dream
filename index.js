@@ -1482,6 +1482,12 @@ function viewMatchpoolProfile(data, uid, scrollX, scrollY, fromChat) {
                 `;
                 // add the chat
                 chats.push(result.chatroom);
+
+                // show the chat button
+                chat.classList.remove("d-none");
+
+                // hide the match button
+                match.classList.add("d-none");
             } else {
                 // show success
                 profileAlertContainer.innerHTML = `
