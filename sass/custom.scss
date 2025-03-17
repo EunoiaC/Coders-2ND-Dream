@@ -735,10 +735,20 @@ $terminal-error: $secondary;
   background-color: $terminal-bg;
 }
 
-#chat-title {
+.chat-header {
     background-color: $terminal-header;
     padding: 10px;
     border-radius: 10px 10px 0 0;
+}
+
+#chat-change-mode {
+  color: #814863;
+}
+
+#chat-change-mode:hover {
+  color: #e181ab;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 footer {
