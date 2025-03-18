@@ -900,7 +900,9 @@ async function loadChatPage() {
         chatObject.listener = onSnapshot(chatDocRef, (doc) => {
             let data = doc.data();
             // update the chat object with the new data
-            Object.assign(chatObject, data);
+            chatObject[auth.currentUser.uid + "-data"] = data[auth.currentUser.uid + "-data"];
+            chatObject[otherUser + "-data"] = data[otherUser + "-data"];
+            chatObject.messages.push(data.messages[data.messages.length - 1]); // don't erase chess data
             // re-render
             renderChats();
             if (currChat === otherUser) {
