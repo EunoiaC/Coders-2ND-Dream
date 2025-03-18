@@ -21,7 +21,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
-    systemInstruction: "When given a string of text messages, you must review each message and give it a label, explaining why in context of all messages. The outputted list MUST EQUAL the size of the input messages. Follow the rules of texting theory. You will be given messages and which user is asking for the review. \n\nmoves are as following:\nBrilliant: Indicates an exceptionally insightful or clever message.\nBest: Denotes the optimal or most appropriate message in the given context.\nExcellent: Signifies a very good message that effectively advances the conversation.\nGood: Represents a solid message that contributes positively to the dialogue.\nBook: Refers to a standard or commonly used message, often neutral in impact.\nInaccuracy: Marks a message that isn't the best choice and could have been improved.\nMistake: Highlights a message that detracts from the conversation or is suboptimal.\nBlunder: Indicates a significantly poor message that negatively affects the interaction.\nMissed Win: Denotes a missed opportunity where a better message could have led to a more favorable outcome.\nForced: Represents a message that was the only viable option in the context.\nCheckmate: Signifies a decisive message that concludes the conversation effectively.\nResignation: Indicates a message where the sender concedes or gives up in the conversation.\n\nInput format: \n\"perspective: [user's display name]\"\n\"[sender]: [message]\"\n\"[sender]: [message]\"\n\"[sender]: [message]\"\n\nOutput format:\n\"moves\": [{\n\"move_type\": \"Brilliant\",\n\"explanation\": \"This message is brilliant because it shows deep understanding of the topic and engages the other person effectively.\"\n}, {\n\"move_type\": \"Best\",\n\"explanation\": \"This message is the best choice in this context because it addresses the question directly and provides a clear answer.\"\n}]\n",
+    systemInstruction: "When given a string of text messages, you must review each message and give it a label, explaining why in context of all messages. The outputted list MUST EQUAL the size of the input messages. Follow the rules of texting theory. You will be given messages and which user is asking for the review. \n\nmoves are as following:\nBrilliant: Indicates an exceptionally insightful or clever message.\nBest: Denotes the optimal or most appropriate message in the given context.\nExcellent: Signifies a very good message that effectively advances the conversation.\nGood: Represents a solid message that contributes positively to the dialogue.\nBook: Refers to a standard or commonly used message, often neutral in impact.\nInaccuracy: Marks a message that isn't the best choice and could have been improved.\nMistake: Highlights a message that detracts from the conversation or is suboptimal.\nBlunder: Indicates a significantly poor message that negatively affects the interaction.\nMissed Win: Denotes a missed opportunity where a better message could have led to a more favorable outcome.\nForced: Represents a message that was the only viable option in the context.\nCheckmate: Signifies a decisive message that concludes the conversation effectively.\nResignation: Indicates a message where the sender concedes or gives up in the conversation.\n\nPlease make sure you write something for EACH message, even if it's a simple thing.",
 });
 
 const generationConfig = {
@@ -99,6 +99,20 @@ export default async function message_review(req, res) {
 
         const chatSession = model.startChat({
             generationConfig,
+            history: [
+                {
+                    role: "user",
+                    parts: [
+                        {text: "\"perspective: Bob\"\n\"Sam: hello\"\n\"Bob: u stupid\"\n\"Sam: :(\"\n\"Bob: hehe\""},
+                    ],
+                },
+                {
+                    role: "model",
+                    parts: [
+                        {text: "{\n  \"moves\": [\n    {\n      \"explanation\": \"\\\"hello\\\" is a standard opening. Nothing special.\",\n      \"move_type\": \"Book\"\n    },\n    {\n      \"explanation\": \"\\\"u stupid\\\" is unnecessarily rude and escalates the situation negatively.\",\n      \"move_type\": \"Blunder\"\n    },\n    {\n      \"explanation\": \"\\\":(\\\" expresses sadness in response to the insult.\",\n      \"move_type\": \"Book\"\n    },\n    {\n      \"explanation\": \"\\\"hehe\\\" is dismissive and continues the negative interaction.\",\n      \"move_type\": \"Mistake\"\n    }\n  ]\n}"},
+                    ],
+                },
+            ],
         });
 
         const result = await chatSession.sendMessage(modelInput);
