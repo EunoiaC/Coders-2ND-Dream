@@ -496,11 +496,9 @@ function renderChatContent(chatObj) {
     for (let i = 0; i < messages.length; i++) {
         let msg = messages[i];
         if (msg.message.startsWith("[SET_CHAT_TYPE]")) {
-            // skip the message
             continue;
         }
 
-        // check for newlines in message
         let msgContent = msg.message;
         msgContent = marked(msgContent, { gfm: true });
 
@@ -508,10 +506,9 @@ function renderChatContent(chatObj) {
         messageDiv.classList.add("text-white", "w-100", "p-2", "mb-1", "d-flex");
 
         let nameSpan = document.createElement("strong");
-        nameSpan.classList.add("me-2", "text-nowrap"); // Add spacing and prevent wrapping
+        nameSpan.classList.add("me-2", "text-nowrap");
         nameSpan.textContent = msg.sender + ": ";
 
-        // give the namespan text color based on the subscription level
         if (msg.sender === currentUserData.displayName) {
             switch (currentUserData.membership) {
                 case 0:
@@ -527,8 +524,7 @@ function renderChatContent(chatObj) {
                     nameSpan.classList.add("text-warning");
                     break;
             }
-        } else if (msg.sender !== "System") { // must be the other user
-            // just set their color to primary
+        } else if (msg.sender !== "System") {
             nameSpan.classList.add("text-primary");
         }
 
@@ -537,9 +533,7 @@ function renderChatContent(chatObj) {
         contentDiv.innerHTML = msgContent;
 
         if (msg.move_type) {
-            // prepend the innerhtml of namespan
             let moveType = msg.move_type;
-            // image link is move type lowercase with spaces replaced with underscores
             let imgSrc = moveType.toLowerCase().replace(/ /g, "_") + "_32x.png";
             let img = document.createElement("img");
             img.src = imgSrc;
@@ -548,18 +542,26 @@ function renderChatContent(chatObj) {
             img.setAttribute("data-bs-toggle", "tooltip");
             img.setAttribute("data-bs-placement", "top");
             img.setAttribute("data-bs-html", "true");
-            // set the tooltip to the explanation
             img.setAttribute("data-bs-original-title", msg.explanation);
-            // append the image to the namespan
+
             nameSpan.prepend(img);
 
-            // Initialize the tooltip on this specific image
-            new bootstrap.Tooltip(img);
-        }
+            // Append elements to DOM before initializing tooltip
+            messageDiv.appendChild(nameSpan);
+            messageDiv.appendChild(contentDiv);
+            chatContent.appendChild(messageDiv);
 
-        messageDiv.appendChild(nameSpan);
-        messageDiv.appendChild(contentDiv);
-        chatContent.appendChild(messageDiv);
+            // Ensure tooltip is initialized after DOM update
+            setTimeout(() => {
+                new bootstrap.Tooltip(img, {
+                    container: 'body'
+                });
+            }, 0);
+        } else {
+            messageDiv.appendChild(nameSpan);
+            messageDiv.appendChild(contentDiv);
+            chatContent.appendChild(messageDiv);
+        }
     }
 
     if (chatObj.scrollToBottom) {
