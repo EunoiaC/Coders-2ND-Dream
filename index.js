@@ -541,17 +541,17 @@ function renderChatContent(chatObj) {
             img.setAttribute("data-bs-toggle", "tooltip");
             img.setAttribute("data-bs-placement", "top");
             img.setAttribute("data-bs-html", "true");
-            img.setAttribute("data-bs-title", msg.explanation);
+            img.setAttribute("data-bs-title", msg.explanation); // Important for Bootstrap 4
 
             nameSpan.prepend(img);
-
-            // Append elements to DOM before initializing tooltip
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(contentDiv);
             chatContent.appendChild(messageDiv);
 
-            // Ensure tooltip is initialized after DOM update
-            new bootstrap.Tooltip(img);  // Move this line AFTER appending to DOM
+            // Ensure the tooltip initializes after appending to the DOM
+            setTimeout(() => {
+                new bootstrap.Tooltip(img);
+            }, 0);
         } else {
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(contentDiv);
