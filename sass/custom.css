@@ -12555,6 +12555,10 @@ textarea.form-control-lg {
   background-color: #323232;
 }
 
+#chat-request-review:hover {
+  cursor: pointer;
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;

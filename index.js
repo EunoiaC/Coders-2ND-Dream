@@ -536,6 +536,12 @@ function renderChatContent(chatObj) {
         contentDiv.classList.add("flex-grow-1", "text-wrap");
         contentDiv.innerHTML = msgContent;
 
+        if (msg.move_type) {
+            contentDiv.onclick = function (event) {
+                alert(msg.move_type + ": " + msg.explanation);
+            }
+        }
+
         messageDiv.appendChild(nameSpan);
         messageDiv.appendChild(contentDiv);
         chatContent.appendChild(messageDiv);
@@ -553,6 +559,61 @@ function renderChatContent(chatObj) {
         } else {
             chatObj.scrollToBottom = false;
         }
+    }
+
+    const requestReview = document.getElementById("chat-request-review");
+    requestReview.onclick = async (event) => {
+        if (currentUserData.membership === 0) {
+            // create a bootstrap alert
+            const alert = document.createElement("div");
+            alert.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorReview">
+                <strong>You must have a paid subscription to use chat review!</strong>
+                <button type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close">
+                </button>
+            </div>`;
+            document.getElementById("chats").prepend(alert);
+            return;
+        }
+        // get the most recent 5000 messages
+        let messages = chatObj.messages;
+        if (messages.length > 5000) {
+            messages = messages.slice(messages.length - 5000, messages.length);
+        }
+        // fetch the message review
+        const args = {
+            messages: messages
+        }
+
+        const token = await getBearerToken();
+
+        const response = await fetch('/api/message_review', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(args)
+        });
+
+        // get the json
+        const res = await response.json();
+        let moves = JSON.parse(res.moves);
+
+        if (messages.length <= 5000) {
+            for (let i = 0; i < moves.length; i++) {
+                chatObj.messages[i].move_type = moves[i].move_type;
+                chatObj.messages[i].explanation = moves[i].explanation;
+            }
+        } else {
+            for (let i = 0; i < moves.length; i++) {
+                chatObj.messages[messages.length - 5000 + i].move_type = moves[i].move_type;
+                chatObj.messages[messages.length - 5000 + i].explanation = moves[i].explanation;
+            }
+        }
+
+        // render the chat content again
+        renderChatContent(chatObj);
     }
 
     const changeMode = document.getElementById("chat-change-mode");

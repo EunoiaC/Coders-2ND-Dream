@@ -772,6 +772,10 @@ $terminal-error: $secondary;
   background-color: $terminal-header;
 }
 
+#chat-request-review:hover {
+  cursor: pointer;
+}
+
 footer {
   background-color: $dark;
   color: $light;
