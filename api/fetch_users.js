@@ -22,7 +22,7 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-async function loadFree(userData, doc) {
+async function loadSimple(userData, doc, numUsers, secondsLimit) {
     let run = false;
 
     let seconds = 0
@@ -35,7 +35,7 @@ async function loadFree(userData, doc) {
 
         seconds = Math.floor(timeDiff / 1000);
 
-        if (seconds > 604800) { // seconds in a week
+        if (seconds > secondsLimit) {
             run = true; // only let free tier fetch again if it's been a week
         }
     }
@@ -49,7 +49,6 @@ async function loadFree(userData, doc) {
             2: { min: maxSeed/3, max: maxSeed } // FULL_STACK
         };
 
-        const requiredAmnt = 5;
         const lookingFor = userData.get("lookingFor");
         const { min, max } = ranges[lookingFor];
 
@@ -62,8 +61,9 @@ async function loadFree(userData, doc) {
 
         const matchesQuery = await db.collection("users")
             .where("matchSeed", ">=", random)
+            .where(admin.firestore.FieldPath.documentId(), "!=", doc.id)
             .orderBy("matchSeed")
-            .limit(5)
+            .limit(numUsers)
             .get();
         for (let i = 0; i < matchesQuery.docs.length; i++) {
             let doc = matchesQuery.docs[i];
@@ -84,7 +84,7 @@ async function loadFree(userData, doc) {
         return {users: Array.from(users.keys()), loadedData: Array.from(users.values())};
     } else {
         // return a message that it's been too close since the last attempt, and return cached match pool
-        let secondsLeft = 604800 - seconds;
+        let secondsLeft = secondsLimit - seconds;
         return {users: userData.get("matchpool"), message: `You have ${Math.floor(secondsLeft/3600)} hours left until you receive a new match pool.`};
     }
 }
@@ -146,7 +146,7 @@ export default async function fetch_users(req, res) {
         const membership = userData.get("membership");
 
         if (membership === 0) {
-            const result = await loadFree(userData, docRef); // Await properly
+            const result = await loadSimple(userData, docRef, 5, 604800); // Await properly
             return res.status(200).json(result);
         }
 
@@ -155,8 +155,8 @@ export default async function fetch_users(req, res) {
         switch (userData.get("membership")) {
             case 1:
                 // for now, load free
-                const freeResult = await loadFree(userData, docRef); // Await properly
-                return res.status(200).json(freeResult);
+                const internResult = await loadSimple(userData, docRef, 10, 86400); // Await properly
+                return res.status(200).json(internResult);
             case 2:
                 break;
             case 3:
