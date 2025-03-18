@@ -902,7 +902,11 @@ async function loadChatPage() {
             // update the chat object with the new data
             chatObject[auth.currentUser.uid + "-data"] = data[auth.currentUser.uid + "-data"];
             chatObject[otherUser + "-data"] = data[otherUser + "-data"];
-            chatObject.messages.push(data.messages[data.messages.length - 1]); // don't erase chess data
+            if (chatObject.messages.length === 0) {
+                chatObject.messages = data.messages;
+            } else {
+                chatObject.messages.push(data.messages[data.messages.length - 1]); // don't erase chess data
+            }
             // re-render
             renderChats();
             if (currChat === otherUser) {
