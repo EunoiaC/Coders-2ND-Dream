@@ -886,11 +886,11 @@ async function loadChatPage() {
         let otherName = data.displayName;
 
         const chatDocRef = doc(db, "chats", chatroom);
-        const chatDocSnap = await getDoc(chatDocRef);
-        let chatData = chatDocSnap.data();
+        // const chatDocSnap = await getDoc(chatDocRef);
+        // let chatData = chatDocSnap.data();
 
         let chatObject = {
-            ...chatData,
+            messages: [],
             chatroom: chatroom,
             otherUser: otherUser,
             otherName: otherName,
