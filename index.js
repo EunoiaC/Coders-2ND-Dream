@@ -899,8 +899,13 @@ async function loadChatPage() {
         }
         chatObject.listener = onSnapshot(chatDocRef, (doc) => {
             let data = doc.data();
+            let oldMsgs = chatObject.messages;
             // update the chat object with the new data
             Object.assign(chatObject, data);
+            let latestMsg = chatObject.messages[chatObject.messages.length - 1];
+            oldMsgs.push(latestMsg);
+            chatObject.messages = oldMsgs;
+
             // re-render
             renderChats();
             if (currChat === otherUser) {
