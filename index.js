@@ -537,6 +537,7 @@ function renderChatContent(chatObj) {
         contentDiv.innerHTML = msgContent;
 
         if (msg.move_type) {
+            console.log(msg.move_type + ": " + msg.explanation);
             contentDiv.onclick = function (event) {
                 alert(msg.move_type + ": " + msg.explanation);
             }
