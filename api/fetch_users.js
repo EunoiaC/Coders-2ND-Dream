@@ -104,7 +104,7 @@ async function loadAPCSAGod(uid, userData, doc, filter, lastDoc) {
         ...doc.data()
     }));
 
-    console.log(users);
+    // console.log(users);
 
     const lastDocument = snapshot.docs[snapshot.docs.length - 1];
 
