@@ -535,24 +535,27 @@ function renderChatContent(chatObj) {
         if (msg.move_type) {
             let moveType = msg.move_type;
             let imgSrc = moveType.toLowerCase().replace(/ /g, "_") + "_32x.png";
+
+            // Create the image
             let img = document.createElement("img");
             img.src = imgSrc;
-            img.classList.add("move-type-icon", "me-2");
+            img.classList.add("move-type-icon", "me-2", "tooltip-container");
 
-            nameSpan.prepend(img);
+            // Create the tooltip
+            let tooltip = document.createElement("span");
+            tooltip.classList.add("custom-tooltip");
+            tooltip.textContent = msg.explanation;
+
+            // Append tooltip to image container
+            let imgWrapper = document.createElement("div");
+            imgWrapper.classList.add("tooltip-wrapper");
+            imgWrapper.appendChild(img);
+            imgWrapper.appendChild(tooltip);
+
+            nameSpan.prepend(imgWrapper);
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(contentDiv);
             chatContent.appendChild(messageDiv);
-
-            // Ensure the tooltip initializes after appending to the DOM
-            img.onmouseover = (event) => {
-                // change the msg content to the explanation
-                contentDiv.innerHTML = msg.explanation;
-            }
-            img.onmouseout = (event) => {
-                // change the msg content back to the original message
-                contentDiv.innerHTML = msgContent;
-            }
         } else {
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(contentDiv);
