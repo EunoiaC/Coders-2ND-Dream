@@ -109,7 +109,6 @@ async function loadIntern(userData, doc) {
     }
 
     if (run) {
-
         const maxSeed = Number.MAX_VALUE; // 1 less than 10 bil
         const ranges = {
             0: { min: 0, max: maxSeed / 3 }, // FRONT_END
@@ -130,7 +129,6 @@ async function loadIntern(userData, doc) {
 
         const matchesQuery = await db.collection("users")
             .where("matchSeed", ">=", random)
-            .where(admin.firestore.FieldPath.documentId(), '!=', userData.id) // exclude self
             .orderBy("matchSeed")
             .limit(10)
             .get();
