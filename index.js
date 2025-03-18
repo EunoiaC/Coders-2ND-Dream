@@ -537,10 +537,24 @@ function renderChatContent(chatObj) {
         contentDiv.innerHTML = msgContent;
 
         if (msg.move_type) {
-            console.log(msg.move_type + ": " + msg.explanation);
-            contentDiv.onclick = function (event) {
-                alert(msg.move_type + ": " + msg.explanation);
-            }
+            // prepend the innerhtml of namespan
+            let moveType = msg.move_type;
+            // image link is move type lowercase with spaces replaced with underscores
+            let imgSrc = moveType.toLowerCase().replace(/ /g, "_") + "_32x.png";
+            let img = document.createElement("img");
+            img.src = imgSrc;
+            img.classList.add("move-type-icon", "me-2");
+            img.setAttribute("title", msg.explanation);
+            img.setAttribute("data-bs-toggle", "tooltip");
+            img.setAttribute("data-bs-placement", "top");
+            img.setAttribute("data-bs-html", "true");
+            // set the tooltip to the explanation
+            img.setAttribute("data-bs-original-title", msg.explanation);
+            // append the image to the namespan
+            nameSpan.prepend(img);
+
+            // Initialize the tooltip on this specific image
+            new bootstrap.Tooltip(img);
         }
 
         messageDiv.appendChild(nameSpan);
