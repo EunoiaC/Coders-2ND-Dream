@@ -538,11 +538,10 @@ function renderChatContent(chatObj) {
             let img = document.createElement("img");
             img.src = imgSrc;
             img.classList.add("move-type-icon", "me-2");
-            img.setAttribute("title", msg.explanation);
             img.setAttribute("data-bs-toggle", "tooltip");
             img.setAttribute("data-bs-placement", "top");
             img.setAttribute("data-bs-html", "true");
-            img.setAttribute("data-bs-original-title", msg.explanation);
+            img.setAttribute("data-bs-title", msg.explanation);
 
             nameSpan.prepend(img);
 
@@ -552,11 +551,7 @@ function renderChatContent(chatObj) {
             chatContent.appendChild(messageDiv);
 
             // Ensure tooltip is initialized after DOM update
-            setTimeout(() => {
-                new bootstrap.Tooltip(img, {
-                    container: 'body'
-                });
-            }, 0);
+            new bootstrap.Tooltip(img);  // Move this line AFTER appending to DOM
         } else {
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(contentDiv);
