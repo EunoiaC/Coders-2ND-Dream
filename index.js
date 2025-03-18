@@ -539,20 +539,45 @@ function renderChatContent(chatObj) {
             // Create the image
             let img = document.createElement("img");
             img.src = imgSrc;
-            img.classList.add("move-type-icon", "me-2", "tooltip-container");
+            img.classList.add("move-type-icon", "me-2", "tooltip-trigger");
 
             // Create the tooltip
-            let tooltip = document.createElement("span");
+            let tooltip = document.createElement("div");
             tooltip.classList.add("custom-tooltip");
             tooltip.textContent = msg.explanation;
+            document.body.appendChild(tooltip); // Attach tooltip to the body
 
-            // Append tooltip to image container
-            let imgWrapper = document.createElement("div");
-            imgWrapper.classList.add("tooltip-wrapper");
-            imgWrapper.appendChild(img);
-            imgWrapper.appendChild(tooltip);
+            // Show tooltip on hover
+            img.addEventListener("mouseenter", (event) => {
+                tooltip.style.display = "block";
+                updateTooltipPosition(event, tooltip);
+            });
 
-            nameSpan.prepend(imgWrapper);
+            // Hide tooltip when mouse leaves
+            img.addEventListener("mouseleave", () => {
+                tooltip.style.display = "none";
+            });
+
+            // Update tooltip position when mouse moves
+            img.addEventListener("mousemove", (event) => {
+                updateTooltipPosition(event, tooltip);
+            });
+
+            function updateTooltipPosition(event, tooltip) {
+                let tooltipWidth = tooltip.offsetWidth;
+                let tooltipHeight = tooltip.offsetHeight;
+                let x = event.clientX - tooltipWidth / 2; // Centered horizontally
+                let y = event.clientY - tooltipHeight - 10; // 10px above the cursor
+
+                // Prevent tooltip from going off-screen
+                x = Math.max(10, Math.min(x, window.innerWidth - tooltipWidth - 10));
+                y = Math.max(10, y);
+
+                tooltip.style.left = `${x}px`;
+                tooltip.style.top = `${y}px`;
+            }
+
+            nameSpan.prepend(img);
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(contentDiv);
             chatContent.appendChild(messageDiv);
