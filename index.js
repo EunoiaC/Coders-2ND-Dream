@@ -562,6 +562,8 @@ function renderChatContent(chatObj) {
         }
     }
 
+    let chatReview = false;
+
     const requestReview = document.getElementById("chat-request-review");
     requestReview.onclick = async (event) => {
         if (currentUserData.membership === 0) {
@@ -576,6 +578,11 @@ function renderChatContent(chatObj) {
             document.getElementById("chats").prepend(alert);
             return;
         }
+        if (chatReview) {
+            return;
+        }
+        chatReview = true;
+        console.log("fetching chat review");
         // get the most recent 5000 messages
         let messages = chatObj.messages;
         if (messages.length > 5000) {
@@ -600,6 +607,8 @@ function renderChatContent(chatObj) {
         // get the json
         const res = await response.json();
         let moves = JSON.parse(res.moves);
+
+        console.log(moves);
 
         if (messages.length <= 5000) {
             for (let i = 0; i < moves.length; i++) {
