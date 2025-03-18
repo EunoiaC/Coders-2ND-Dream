@@ -806,6 +806,13 @@ $terminal-error: $secondary;
   opacity: 1;
 }
 
+#chats-stats {
+    background-color: $warning;
+    padding: 10px;
+    border-radius: 10px;
+   height: fit-content;
+}
+
 footer {
   background-color: $dark;
   color: $light;

@@ -109,7 +109,7 @@ export default async function fetch_insight(req, res) {
 
         const membership = userData.get("membership");
 
-        if (membership < 1) {
+        if (membership <= 1) {
             return res.status(401).json({error: "Invalid membership"});
         }
 

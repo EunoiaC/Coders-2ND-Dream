@@ -479,7 +479,7 @@ function renderChats() {
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             let overallContainer = document.getElementById("chats-container-container");
-            overallContainer.classList.remove("col-sm-8");
+            overallContainer.classList.remove("col-sm-6");
             overallContainer.classList.add("col-sm-10");
 
             // hide stats
@@ -674,6 +674,12 @@ function renderChatContent(chatObj) {
     changeMode.onclick = async function () {
         // show a popup saying you must be 18+ to request dating mode
         if (chatObj[auth.currentUser.uid + "-data"].mode === "dating") {
+            // check if the other user is also in dating mode
+            if (chatObj[chatObj.otherUser + "-data"].mode === "dating") {
+                // alert
+                alert("You are already in dating mode!");
+                return;
+            }
             alert("You have already requested dating mode!");
             return;
         }
@@ -834,7 +840,7 @@ async function loadChatPage() {
         chatContent.classList.add("d-none");
 
         let overallContainer = document.getElementById("chats-container-container");
-        overallContainer.classList.remove("col-sm-8");
+        overallContainer.classList.remove("col-sm-6");
         overallContainer.classList.add("col-sm-10");
 
         let chatsStats = document.getElementById("chats-stats");
@@ -856,7 +862,7 @@ async function loadChatPage() {
         chatContent.classList.add("d-none");
 
         let overallContainer = document.getElementById("chats-container-container");
-        overallContainer.classList.add("col-sm-8");
+        overallContainer.classList.add("col-sm-6");
         overallContainer.classList.remove("col-sm-10");
 
         let chatsStats = document.getElementById("chats-stats");
@@ -1467,6 +1473,9 @@ async function loadUsers(filter, lastDoc) {
     switch (currentUserData.membership) {
         case 0:
             limit = 604800; // 1 week in seconds
+            break;
+        case 1:
+            limit = 86400; // seconds in day
             break;
         // TODO: add other membership levels
     }

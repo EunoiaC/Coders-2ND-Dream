@@ -12588,6 +12588,13 @@ textarea.form-control-lg {
   opacity: 1;
 }
 
+#chats-stats {
+  background-color: #D19A66;
+  padding: 10px;
+  border-radius: 10px;
+  height: fit-content;
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;

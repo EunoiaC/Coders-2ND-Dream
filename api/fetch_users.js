@@ -11,6 +11,7 @@
  */
 
 import admin from "firebase-admin";
+import {FieldPath} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
@@ -89,6 +90,74 @@ async function loadFree(userData, doc) {
     }
 }
 
+async function loadIntern(userData, doc) {
+    let run = false;
+
+    let seconds = 0
+    if (!userData.get("lastFetch")) { // check if the timestamp existed
+        run = true;
+    } else {
+        const now = new Date();
+        let timestamp = userData.get("lastFetch").toDate();
+        const timeDiff = now - timestamp; // Difference in milliseconds
+
+        seconds = Math.floor(timeDiff / 1000);
+
+        if (seconds > 86400) { // seconds in a day
+            run = true; // only let free tier fetch again if it's been a week
+        }
+    }
+
+    if (run) {
+
+        const maxSeed = Number.MAX_VALUE; // 1 less than 10 bil
+        const ranges = {
+            0: { min: 0, max: maxSeed / 3 }, // FRONT_END
+            1: { min: maxSeed / 3, max: maxSeed/3 }, // BACK_END
+            2: { min: maxSeed/3, max: maxSeed } // FULL_STACK
+        };
+
+        const requiredAmnt = 5;
+        const lookingFor = userData.get("lookingFor");
+        const { min, max } = ranges[lookingFor];
+
+        let users = new Map(); // list of uids, in map format to prevent duplicates
+
+        // TODO: instead of for loop, just use one query?
+        // get 5 random documents by finding each one closest to the match seed
+        // generate a random number between min and max
+        let random = Math.floor(Math.random() * (max - min + 1) + min);
+
+        const matchesQuery = await db.collection("users")
+            .where("matchSeed", ">=", random)
+            .where(admin.firestore.FieldPath.documentId(), '!=', userData.id) // exclude self
+            .orderBy("matchSeed")
+            .limit(10)
+            .get();
+        for (let i = 0; i < matchesQuery.docs.length; i++) {
+            let doc = matchesQuery.docs[i];
+            let data = doc.data();
+            delete data.matchpool; // dont return the matchpool, sensitive info
+            delete data.lastFetch; // dont return their lastFetch either
+            delete data.matchSeed; // dont need their matchseed
+            users.set(doc.id, data);
+        }
+
+
+        // update the timestamp in the doc and currently matching users
+        await doc.update({
+            lastFetch: admin.firestore.FieldValue.serverTimestamp(),
+            matchpool: Array.from(users.keys()),
+        });
+
+        return {users: Array.from(users.keys()), loadedData: Array.from(users.values())};
+    } else {
+        // return a message that it's been too close since the last attempt, and return cached match pool
+        let secondsLeft = 86400 - seconds;
+        return {users: userData.get("matchpool"), message: `You have ${Math.floor(secondsLeft/3600)} hours left until you receive a new match pool.`};
+    }
+}
+
 async function loadAPCSAGod(uid, userData, doc, filter, lastDoc) {
     // just fetch most recent 20 active users (by last fetch) in pagination 20 -> 20 * (page + 1)
     const query = db.collection("users")
@@ -154,7 +223,8 @@ export default async function fetch_users(req, res) {
 
         switch (userData.get("membership")) {
             case 1:
-                break;
+                const resultIntern = await loadIntern(userData, docRef); // Await properly
+                return res.status(200).json(resultIntern);
             case 2:
                 break;
             case 3:
