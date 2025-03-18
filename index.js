@@ -904,7 +904,7 @@ async function loadChatPage() {
             chatObject[otherUser + "-data"] = data[otherUser + "-data"];
             if (chatObject.messages.length === 0) {
                 chatObject.messages = data.messages;
-            } else {
+            } else if (chatObject.messages.length !== data.messages.length) { // only update if new messages
                 chatObject.messages.push(data.messages[data.messages.length - 1]); // don't erase chess data
             }
             // re-render
