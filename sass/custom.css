@@ -12559,6 +12559,11 @@ textarea.form-control-lg {
   cursor: pointer;
 }
 
+.move-type-icon:hover {
+  cursor: pointer;
+  filter: brightness(0.8);
+}
+
 footer {
   background-color: #282C34;
   color: #ABB2BF;

@@ -776,6 +776,11 @@ $terminal-error: $secondary;
   cursor: pointer;
 }
 
+.move-type-icon:hover {
+    cursor: pointer;
+    filter: brightness(0.8);
+}
+
 footer {
   background-color: $dark;
   color: $light;

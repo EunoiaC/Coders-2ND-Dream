@@ -538,10 +538,6 @@ function renderChatContent(chatObj) {
             let img = document.createElement("img");
             img.src = imgSrc;
             img.classList.add("move-type-icon", "me-2");
-            img.setAttribute("data-bs-toggle", "tooltip");
-            img.setAttribute("data-bs-placement", "top");
-            img.setAttribute("data-bs-html", "true");
-            img.setAttribute("data-bs-title", msg.explanation); // Important for Bootstrap 4
 
             nameSpan.prepend(img);
             messageDiv.appendChild(nameSpan);
@@ -549,9 +545,14 @@ function renderChatContent(chatObj) {
             chatContent.appendChild(messageDiv);
 
             // Ensure the tooltip initializes after appending to the DOM
-            setTimeout(() => {
-                new bootstrap.Tooltip(img);
-            }, 0);
+            img.onmouseover = (event) => {
+                // change the msg content to the explanation
+                contentDiv.innerHTML = msg.explanation;
+            }
+            img.onmouseout = (event) => {
+                // change the msg content back to the original message
+                contentDiv.innerHTML = msgContent;
+            }
         } else {
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(contentDiv);
