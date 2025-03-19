@@ -506,6 +506,8 @@ function renderChats() {
             let chatsStats = document.getElementById("chats-stats");
             chatsStats.classList.add("d-none");
         }
+
+        console.log("rendered chat " + chatData.otherName);
     }
 }
 
@@ -965,16 +967,16 @@ async function loadChatPage() {
                     chatStats.longestChatWith = chatObject;
                 }
 
-                if (chatObject.messages[0].sender === currentUserData.displayName) {
+                if (chatObject.messages.length && chatObject.messages[0].sender === currentUserData.displayName) {
                     chatStats.firstMessagesSent++;
                 }
 
                 chatStats.totalChatLength += chatObject.messages.length;
-
-                chats.push(chatObject); // add to chats array
             }
             chatObject.initialized = true;
         });
+
+        chats.push(chatObject);
 
         // calculate age and aura from data
         let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
@@ -997,6 +999,18 @@ async function loadChatPage() {
         }
     }
 
+    // wait until all chats are initialized, then call render chats
+    function allInitialized() {
+        for (let i = 0; i < chats.length; i++) {
+            if (!chats[i].initialized) {
+                return false;
+            }
+        }
+        return true;
+    }
+    while (!allInitialized()) {
+        await new Promise(resolve => setTimeout(resolve, 100)); // pause until all init
+    }
     renderChats();
 }
 
