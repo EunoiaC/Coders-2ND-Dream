@@ -6,6 +6,7 @@ $dark: #282C34; // Dark gray, matching common dark-mode backgrounds like VS Code
 $warning: #D19A66; // Amber-orange, inspired by warnings or deprecation highlights
 
 $apcsagod: #ff9e00;
+$intern: #5685c2;
 
 $terminal-bg: #1E1E1E;
 $terminal-text: #00ff00;
@@ -538,8 +539,8 @@ $terminal-error: $secondary;
 }
 
 .rank-intern {
-  color: $primary;
-  border: $primary solid 1px;
+  color: $intern;
+  border: $intern solid 1px;
 }
 
 .rank-salesforceworker {
