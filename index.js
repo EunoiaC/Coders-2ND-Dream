@@ -67,6 +67,14 @@ let currentUserData = null;
 let currentNotifIdx = 0;
 let chats = [];
 
+let chatStats = { // only loaded once, don't update until page refreshed
+    totalSent: 0,
+    totalReceived: 0,
+    totalChatLength: 0,
+    longestChatWith: "",
+    firstMessagesSent: 0,
+};
+
 // calculate aura
 function calculateAura(selfRequestedMatches, otherRequestedMatches, successfulMatches, selfCapabilities, plan) {
     if (selfRequestedMatches < 0 || otherRequestedMatches < 0 || successfulMatches < 0) {
@@ -392,6 +400,18 @@ function begin() {
 let currChat = null;
 
 function renderChats() {
+    const statsTotalSent = document.getElementById("stats-total-sent");
+    const statsTotalReceived = document.getElementById("stats-total-received");
+    const statsLongestChat = document.getElementById("stats-longest-chat");
+    const statsAvgLength = document.getElementById("stats-avg-length");
+    const statsFirstMessages = document.getElementById("stats-first-messages");
+
+    statsTotalSent.innerText = chatStats.totalSent;
+    statsTotalReceived.innerText = chatStats.totalReceived;
+    statsLongestChat.innerText = chatStats.longestChatWith.otherName;
+    statsAvgLength.innerText = Math.round(chatStats.totalChatLength / chats.length) + "";
+    statsFirstMessages.innerText = chatStats.firstMessagesSent;
+
     const chatContainer = document.getElementById("chat-container");
     chatContainer.innerHTML = "";
     for (let i = 0; i < chats.length; i++) {
@@ -901,7 +921,8 @@ async function loadChatPage() {
             otherUser: otherUser,
             otherName: otherName,
             scrollToBottom: true,
-            chatReview: false
+            chatReview: false,
+            initialized: false,
         }
         chatObject.listener = onSnapshot(chatDocRef, (doc) => {
             let data = doc.data();
@@ -914,10 +935,43 @@ async function loadChatPage() {
                 chatObject.messages.push(data.messages[data.messages.length - 1]); // don't erase chess data
             }
             // re-render
-            renderChats();
+            if (chatObject.initialized) {
+                renderChats();
+            }
             if (currChat === otherUser) {
                 renderChatContent(chatObject);
             }
+
+            if (!chatObject.initialized) {
+                // update stat object
+                let sent = 0;
+                let received = 0;
+                // loop through messages
+                for (let i = 0; i < data.messages.length; i++) {
+                    let message = data.messages[i];
+                    if (message.sender === currentUserData.displayName) {
+                        sent++;
+                    } else {
+                        received++;
+                    }
+                }
+
+                chatStats.totalSent += sent;
+                chatStats.totalReceived += received;
+
+                if (!chatStats.longestChatWith) {
+                    chatStats.longestChatWith = chatObject;
+                } else if (chatStats.longestChatWith.messages.length < chatObject.messages.length) {
+                    chatStats.longestChatWith = chatObject;
+                }
+
+                if (chatObject.messages[0].sender === currentUserData.displayName) {
+                    chatStats.firstMessagesSent++;
+                }
+
+                chatStats.totalChatLength += chatObject.messages.length;
+            }
+            chatObject.initialized = true;
         });
 
         chats.push(chatObject);
