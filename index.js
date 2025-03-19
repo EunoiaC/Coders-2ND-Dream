@@ -970,11 +970,11 @@ async function loadChatPage() {
                 }
 
                 chatStats.totalChatLength += chatObject.messages.length;
+
+                chats.push(chatObject); // add to chats array
             }
             chatObject.initialized = true;
         });
-
-        chats.push(chatObject);
 
         // calculate age and aura from data
         let bday = new Date(data.bday[2], data.bday[0] - 1, data.bday[1]); // Month is 0-based
