@@ -212,6 +212,75 @@ The algorithm considers:
 - **Capability bonus**: Full-stack developers get slightly higher base scores
 - **Subscription tier**: Premium users start with higher base aura
 
+### Seed-Based Matching Algorithm
+
+One of the core innovations in Coder's Second Dream is the **seed-based matching system** that efficiently pairs users based on their developer type preferences.
+
+**How it works:**
+
+Each user is assigned a `matchSeed` during registration based on their `selfCapabilities`:
+
+```javascript
+// Seed ranges based on developer type
+let maxSeed = Number.MAX_VALUE;
+let min = stack.indexOf(selfCapabilities.innerText) / 3 * maxSeed;
+let max = (stack.indexOf(selfCapabilities.innerText) + 1) / 3 * maxSeed;
+let random = Math.floor(Math.random() * (max - min + 1)) + min;
+
+// FRONT_END seeds: 0 → 1/3 of MAX_VALUE
+// BACK_END seeds: 1/3 → 2/3 of MAX_VALUE
+// FULL_STACK seeds: 2/3 → MAX_VALUE
+```
+
+When fetching potential matches, the system queries Firestore for users whose seeds fall within the range corresponding to the user's `lookingFor` preference:
+
+```javascript
+const ranges = {
+    0: { min: 0, max: maxSeed / 3 },        // Looking for FRONT_END
+    1: { min: maxSeed / 3, max: maxSeed/3 }, // Looking for BACK_END
+    2: { min: maxSeed/3, max: maxSeed }      // Looking for FULL_STACK
+};
+
+const lookingFor = userData.get("lookingFor");
+const { min, max } = ranges[lookingFor];
+let random = Math.floor(Math.random() * (max - min + 1) + min);
+
+// Query users with nearest seeds
+const matchesQuery = await db.collection("users")
+    .where("matchSeed", ">=", random)
+    .orderBy("matchSeed")
+    .limit(numUsers)
+    .get();
+```
+
+**Benefits of this approach:**
+
+| Benefit | Description |
+|---------|-------------|
+| **Efficient Queries** | Firestore can index on `matchSeed` for O(log n) lookups |
+| **Scalable Matching** | Avoids scanning all users; finds nearest matches by seed |
+| **Randomized Results** | Random starting point ensures varied matchpools |
+| **Capability-Based** | Front-end devs seeking back-end will only see back-end profiles |
+
+When a user updates their `selfCapabilities` on their profile, their `matchSeed` is regenerated to place them in the correct range:
+
+```javascript
+bounds.onmouseout = async (event) => {
+    // Regenerate seed when capabilities change
+    let maxSeed = Number.MAX_VALUE;
+    let min = stack.indexOf(selfCapabilities.innerText) / 3 * maxSeed;
+    let max = (stack.indexOf(selfCapabilities.innerText) + 1) / 3 * maxSeed;
+    let random = Math.floor(Math.random() * (max - min + 1)) + min;
+    
+    currentUserData.matchSeed = random;
+    await updateDoc(docRef, {
+        matchSeed: currentUserData.matchSeed
+    });
+};
+```
+
+This seed-based system enables efficient matching at scale while respecting user preferences for the type of developer they want to collaborate with.
+
 ### Real-Time Chat with Firestore
 
 Chats use Firestore snapshot listeners for real-time updates:
