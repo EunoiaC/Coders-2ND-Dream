@@ -131,8 +131,9 @@ Users authenticate by typing `gh auth login` in a simulated terminal, complete w
 
 **Config File Registration:**
 
-Instead of a traditional form, users fill out a JSON-style config file with syntax highlighting:
-```json
+Instead of a traditional form, users fill out a JavaScript-inspired config file with syntax highlighting. The format intentionally uses programming constructs like `new Date()` and enum values rather than pure JSON:
+
+```javascript
 {
     "display_name": "John Doe",
     "email": "john@example.com",
@@ -146,7 +147,7 @@ Instead of a traditional form, users fill out a JSON-style config file with synt
 }
 ```
 
-The registration includes IDE-style tooltips, syntax error highlighting, and a console output that displays compilation errors or success.
+The registration includes IDE-style tooltips with field documentation, syntax error highlighting (red underlines for invalid values), and a console output that displays compilation-style errors or success messages.
 
 ![Placeholder: Screenshot of terminal login screen](placeholder_login_terminal.png)
 
